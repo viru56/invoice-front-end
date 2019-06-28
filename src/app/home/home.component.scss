@@ -1,0 +1,199 @@
+@mixin home($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  [no-over-flow] {
+    overflow: hidden;
+  }
+  .router-outlet {
+    position: relative;
+    padding: 0px 5px;
+  }
+  .spacer {
+    width: 100%;
+  }
+}
+.mat-toolbar {
+  .auth-btn {
+    box-shadow: none;
+    background-color: #42a5f5;
+    color: #fff;
+  }
+  .log-in{
+    margin-right: 5px;
+  }
+  .log-in:hover, .sign-up:hover{
+    text-decoration: underline;
+  }
+  .sign-up{
+    border: 1px solid #fff;
+  }
+}
+
+.full {
+  width: 100%;
+}
+.invoice-container {
+  background-color: white;
+  padding: 10px;
+  .mat-title:hover,
+  .mat-title:focus {
+    border: 1px solid #ccc;
+    outline: none;
+    border-radius: 4px;
+  }
+  .clear-icon {
+    background-color: #eee;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    font-size: 20px;
+    border-radius: 4px;
+  }
+  .clear-icon:hover {
+    background-color: #42a5f5;
+  }
+  .invoice-logo {
+    position: relative;
+    label {
+      padding: 60px 30px;
+    }
+    .inputfile {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+    .inputfile + label {
+      font-size: 1.25em;
+      font-weight: 700;
+      background-color: #eee;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .inputfile + label * {
+      pointer-events: none;
+    }
+    .img-container {
+      position: relative;
+      .logoPreview {
+        max-height: 150px;
+        max-width: 200px;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 4px;
+      }
+      .clear-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
+  .sender-email,
+  .reveiver-email {
+    .mat-form-field-infix {
+      min-width: 200px;
+    }
+    .mat-form-field-flex {
+      padding-top: 1rem;
+    }
+  }
+  .invoice-name {
+    padding: 10px;
+    outline-width: 0;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    h2 {
+      margin: 0;
+      outline-width: 0;
+    }
+  }
+  .invoice-name:hover,
+  .invoice-name:focus {
+    border-color: #ccc;
+  }
+  .date {
+    .mat-form-field-infix {
+      width: 150px;
+    }
+  }
+  .dflex {
+    display: flex;
+  }
+  .mrt {
+    margin-top: 20px;
+  }
+  .editable-content {
+    outline-width: 0;
+    h4 {
+      border: 1px solid #fff;
+      padding: 10px 10px 5px 10px;
+      border-radius: 4px;
+      margin-top: 12px;
+      outline-width: 0;
+    }
+    h4:hover,
+    h4:focus {
+      border-color: #ccc;
+    }
+  }
+  .item-list {
+    .item-header {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 10px;
+      background: #ccc;
+      padding: 5px;
+      div {
+        outline-width: 0;
+        padding: 5px;
+      }
+      div:hover,
+      div:focus {
+        background: #eee;
+        border-radius: 4px;
+      }
+    }
+  }
+  .item {
+    padding: 5px;
+    mat-form-field {
+      width: 80%;
+    }
+  }
+  .invoice-balance {
+    padding: 10px;
+    display: flex;
+    h4 {
+      margin: 0;
+      outline-width: 0;
+    }
+    .balance-amount {
+      padding: 10px;
+    }
+    .balance-name {
+      border: 1px solid #fff;
+      border-radius: 4px;
+      padding: 10px;
+      outline-width: 0;
+    }
+    .balance-name:hover,
+    .balance-name:focus {
+      border-color: #ccc;
+    }
+  }
+  .tax,
+  .discount,
+  .shipping,
+  .amount-paid {
+    margin-right: 10px;
+    .mat-form-field {
+      text-align: right;
+    }
+  }
+}

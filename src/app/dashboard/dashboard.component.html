@@ -1,3 +1,175 @@
-<p>
-  dashboard works!
-</p>
+<div
+  fxLayout="column"
+  class="dashboard"
+  fxLayoutAlign="space-between stretch"
+  fxLayoutGap="10px"
+  fxFlexFill
+  style="padding: 20px;"
+>
+  <div
+    fxLayout="column"
+    class="mat-elevation-z2"
+    style="background-color: white; padding: 10px;"
+    fxLayoutAlign="space-between stretch"
+    fxFlexFill
+  >
+    <div>
+      <mat-toolbar>
+        <h3 class="mat-heading">Welcome to Ind-Invoice, virender!</h3>
+      </mat-toolbar>
+    </div>
+    <div fxFlexFill>
+      <div fxLayout="row" fxLayout.lt-sm="column">
+        <div fxFlex="100">
+          <h4 class="mat-subheader">Let's help you set up your account.</h4>
+          <div>
+            <mat-tab-group>
+              <mat-tab label="Complete your business profile">
+                <div class="mw-800">
+                  <h4>Branding & Contact Information</h4>
+                  <p>
+                    This one is important. Make it clear to customers who they
+                    are paying! You should add your billing address, contact
+                    information, and your logo in <b>Settings > Billing</b> .
+                  </p>
+                  <div>
+                    <p>Example:</p>
+                    <img
+                      class="sample-img"
+                      [src]="'assets/branding-sample.png'"
+                    />
+                    <p>Current Address: Nehra, India</p>
+                  </div>
+                  <a
+                    [routerLink]="['/auth/settings']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Complete Profile now <mat-icon>trending_flat</mat-icon>
+                  </a>
+                </div>
+              </mat-tab>
+              <mat-tab label="Enable payments">
+                <div class="mw-800">
+                  <h4>Setup Payments</h4>
+                  <p>
+                    Don't forget to let your customers know how to pay! With
+                    Invoiced you can get paid in a variety of ways, making it
+                    more convenient for customers.
+                  </p>
+                  <h4>Online Payments</h4>
+                  <p>
+                    You can accept instant, online payments with Invoiced,
+                    including credit and debit cards, ACH, direct debit, and
+                    PayPal. When you receive a payment online, Invoiced will
+                    mark the invoice as paid, automatically.
+                  </p>
+                  <h4>Payment Instructions</h4>
+                  <p>
+                    Customers still sending a check? No problem! We can display
+                    your payment instructions on invoices and the payment page.
+                    Your customers can even click a button to let you know when
+                    a check is in the mail (known as a promise to pay).
+                  </p>
+                  <a
+                    [routerLink]="['/auth/payments']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Setup payment now <mat-icon>trending_flat</mat-icon>
+                  </a>
+                </div>
+              </mat-tab>
+              <mat-tab label="Import data">
+                <div class="mw-800">
+                  <h4>Importing Data</h4>
+                  <p>
+                    Already have existing billing data you need to pull into
+                    Invoiced? Data can be imported from a variety of sources,
+                    including from spreadsheets and your accounting system.
+                  </p>
+                  <a
+                    [routerLink]="['/auth/payments']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Import customers
+                  </a>
+                  <a
+                    style="margin-left:20px;"
+                    [routerLink]="['/auth/payments']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Import invoices
+                  </a>
+                </div>
+              </mat-tab>
+              <mat-tab label="Verify your email address">
+                <div class="mw-800">
+                  <h4>Verify Your Account</h4>
+                  <p>
+                    Before you can send invoices, you must first verify your
+                    email address. Please check your inbox for an email titled
+                    <b>
+                      <i><u>Please verify your email address</u></i></b
+                    >
+                    and click the button contained in the email.
+                  </p>
+                </div>
+              </mat-tab>
+              <mat-tab label="Send Your First Invoice">
+                <div class="mw-800">
+                  <h4>Sending Invoices</h4>
+                  <p>
+                    Once you have setup your business profile and enabled
+                    payments, you are ready to send your first invoice. If you
+                    have not already, you will need to
+                    <a [routerLink]="['/auth/invoices']" color="warn">
+                      create an invoice
+                    </a>
+                    first.
+                  </p>
+                  <p>
+                    Invoices can be sent via email, direct mail, and text
+                    message. In order to send your first invoice, you simply
+                    <b>Send Invoice</b> on an open invoice.
+                  </p>
+                  <a
+                    [routerLink]="['/auth/invoices']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Send invoices <mat-icon>trending_flat</mat-icon>
+                  </a>
+                </div>
+              </mat-tab>
+              <mat-tab label="Invite team member">
+                <div class="mw-800">
+                  <h4>Invite Team Members</h4>
+                  <p>
+                    Do other team members within your organization participate
+                    in invoicing and collections? Add them to your Invoiced
+                    account to start collaborating and get paid faster.
+                  </p>
+                  <p>
+                    Invoiced has many features that get even better in a
+                    multi-user environment, like follow up notes, the activity
+                    log, account managers, and Smart Chasing.
+                  </p>
+                  <a
+                    [routerLink]="['/auth/settings']"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Invite team member <mat-icon>trending_flat</mat-icon>
+                  </a>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

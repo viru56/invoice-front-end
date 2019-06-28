@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   PerfectScrollbarModule,
   PerfectScrollbarConfigInterface,
@@ -17,7 +17,20 @@ import {
   MatToolbarModule,
   MatChipsModule,
   MatFormFieldModule,
-  MatTabsModule
+  MatTabsModule,
+  MatDividerModule,
+  MatCheckboxModule,
+  MatStepperModule,
+  MatExpansionModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
+  MatCardModule,
+  MatAutocompleteModule,
+  MatSlideToggleModule,
+  MatSelectModule,
+  MatMenuModule
 } from "@angular/material";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { SidemenuComponent } from "./sidemenu/sidemenu.component";
@@ -25,7 +38,7 @@ import { SidemenuItemComponent } from "./sidemenu-item/sidemenu-item.component";
 import { UserMenuComponent } from "./user-menu/user-menu.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { ToolbarNotificationComponent } from "./toolbar-notification/toolbar-notification.component";
-import { RouterModule } from '@angular/router';
+import { RouterModule } from "@angular/router";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -54,21 +67,66 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatTabsModule,
     MatSliderModule,
     MatProgressBarModule,
-    RouterModule
+    RouterModule,
+    MatDividerModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatStepperModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatCardModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatMenuModule
   ],
   exports: [
     SidemenuComponent,
     SidemenuItemComponent,
     ToolbarNotificationComponent,
     ToolbarComponent,
-    UserMenuComponent
-],
+    UserMenuComponent,
+    MatToolbarModule,
+    MatDividerModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatButtonModule,
+    MatListModule,
+    MatInputModule,
+    PerfectScrollbarModule,
+    FlexLayoutModule,
+    MatSidenavModule,
+    MatTabsModule,
+    MatSliderModule,
+    MatProgressBarModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatStepperModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatCardModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatMenuModule,
+    CommonModule
+  ],
 
-providers: [
+  providers: [
     {
-        provide: PERFECT_SCROLLBAR_CONFIG,
-        useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
     }
-]
+  ]
 })
 export class BaseModule {}

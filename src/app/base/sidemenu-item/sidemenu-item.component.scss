@@ -24,7 +24,7 @@
         padding-top: 0px;
     }
     .secondaryMenu {
-        background:  mat-color($primary, 500); ;
+        background:  mat-color($primary, 500);
         transition: max-height .4s cubic-bezier(.35, 0, .25, 1);  
         padding-top: 0px;
     }
@@ -38,7 +38,12 @@
     .mat-nav-list .mat-list-item {
         font-size: 14px;
     }
-
+    .mat-nav-list {
+        .mat-list-item:focus,.mat-list-item:active{
+            background: mat-color($primary, 500);
+        }
+        
+    }
   
 }
 

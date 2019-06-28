@@ -1,17 +1,15 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RegisterComponent } from './register.component';
-import {Routes, RouterModule} from '@angular/router';
-
-const appRoutes:Routes = [{
-  path:'',
-  component: RegisterComponent
-}]
+import { NgModule } from "@angular/core";
+import { RegisterComponent } from "./register.component";
+import { Routes, RouterModule } from "@angular/router";
+import { BaseModule } from "../base/base.module";
+const appRoutes: Routes = [
+  {
+    path: "",
+    component: RegisterComponent
+  }
+];
 @NgModule({
   declarations: [RegisterComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(appRoutes)
-  ]
+  imports: [BaseModule, RouterModule.forChild(appRoutes)]
 })
-export class RegisterModule { }
+export class RegisterModule {}

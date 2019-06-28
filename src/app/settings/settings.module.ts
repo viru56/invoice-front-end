@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { BaseModule } from '../base/base.module';
 import { SettingsComponent } from './settings.component';
 import {Routes, RouterModule} from '@angular/router';
 
@@ -10,7 +10,7 @@ const appRoutes:Routes = [{
 @NgModule({
   declarations: [SettingsComponent],
   imports: [
-    CommonModule,
+    BaseModule,
     RouterModule.forChild(appRoutes)
   ]
 })

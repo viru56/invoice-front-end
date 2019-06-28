@@ -2,32 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: 'app-forgot-password',
+  templateUrl: './forgot-password.component.html',
+  styleUrls: ['./forgot-password.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class ForgotPasswordComponent implements OnInit {
 
   userForm: FormGroup;
   formErrors = {
-    'email': '',
-    'password': ''
+    'email': ''
   };
   validationMessages = {
     'email': {
       'required': 'Please enter your email',
       'email': 'please enter your vaild email'
-    },
-    'password': {
-      'required': 'please enter your password',
-      'minlength': 'Please enter more than 6 characters',
-      'maxlength': 'Please enter less than 18 characters',
     }
   };
 
   constructor(private router: Router,
               private fb: FormBuilder) {
   }
+
 
   ngOnInit() {
     this.buildForm();
@@ -72,6 +67,7 @@ export class LoginComponent implements OnInit {
     }
   }
   submit() {
-    this.router.navigate(['/auth/dashboard']);
+    this.router.navigate(['/login']);
   }
+
 }

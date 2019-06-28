@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 @Component({
   selector: "app-auth",
   templateUrl: "./auth.component.html",
