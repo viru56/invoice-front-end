@@ -6,31 +6,49 @@ export const menus = [
     open: false
   },
   {
-    name: "customers",
+    name: "Customers",
     open: false,
     link: "/auth/customers",
     icon: "people"
   },
   {
-    name: "invoices",
+    name: "Invoices",
     open: false,
     link: "/auth/invoices",
     icon: "receipt"
   },
   {
-    name: "payments",
+    name: "Payments",
     open: false,
     link: "/auth/payments",
     icon: "payment"
   },
   {
-    name: "reports",
+    name: "Team",
+    open: false,
+    link: "/auth/team",
+    icon: "supervisor_account"
+  },
+  {
+    name: "Tax",
+    open: false,
+    link: "/auth/tax",
+    icon: "redeem"
+  },
+  {
+    name: "Item",
+    open: false,
+    link: "/auth/item",
+    icon: "store"
+  },
+  {
+    name: "Reports",
     open: false,
     link: "/auth/reports",
     icon: "assessment"
   },
   {
-    name: "settings",
+    name: "Settings",
     open: false,
     link: "/auth/settings",
     icon: "settings"

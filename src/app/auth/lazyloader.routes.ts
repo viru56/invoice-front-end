@@ -8,6 +8,9 @@ export const appRoutes: Routes = [{
         { path: 'customers', loadChildren: '../customers/customers.module#CustomersModule' },
         { path: 'settings', loadChildren: '../settings/settings.module#SettingsModule' },
         { path: 'reports', loadChildren: '../reports/reports.module#ReportsModule' },
-        { path: 'payments', loadChildren: '../payments/payments.module#PaymentsModule' }
+        { path: 'payments', loadChildren: '../payments/payments.module#PaymentsModule' },
+        { path: 'tax', loadChildren: '../tax/tax.module#TaxModule' },
+        { path: 'item', loadChildren: '../item/item.module#ItemModule' },
+        { path: 'team', loadChildren: '../team/team.module#TeamModule' }
     ]
 }];
