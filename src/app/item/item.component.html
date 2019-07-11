@@ -1,3 +1,70 @@
-<p>
-  item works!
-</p>
+<div class="header">
+  <p>
+    <span class="title">Items</span>
+    <button mat-raised-button color="primary" (click)="addNewItem()">
+      <mat-icon>add_box</mat-icon> New item
+    </button>
+  </p>
+  <div class="subtitle">
+    Add and manage items.
+  </div>
+</div>
+<div class="table-wrapper">
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+    </ng-container>
+
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef>
+        <span></span> Description
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.description }}</mat-cell>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.type }} </mat-cell>
+    </ng-container>
+
+    <!-- Unit Cost Column -->
+    <ng-container matColumnDef="unitCost">
+      <mat-header-cell *matHeaderCellDef> Unit cost </mat-header-cell>
+      <mat-cell *matCellDef="let element">Rs {{ element.unitCost }} </mat-cell>
+    </ng-container>
+
+    <!-- Taxable Column -->
+    <ng-container matColumnDef="taxable">
+      <mat-header-cell *matHeaderCellDef> Taxable </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <span *ngIf="element.taxable">Yes</span>
+        <span *ngIf="!element.taxable">No</span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Tax Column -->
+    <ng-container matColumnDef="tax">
+      <mat-header-cell *matHeaderCellDef> Tax </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.taxRate }} </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element; let index = index">
+        <mat-icon (click)="editItem(element)" matTooltip="edit">
+          edit
+        </mat-icon>
+        <mat-icon color="warn" (click)="deleteItem(index)" matTooltip="delete">
+          delete_forever
+        </mat-icon>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+</div>

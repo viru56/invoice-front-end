@@ -1,12 +1,12 @@
-export interface Invoice {
-  label: InvoiceTextLabel;
+export interface Iinvoice {
+  label: IinvoiceTextLabel;
   invoiceNumber: number;
   sender: string;
   receiver: string;
   date: string;
   paymentTerms: string;
   dueDate: string;
-  lineItem: LineItem;
+  lineItem: IlineItem;
   subtotal: number;
   discount: number;
   tax: number;
@@ -19,7 +19,7 @@ export interface Invoice {
   tax_type: string;
   discount_type: string;
 }
-export interface InvoiceTextLabel {
+export interface IinvoiceTextLabel {
   invoiceName: string;
   date: string;
   paymentTerms: string;
@@ -38,7 +38,7 @@ export interface InvoiceTextLabel {
   notes: string;
   terms: string;
 }
-export interface LineItem {
+export interface IlineItem {
   name: string;
   quantity: number;
   rate: number;

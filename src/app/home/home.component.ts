@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Invoice } from "../models";
+import { Iinvoice } from "../models";
 
 @Component({
   selector: "app-home",
@@ -10,7 +10,7 @@ import { Invoice } from "../models";
 })
 export class HomeComponent implements OnInit {
   invoiceForm: FormGroup;
-  invoice: Invoice;
+  invoice: Iinvoice;
   fileToUpload: SafeUrl = null;
   showDiscount: boolean;
   showTax: boolean;

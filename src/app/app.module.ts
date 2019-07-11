@@ -5,7 +5,7 @@ import { RouterModule } from "@angular/router";
 import { AppComponent } from "./app.component";
 import { LazyLoadModule } from "./lazy-load/lazy-load.module";
 import { BaseModule } from "./base/base.module";
-
+import {DialogModule} from './dialogs/dialog.module';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -13,7 +13,8 @@ import { BaseModule } from "./base/base.module";
     BrowserAnimationsModule,
     RouterModule,
     BaseModule,
-    LazyLoadModule
+    LazyLoadModule,
+    DialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

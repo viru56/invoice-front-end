@@ -31,7 +31,11 @@ import {
   MatSlideToggleModule,
   MatSelectModule,
   MatMenuModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatTableModule,
+  MatSortModule,
+  MatPaginatorModule,
+  MatDialogModule
 } from "@angular/material";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { SidemenuComponent } from "./sidemenu/sidemenu.component";
@@ -85,7 +89,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatSlideToggleModule,
     MatSelectModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule
   ],
   exports: [
     CommonModule,
@@ -122,7 +130,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatSlideToggleModule,
     MatSelectModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatDialogModule
   ],
 
   providers: [

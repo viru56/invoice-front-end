@@ -10,7 +10,9 @@ export class RegisterComponent implements OnInit {
   userForm: FormGroup;
   formErrors = {
     email: "",
-    password: ""
+    password: "",
+    firstName:"",
+    companyName:""
   };
   validationMessages = {
     firstName: {

@@ -1,3 +1,54 @@
-<p>
-  team works!
-</p>
+<div class="header">
+  <p>
+    <span class="title">Team</span>
+    <button mat-raised-button color="primary">
+      <mat-icon>add_box</mat-icon> Invite Member
+    </button>
+  </p>
+  <div class="subtitle">
+    Grant others access to your business on Ind-Invoices.
+  </div>
+</div>
+<div class="table-wrapper">
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+    </ng-container>
+
+    <!-- Amount Column -->
+    <ng-container matColumnDef="emailAddress">
+      <mat-header-cell *matHeaderCellDef> Email address </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.emailAddress }}</mat-cell>
+    </ng-container>
+
+    <!-- Tax mode Column -->
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+      <mat-cell *matCellDef="let element"
+        ><span class="tax-mode">{{ element.role }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <div *ngIf="element.id !== 1">
+          <mat-icon (click)="editUser(element.id)" matTooltip="edit"
+            >edit</mat-icon
+          >
+          <mat-icon
+            color="warn"
+            (click)="deleteUser(element.id)"
+            matTooltip="delete"
+            >delete_forever</mat-icon
+          >
+        </div>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+</div>

@@ -1,3 +1,63 @@
-<p>
-  customers works!
-</p>
+<div class="header">
+  <p>
+    <span class="title">Customers</span>
+
+    <button mat-raised-button color="primary" (click)="addNewCustomer()">
+      <mat-icon>add_box</mat-icon> New Customer
+    </button>
+  </p>
+</div>
+<div class="mat-elevation-z1">
+  <div>
+    <mat-form-field class="filter">
+      <input
+        matInput
+        (keyup)="applyFilter($event.target.value)"
+        placeholder="Filter"
+        autocomplete="off"
+      />
+    </mat-form-field>
+    <mat-form-field class="startdate">
+      <input matInput [matDatepicker]="satrtDate" placeholder="start date" autocomplete="off">
+      <mat-datepicker-toggle matSuffix [for]="satrtDate"></mat-datepicker-toggle>
+      <mat-datepicker #satrtDate></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="enddate">
+      <input matInput [matDatepicker]="endDate" placeholder="end date" autocomplete="off">
+      <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+      <mat-datepicker #endDate></mat-datepicker>
+    </mat-form-field>
+  </div>
+<div class="table-wrapper">
+  <mat-table [dataSource]="dataSource" matSort>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Name
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="collections">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Collections
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.collections }} </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-icon (click)="editTaxRate(element.id)" matTooltip="edit">edit</mat-icon>
+        <mat-icon color="primary" (click)="deleteTaxRate(element.id)" matTooltip="Generate report"
+          >description</mat-icon
+        >
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+</div>
+</div>

@@ -1,0 +1,84 @@
+<div class="dialog ">
+  <form action="submit" [formGroup]="itemForm" (ngSubmit)="submit()">
+    <h2 mat-dialog-title>
+      {{ title }}
+      <button [mat-dialog-close]="false">
+        <mat-icon class="clear-icon">clear</mat-icon>
+      </button>
+    </h2>
+    <mat-divider></mat-divider>
+    <mat-dialog-content>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Name"
+            formControlName="name"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Description"
+            formControlName="description"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <mat-select placeholder="Type" formControlName="type">
+            <mat-option>None</mat-option>
+            <mat-option value="Product">Product</mat-option>
+            <mat-option value="Service">Service</mat-option>
+            <mat-option value="Shipping">Shipping</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="number"
+            autocomplete="off"
+            placeholder="Unit Cost"
+            formControlName="unitCost"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <section style="height:35px;">
+          <mat-checkbox color="primary" formControlName="taxable"
+            ><span style="padding-left: 10px;">Taxable</span>
+          </mat-checkbox>
+        </section>
+      </div>
+      <div *ngIf="itemForm.value.taxable">
+        <mat-form-field class="au-wt">
+          <mat-label>Taxes</mat-label>
+          <mat-select formControlName="taxIds" multiple>
+            <mat-option *ngFor="let tax of taxList" [value]="tax.id">
+              {{ tax.name }} - {{tax.amount}} %
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!itemForm.valid"
+        color="primary"
+      >
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
