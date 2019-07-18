@@ -26,10 +26,10 @@
     </ng-container>
 
     <!-- Type Column -->
-    <ng-container matColumnDef="type">
+    <!-- <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element.type }} </mat-cell>
-    </ng-container>
+    </ng-container> -->
 
     <!-- Unit Cost Column -->
     <ng-container matColumnDef="unitCost">
@@ -44,12 +44,6 @@
         <span *ngIf="element.taxable">Yes</span>
         <span *ngIf="!element.taxable">No</span>
       </mat-cell>
-    </ng-container>
-
-    <!-- Tax Column -->
-    <ng-container matColumnDef="tax">
-      <mat-header-cell *matHeaderCellDef> Tax </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element.taxRate }} </mat-cell>
     </ng-container>
 
     <!-- Action Column -->

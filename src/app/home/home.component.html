@@ -12,7 +12,7 @@
     >
   </mat-toolbar-row>
 </mat-toolbar>
-<form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="invoiceForm" (keydown.enter)="$event.preventDefault()">
   <div
     fxLayout="row"
     fxLayoutAlign="space-between stretch"
@@ -152,7 +152,7 @@
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
           </div>
-          <div class="dflex">
+          <!-- <div class="dflex">
             <div class="editable-content">
               <h4
                 contenteditable="true"
@@ -170,7 +170,7 @@
                 type="text"
               />
             </mat-form-field>
-          </div>
+          </div> -->
           <div class="dflex">
             <div class="editable-content">
               <h4
@@ -243,7 +243,7 @@
         <div fxFlex="100" fxLayoutGap="10px">
           <div
             *ngFor="let item of lineItems.controls; let itemIndex = index"
-            [formGroupName]="itemIndex"
+            [formGroupName]="itemIndex" class="item-row"
           >
             <div fxFlex="40">
               <mat-form-field>
@@ -281,7 +281,7 @@
               </mat-form-field>
             </div>
             <div fxFlex="20" style="display:flex">
-              <h4 style="display:flex">
+              <h4 style="display:flex" [ngStyle]="{'margin-left':itemIndex === lineItems.controls.length-1?'-8px':0}">
                 Rs
                 <input
                   readonly
@@ -293,11 +293,11 @@
                 />
               </h4>
               <div
-                style="padding:20px"
+                style="padding-top:20px"
                 *ngIf="
-                  itemIndex === lineItems.controls.length - 1 && itemIndex > 0
+                itemIndex !== 0
                 "
-              >
+              > 
                 <mat-icon class="clear-icon" (click)="removeLineItem(itemIndex)"
                   >clear</mat-icon
                 >
@@ -307,7 +307,7 @@
         </div>
       </div>
       <div fxLayout="row" fxLayoutAlign="start center" class="item">
-        <button mat-raised-button color="primary" (click)="addLineItem()">
+        <button mat-raised-button color="primary" (click)="addLineItem()" type="button">
           + Line Item
         </button>
       </div>
@@ -332,6 +332,7 @@
             color="primary"
             *ngIf="!showDiscount"
             (click)="showDiscount = !showDiscount"
+            type="button"
           >
             + Discount
           </button>
@@ -366,7 +367,7 @@
               </mat-form-field>
             </div>
             <mat-icon
-              class="clear-icon mrt"
+              class="clear-icon mt20"
               (click)="showDiscount = !showDiscount"
               >clear</mat-icon
             >
@@ -378,6 +379,7 @@
             color="primary"
             *ngIf="!showTax"
             (click)="showTax = !showTax"
+            type="button"
           >
             + Tax
           </button>
@@ -396,12 +398,13 @@
                 <input
                   matInput
                   type="number"
+                  placeholder="percentage"
                   formControlName="tax"
                   (keyup)="updateTotal()"
                   autocomplete="off"
-                />
+                /> 
               </mat-form-field>
-              <mat-form-field style="width:50px;padding-left:5px;">
+              <!-- <mat-form-field style="width:50px;padding-left:5px;">
                 <mat-select
                   formControlName="tax_type"
                   (selectionChange)="updateTotal()"
@@ -409,9 +412,9 @@
                   <mat-option selected value="flat">Rs</mat-option>
                   <mat-option value="percentage">%</mat-option>
                 </mat-select>
-              </mat-form-field>
+              </mat-form-field> -->
             </div>
-            <mat-icon class="clear-icon mrt" (click)="showTax = !showTax"
+            <mat-icon class="clear-icon mt20" (click)="showTax = !showTax"
               >clear</mat-icon
             >
           </div>
@@ -422,6 +425,7 @@
             color="primary"
             *ngIf="!showShipping"
             (click)="showShipping = !showShipping"
+            type="button"
           >
             + Shipping
           </button>
@@ -447,7 +451,7 @@
               </mat-form-field>
             </div>
             <mat-icon
-              class="clear-icon mrt"
+              class="clear-icon mt20"
               (click)="showShipping = !showShipping"
               >clear</mat-icon
             >
@@ -575,10 +579,11 @@
           mat-raised-button
           color="primary"
           type="submit"
+          (click)="onSubmit()"
         >
           Send Invoice
         </button>
-        <button mat-raised-button color="warn">
+        <button mat-raised-button color="warn" type="button" (click)="downloadInvoice()">
           <mat-icon class="clear-icon">cloud_download</mat-icon> Download
           Invoice
         </button>

@@ -17,7 +17,7 @@ export class TaxDialogComponent implements OnInit {
   taxForm: FormGroup;
   ngOnInit() {
     this.data
-      ? (this.title = "Update Tax Rate")
+      ? (this.title = "Edit Tax Rate")
       : (this.title = "New Tax Rate");
     this.taxForm = this.fb.group({
       name: [this.data ? this.data.name : "", [Validators.required]],

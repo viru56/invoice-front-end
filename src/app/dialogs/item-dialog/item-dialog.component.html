@@ -30,16 +30,20 @@
           />
         </mat-form-field>
       </div>
-      <div>
+      <!-- <div>
         <mat-form-field class="au-wt">
           <mat-select placeholder="Type" formControlName="type">
-            <mat-option>None</mat-option>
-            <mat-option value="Product">Product</mat-option>
-            <mat-option value="Service">Service</mat-option>
-            <mat-option value="Shipping">Shipping</mat-option>
+            <mat-option
+              style="line-height: 15px;
+                  border-bottom: 1px solid #ccc;background:#f5f5f5"
+              *ngFor="let type of Types"
+              [value]="type"
+            >
+              {{ type }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
+      </div> -->
       <div>
         <mat-form-field class="au-wt">
           <input
@@ -58,7 +62,7 @@
           </mat-checkbox>
         </section>
       </div>
-      <div *ngIf="itemForm.value.taxable">
+      <!-- <div *ngIf="itemForm.value.taxable">
         <mat-form-field class="au-wt">
           <mat-label>Taxes</mat-label>
           <mat-select formControlName="taxIds" multiple>
@@ -67,7 +71,7 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
+      </div> -->
     </mat-dialog-content>
     <mat-divider></mat-divider>
     <mat-dialog-actions align="end">

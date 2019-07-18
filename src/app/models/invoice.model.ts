@@ -1,23 +1,26 @@
+import { Itax } from "./tax.model";
+import { IlineItem } from "./item.model";
 export interface Iinvoice {
-  label: IinvoiceTextLabel;
+  label?: IinvoiceTextLabel;
+  invoiceName: string;
   invoiceNumber: number;
   sender: string;
   receiver: string;
   date: string;
-  paymentTerms: string;
+  paymentTerms?: string;
   dueDate: string;
   lineItem: IlineItem;
   subtotal: number;
-  discount: number;
-  tax: number;
+  discount: Itype;
+  tax?: Itax[];
   total: number;
   shipping: number;
   amountPaid: number;
   balanceDue: number;
   notes: string;
   terms: string;
-  tax_type: string;
-  discount_type: string;
+  taxableAmount?: number;
+  nonTaxableAmount?: number;
 }
 export interface IinvoiceTextLabel {
   invoiceName: string;
@@ -38,9 +41,7 @@ export interface IinvoiceTextLabel {
   notes: string;
   terms: string;
 }
-export interface IlineItem {
-  name: string;
-  quantity: number;
-  rate: number;
-  amount: number;
+export interface Itype {
+  type: string;
+  value: number;
 }

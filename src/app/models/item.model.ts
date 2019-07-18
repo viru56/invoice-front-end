@@ -1,11 +1,10 @@
-import {Itax} from './tax.model';
-export interface Iitem {
-    id: number;
+export interface IlineItem {
+    id?: number;
     name: string;
-    type: string;
-    description: string;
+    type?: string;
+    description?: string;
     unitCost: number;
     taxable: boolean;
-    taxIds?:number[];
-    taxRate?:String;
+    quantity?:number;
+    amount?:number;
   }

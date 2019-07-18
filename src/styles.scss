@@ -1,16 +1,17 @@
-@import '~@angular/material/theming';
-@import './app/auth/auth.component.scss';
-@import './app/base/sidemenu/sidemenu.component.scss';
-@import './app/base/sidemenu-item/sidemenu-item.component.scss';
-@import './app/home/home.component.scss';
+@import "~@angular/material/theming";
+@import "./app/auth/auth.component.scss";
+@import "./app/base/sidemenu/sidemenu.component.scss";
+@import "./app/base/sidemenu-item/sidemenu-item.component.scss";
+@import "./app/home/home.component.scss";
+@import "./app/invoices/new-invoice/new-invoice.component.scss";
 
 $mat-light-theme-background: (
   status-bar: map_get($mat-grey, 300),
-  app-bar:    map_get($mat-grey, 100),
+  app-bar: map_get($mat-grey, 100),
   background: map_get($mat-grey, 50),
-  hover:      rgba(black, 0.04), // TODO(kara): check style with Material Design UX
-  card:       white,
-  dialog:     white,
+  hover: rgba(black, 0.04),
+  // TODO(kara): check style with Material Design UX card: white,
+  dialog: white,
   disabled-button: $black-12-opacity,
   raised-button: white,
   focused-button: $black-6-opacity,
@@ -18,104 +19,123 @@ $mat-light-theme-background: (
   selected-disabled-button: map_get($mat-grey, 400),
   disabled-button-toggle: map_get($mat-grey, 200),
   unselected-chip: map_get($mat-grey, 300),
-  disabled-list-option: map_get($mat-grey, 200),
+  disabled-list-option: map_get($mat-grey, 200)
 );
 
 @include mat-core();
 
-$primary : $mat-blue;
-$accent  : $mat-orange;
-$warn    : $mat-red;
+$primary: $mat-blue;
+$accent: $mat-orange;
+$warn: $mat-red;
 
+$primary-app-primary: mat-palette($primary, 400);
+$primary-app-accent: mat-palette($accent, 900);
+$primary-app-warn: mat-palette($warn);
+$app-theme: mat-light-theme(
+  $primary-app-primary,
+  $primary-app-accent,
+  $primary-app-warn
+);
 
-
-$primary-app-primary: mat-palette($primary , 400);
-$primary-app-accent:  mat-palette($accent , 900);
-$primary-app-warn:    mat-palette($warn );
-$app-theme:   mat-light-theme($primary-app-primary, $primary-app-accent,$primary-app-warn);
-
-app-sidemenu{
-    $sidemenu-app-primary: mat-palette($primary , 400);
-    $sidemenu-app-accent:  mat-palette($accent , 900);
-    $sidemenu-app-warn:    mat-palette($warn );
-    $app-sidemenu-theme:   mat-dark-theme($sidemenu-app-primary, $sidemenu-app-accent,$sidemenu-app-warn);
-    @include mat-list-theme($app-sidemenu-theme);
+app-sidemenu {
+  $sidemenu-app-primary: mat-palette($primary, 400);
+  $sidemenu-app-accent: mat-palette($accent, 900);
+  $sidemenu-app-warn: mat-palette($warn);
+  $app-sidemenu-theme: mat-dark-theme(
+    $sidemenu-app-primary,
+    $sidemenu-app-accent,
+    $sidemenu-app-warn
+  );
+  @include mat-list-theme($app-sidemenu-theme);
 }
 
-
-app-sidemenu-item{
-    @include sidemenu-item($app-theme,20px)
+app-sidemenu-item {
+  @include sidemenu-item($app-theme, 20px);
 }
 
 @include angular-material-theme($app-theme);
 @include auth($app-theme);
 
 html {
-  height:100%;
+  height: 100%;
 }
-body{
+body {
   padding: 0px !important;
   margin: 0px !important;
-  height:100%;
+  height: 100%;
 }
 .components-container-gt-xs {
-    padding: 20px;
+  padding: 20px;
 }
 .components-container-xs {
-    padding: 5px !important;
+  padding: 5px !important;
 }
 .component-preview {
-    padding: 20px;
+  padding: 20px;
 }
 .ps-content {
   height: 100%;
 }
-
+.wd-150 {
+  width: 150px;
+}
+.float-right{
+  float: right;
+}
+.mr20{
+  margin-right: 20px;
+}
+.ml20{
+  margin-left: 20px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.dflex{
+  display: flex;
+}
 .loader-container {
-    background-color: white;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2000;
-    position: absolute;
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  position: absolute;
 
-    -moz-animation: cssAnimation 1s ease-in 3s forwards;
-    /* Firefox */
-    animation: cssAnimation 1s ease-in 3s forwards;
-    /* Safari and Chrome */
-    -o-animation: cssAnimation 1s ease-in 3s forwards;
-    /* Opera */
-    animation: cssAnimation 1s ease-in 3s forwards;
-    animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
+  -moz-animation: cssAnimation 1s ease-in 3s forwards;
+  /* Firefox */
+  animation: cssAnimation 1s ease-in 3s forwards;
+  /* Safari and Chrome */
+  -o-animation: cssAnimation 1s ease-in 3s forwards;
+  /* Opera */
+  animation: cssAnimation 1s ease-in 3s forwards;
+  animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
 }
 
 @keyframes cssAnimation {
-    to {
-        opacity:0;
-        display: none;
-        visibility:hidden;
-    }
+  to {
+    opacity: 0;
+    display: none;
+    visibility: hidden;
+  }
 }
 @keyframes cssAnimation {
-    to {
-        visibility:hidden;
-        opacity:0;
-        display: none;
-    }
+  to {
+    visibility: hidden;
+    opacity: 0;
+    display: none;
+  }
 }
-
-
 
 .spinner {
-    margin: 50vh auto 0;
-    width: 70px;
-    text-align: center;
+  margin: 50vh auto 0;
+  width: 70px;
+  text-align: center;
 }
 
 .spinner > div {
   width: 18px;
   height: 18px;
-
 
   border-radius: 100%;
   display: inline-block;
@@ -124,39 +144,41 @@ body{
 }
 
 .bounce3 {
-    background-color: orange;
+  background-color: orange;
 }
 
 .spinner .bounce1 {
-    background-color: blue;
+  background-color: blue;
   animation-delay: -0.32s;
   animation-delay: -0.32s;
 }
 
 .spinner .bounce2 {
-    background-color: red;
+  background-color: red;
   animation-delay: -0.16s;
   animation-delay: -0.16s;
 }
 
-
-
 @keyframes sk-bouncedelay {
-  0%, 80%, 100% { transform: scale(0) }
-  40% { transform: scale(1.0) }
-}
-
-@keyframes sk-bouncedelay {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0);
-    transform: scale(0);
-  } 40% {
-    transform: scale(1.0);
-    transform: scale(1.0);
+  }
+  40% {
+    transform: scale(1);
   }
 }
-@media only screen and (min-width: 600px){
-    .ps-content{
-        overflow: hidden;
-    }
+
+@keyframes sk-bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+    transform: scale(1);
+  }
 }

@@ -122,12 +122,6 @@
       width: 150px;
     }
   }
-  .dflex {
-    display: flex;
-  }
-  .mrt {
-    margin-top: 20px;
-  }
   .editable-content {
     outline-width: 0;
     h4 {
@@ -165,6 +159,14 @@
     mat-form-field {
       width: 80%;
     }
+    .clear-icon{
+      display: none;
+    }
+    .item-row:hover{
+      .clear-icon{
+        display: block;
+      }
+    }
   }
   .invoice-balance {
     padding: 10px;
@@ -187,7 +189,9 @@
       border-color: #ccc;
     }
   }
-  .tax,
+  .tax{
+    margin-right: 10px;
+  }
   .discount,
   .shipping,
   .amount-paid {
