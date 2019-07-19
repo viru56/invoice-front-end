@@ -45,7 +45,7 @@
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element;let index = index">
+      <mat-cell *matCellDef="let element;let index">
         <mat-icon (click)="editTaxRate(element)" matTooltip="edit">edit</mat-icon>
         <mat-icon color="warn" (click)="deleteTaxRate(index)" matTooltip="delete"
           >delete_forever</mat-icon

@@ -361,7 +361,7 @@
       <!--tax-->
       <div *ngIf="invoice.tax.length > 0" class="dflex">
         <div
-          *ngFor="let tax of invoice.tax; let index = index"
+          *ngFor="let tax of invoice.tax; let index"
           class="tax-item"
         >
           <p>
@@ -375,14 +375,14 @@
       <div class="ml20">
         <mat-form-field style="width:150px;">
           <mat-select
-            (selectionChange)="selectedTax(index)"
+            (selectionChange)="selectedTaxChange()"
             placeholder="Apply tax"
             formControlName="selectedTax"
           >
             <mat-option
               style="line-height: 20px;
                   border-bottom: 1px solid #ccc;"
-              *ngFor="let item of TAX_DATA; let index = index"
+              *ngFor="let item of TAX_DATA;"
               [value]="item"
             >
               {{ item.name }}

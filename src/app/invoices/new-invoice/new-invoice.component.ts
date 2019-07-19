@@ -275,7 +275,7 @@ export class NewInvoiceComponent implements OnInit {
     this.invoiceForm.controls["discount"].setValue(0);
     this.updateTotal();
   }
-  selectedTax(): void {
+  selectedTaxChange(): void {
     let newItem = true;
     for (let tax of this.invoice.tax) {
       if (tax.id === this.invoiceForm.value.selectedTax.id) {
