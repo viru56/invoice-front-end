@@ -20,7 +20,7 @@ export class NewInvoiceComponent implements OnInit {
   invoice: Iinvoice;
   invoiceLogo = "assets/branding-sample.png";
   seletedCustomer = new FormControl();
-  showDiscount:boolean;
+  showDiscount: boolean;
   CUST_DATA: Icustomer[] = [
     {
       id: 1,
@@ -152,7 +152,7 @@ export class NewInvoiceComponent implements OnInit {
       shipping: 0,
       notes: "",
       terms: "",
-      tax:[]
+      tax: []
     };
     this.filteredCustomerOptions = this.seletedCustomer.valueChanges.pipe(
       startWith(""),
@@ -168,7 +168,7 @@ export class NewInvoiceComponent implements OnInit {
         [Validators.required]
       ],
       selectedItem: [null],
-      selectedTax:[null],
+      selectedTax: [null],
       amountPaid: [0],
       lineItems: this.fb.array([
         this.fb.group({
@@ -180,7 +180,8 @@ export class NewInvoiceComponent implements OnInit {
         })
       ]),
       discount: [0],
-      discount_type: ["flat"]
+      discount_type: ["flat"],
+      notes: [""]
     });
   }
   get lineItems() {
@@ -245,14 +246,13 @@ export class NewInvoiceComponent implements OnInit {
     this.updateTotal();
   }
   updateTotal(): void {
-    if(this.invoice.subtotal > 0){
+    if (this.invoice.subtotal > 0) {
       this.invoice.total = this.invoice.nonTaxableAmount;
       this.invoice.total = this.invoice.total + this.invoice.taxableAmount;
-      if(this.invoice.tax.length > 0){
-        for(let tax of this.invoice.tax){
+      if (this.invoice.tax.length > 0) {
+        for (let tax of this.invoice.tax) {
           this.invoice.total =
-          this.invoice.total -
-          (this.invoice.total * tax.amount) / 100;
+            this.invoice.total - (this.invoice.total * tax.amount) / 100;
         }
       }
       if (this.invoiceForm.value.discount_type === "percentage") {
@@ -260,37 +260,48 @@ export class NewInvoiceComponent implements OnInit {
           this.invoice.total -
           (this.invoice.total * this.invoiceForm.value.discount) / 100;
       } else if (this.invoiceForm.value.discount_type === "flat") {
-        this.invoice.total = this.invoice.total - this.invoiceForm.value.discount;
+        this.invoice.total =
+          this.invoice.total - this.invoiceForm.value.discount;
       }
-      if(this.invoiceForm.value.shippin){
+      if (this.invoiceForm.value.shippin) {
         this.invoice.total -= this.invoiceForm.value.shipping;
       }
       this.invoice.balanceDue =
         this.invoice.total - this.invoiceForm.value.amountPaid;
     }
   }
-  removeDiscount():void{
+  removeDiscount(): void {
     this.showDiscount = false;
-    this.invoiceForm.controls['discount'].setValue(0);
+    this.invoiceForm.controls["discount"].setValue(0);
     this.updateTotal();
   }
-  selectedTax():void{
+  selectedTax(): void {
     let newItem = true;
-    for(let tax of this.invoice.tax){
-      if(tax.id === this.invoiceForm.value.selectedTax.id){
+    for (let tax of this.invoice.tax) {
+      if (tax.id === this.invoiceForm.value.selectedTax.id) {
         newItem = false;
       }
     }
-    if(newItem){
+    if (newItem) {
       this.invoice.tax.push(this.invoiceForm.value.selectedTax);
       this.updateTotal();
     }
-    this.invoiceForm.controls['selectedTax'].setValue(null);
+    this.invoiceForm.controls["selectedTax"].setValue(null);
   }
-  removeTaxItem(index:number):void{
-    this.invoice.tax.splice(index,1);
+  removeTaxItem(index: number): void {
+    this.invoice.tax.splice(index, 1);
   }
   onSubmit(): void {
-    console.log("submit");
+    this.invoice.invoiceName = this.invoiceForm.value.invoiceName;
+    this.invoice.invoiceNumber = this.invoiceForm.value.invoiceNumber;
+    this.invoice.date = this.invoiceForm.value.date;
+    this.invoice.dueDate = this.invoiceForm.value.dueDate;
+    this.invoice.lineItem = this.invoiceForm.value.lineItem;
+    this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
+    this.invoice.discount = {
+      value: this.invoiceForm.value.discount,
+      type: this.invoiceForm.value.discount_type
+    };
+    this.invoice.notes = this.invoiceForm.value.notes;
   }
 }

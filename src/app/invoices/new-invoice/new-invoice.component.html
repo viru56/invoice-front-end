@@ -35,8 +35,8 @@
 <form
   [formGroup]="invoiceForm"
   (keydown.enter)="$event.preventDefault()"
-  style="width:100%"
 >
+<div fxlayout="row" style="width:100%" class="mb20" fxLayoutGap="20px">
   <div
     fxFlex="100"
     class="mat-elevation-z1 new-invoice-container  components-container-gt-xs"
@@ -251,7 +251,6 @@
             <div style="padding-top:20px">
               <mat-icon
                 class="clear-icon"
-                *ngIf="itemIndex !== 0"
                 (click)="removeLineItem(itemIndex)"
                 >clear</mat-icon
               >
@@ -361,7 +360,10 @@
       </div>
       <!--tax-->
       <div *ngIf="invoice.tax.length > 0" class="dflex">
-        <div *ngFor="let tax of invoice.tax;let index = index" class="tax-item"> 
+        <div
+          *ngFor="let tax of invoice.tax; let index = index"
+          class="tax-item"
+        >
           <p>
             <span>{{ tax.name }} </span> <span> {{ tax.amount }}%</span>
           </p>
@@ -380,7 +382,7 @@
             <mat-option
               style="line-height: 20px;
                   border-bottom: 1px solid #ccc;background:#f5f5f5"
-              *ngFor="let item of TAX_DATA;let index=index"
+              *ngFor="let item of TAX_DATA; let index = index"
               [value]="item"
             >
               {{ item.name }}
@@ -435,15 +437,38 @@
         <div class="balance-amount">Rs {{ invoice.balanceDue }}</div>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutAlign="end center">
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!invoiceForm.valid"
-        (click)="onSubmit()"
-      >
-        Save and Issue
-      </button>
-    </div>
+    <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="20px">
+        <div class="invoice-balance">
+          <div class="balance-name">
+            <h4
+            >
+              Notes
+            </h4>
+          </div>
+        </div>
+        <mat-form-field style="width:80%">
+          <textarea
+            matInput
+            type="text"
+            matTextareaAutosize
+            matAutosizeMinRows="2"
+            matAutosizeMaxRows="5"
+            formControlName="notes"
+            placeholder="Notes - any relevant information not already covered"
+            autocomplete="off"
+          ></textarea>
+        </mat-form-field>
+      </div>
+  </div>
+</div>
+  <div fxlayout="row" fxLayoutAlign="end start" class="m20">
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!invoiceForm.valid"
+      (click)="onSubmit()"
+    >
+      Save and Issue
+    </button>
   </div>
 </form>
