@@ -3,7 +3,7 @@ import { MediaObserver, MediaChange } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ItemDialogComponent, DialogConfig } from "../dialogs";
-import { Iitem } from "../models";
+import {Iitem} from '../models';
 import { MatTableDataSource } from "@angular/material";
 
 const ITEM_DATA: Iitem[] = [
