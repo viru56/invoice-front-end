@@ -7,7 +7,7 @@
     </button>
   </p>
 </div>
-<div class="mat-elevation-z1">
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length>0">
   <div>
     <mat-form-field class="filter">
       <input
@@ -40,7 +40,7 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="collections">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
+      <mat-header-cell *matHeaderCellDef>
         Collections
       </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.collections }} </mat-cell>
@@ -50,8 +50,8 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <mat-icon (click)="editTaxRate(element.id)" matTooltip="edit">edit</mat-icon>
-        <mat-icon color="primary" (click)="deleteTaxRate(element.id)" matTooltip="Generate report"
+        <mat-icon (click)="editCustomer(element)" matTooltip="edit">edit</mat-icon>
+        <mat-icon color="primary" (click)="generateReoprt(element.id)" matTooltip="Generate report"
           >description</mat-icon
         >
       </mat-cell>
@@ -60,4 +60,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 </div>
+</div>
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length===0">
+  <p class="p20">No Customer Found</p>
 </div>

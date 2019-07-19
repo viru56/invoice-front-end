@@ -3,11 +3,11 @@ import { MatDialog } from "@angular/material/dialog";
 import { TaxDialogComponent, DialogConfig } from "../dialogs";
 import { MatTableDataSource } from "@angular/material";
 import {Itax} from '../models';
-import { from } from 'rxjs';
+
 const TAX_DATA: Itax[] = [
-  { id: 1, name: "C GST", amount: 5, taxMode: false },
-  { id: 2, name: "G GST", amount: 5, taxMode: false },
-  { id: 3, name: "service tax", amount: 8, taxMode: true }
+  { id: 1, name: "C GST", amount: 5, inclusive: false },
+  { id: 2, name: "G GST", amount: 5, inclusive: false },
+  { id: 3, name: "service tax", amount: 8, inclusive: true }
 ];
 
 @Component({
@@ -24,6 +24,7 @@ export class TaxComponent implements OnInit {
     this.dataSource = new MatTableDataSource(TAX_DATA);
   }
   addNewTaxRate(): void {
+    DialogConfig.data = null;
     const dialogRef = this.dialog.open(TaxDialogComponent, DialogConfig);
     dialogRef
       .afterClosed()
@@ -55,7 +56,7 @@ export class TaxComponent implements OnInit {
             for(let item of TAX_DATA){
               if(item.id === result.id){
                 item.name = result.name;
-                item.taxMode = result.taxMode;
+                item.inclusive = result.taxMode;
                 item.amount = result.amount;
               }
             }

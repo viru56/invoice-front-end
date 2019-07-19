@@ -10,7 +10,7 @@
     You can create tax rates that can be applied to line items and subtotals.
   </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="dataSource.data.length>0">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -45,7 +45,7 @@
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element;let index = index">
+      <mat-cell *matCellDef="let element;let index">
         <mat-icon (click)="editTaxRate(element)" matTooltip="edit">edit</mat-icon>
         <mat-icon color="warn" (click)="deleteTaxRate(index)" matTooltip="delete"
           >delete_forever</mat-icon
@@ -55,4 +55,8 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+</div>
+
+<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1">
+    <p class="p20">No Tax Found</p>
 </div>

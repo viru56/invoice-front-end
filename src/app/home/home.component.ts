@@ -41,23 +41,30 @@ export class HomeComponent implements OnInit {
         notes: "Notes",
         terms: "Terms"
       },
+      invoiceName: "INVOICE",
       invoiceNumber: Date.now(),
-      tax_type: "flat",
-      discount_type: "flat",
       sender: "",
       receiver: "",
       lineItem: {
         name: "",
-        rate: 0,
+        unitCost: 0,
         quantity: 0,
-        amount: 0.0
+        amount: 0.0,
+        taxable: true
       },
+      tax: [{
+        name: "",
+        amount: 0,
+        inclusive: false
+      }],
       subtotal: 0.0,
       total: 0.0,
       balanceDue: 0.0,
       amountPaid: 0.0,
-      discount: 0,
-      tax: 0,
+      discount: {
+        type: "flat",
+        value: 0
+      },
       shipping: 0,
       paymentTerms: "",
       date: new Date().toISOString(),
@@ -76,17 +83,16 @@ export class HomeComponent implements OnInit {
         this.fb.group({
           name: [this.invoice.lineItem.name],
           quantity: [this.invoice.lineItem.quantity],
-          rate: [this.invoice.lineItem.rate],
+          rate: [this.invoice.lineItem.unitCost],
           amount: [this.invoice.lineItem.amount]
         })
       ]),
-      discount: [this.invoice.discount],
-      tax: [this.invoice.tax],
+      discount: [this.invoice.discount.value],
+      discount_type: [this.invoice.discount.type],
+      tax: [this.invoice.tax[0].amount],
       shipping: [this.invoice.shipping],
       notes: [this.invoice.notes],
       terms: [this.invoice.terms],
-      tax_type: [this.invoice.tax_type],
-      discount_type: [this.invoice.discount_type],
       amountPaid: [this.invoice.amountPaid]
     });
   }
@@ -110,7 +116,7 @@ export class HomeComponent implements OnInit {
         reader.onload = e => {
           this.fileToUpload = this.sanitizer.bypassSecurityTrustResourceUrl(
             reader.result as string
-            );
+          );
         };
         reader.readAsDataURL(file);
       }
@@ -124,7 +130,7 @@ export class HomeComponent implements OnInit {
       this.fb.group({
         name: [this.invoice.lineItem.name],
         quantity: [this.invoice.lineItem.quantity],
-        rate: [this.invoice.lineItem.rate],
+        rate: [this.invoice.lineItem.unitCost],
         amount: [this.invoice.lineItem.amount]
       })
     );
@@ -166,13 +172,9 @@ export class HomeComponent implements OnInit {
     } else if (this.invoiceForm.value.discount_type === "flat") {
       this.invoice.total = this.invoice.total - this.invoiceForm.value.discount;
     }
-    if (this.invoiceForm.value.tax_type === "percentage") {
-      this.invoice.total =
-        this.invoice.total -
-        (this.invoice.total * this.invoiceForm.value.tax) / 100;
-    } else if (this.invoiceForm.value.tax_type === "flat") {
-      this.invoice.total = this.invoice.total - this.invoiceForm.value.tax;
-    }
+    this.invoice.total =
+      this.invoice.total -
+      (this.invoice.total * this.invoiceForm.value.tax) / 100;
     this.invoice.total = this.invoice.total - this.invoiceForm.value.shipping;
     this.invoice.balanceDue =
       this.invoice.total - this.invoiceForm.value.amountPaid;
@@ -183,17 +185,25 @@ export class HomeComponent implements OnInit {
     this.invoice.receiver = this.invoiceForm.value.receiver;
     this.invoice.date = this.invoiceForm.value.date;
     this.invoice.dueDate = this.invoiceForm.value.dueDate;
-    this.invoice.paymentTerms = this.invoiceForm.value.paymentTerms;
+    // this.invoice.paymentTerms = this.invoiceForm.value.paymentTerms;
     this.invoice.invoiceNumber = this.invoiceForm.value.invoiceNumber;
     this.invoice.lineItem = this.invoiceForm.value.lineItems;
-    this.invoice.discount = this.invoiceForm.value.discount;
-    this.invoice.discount_type = this.invoiceForm.value.discount_type;
-    this.invoice.tax = this.invoiceForm.value.tax;
-    this.invoice.tax_type = this.invoiceForm.value.tax_type;
+    this.invoice.discount = {
+      type: this.invoiceForm.value.discount_type,
+      value: this.invoiceForm.value.discount
+    };
+    this.invoice.tax = [{
+      amount: this.invoiceForm.value.tax,
+      inclusive: false,
+      name: ""
+    }];
     this.invoice.shipping = this.invoiceForm.value.shipping;
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.notes = this.invoiceForm.value.notes;
     this.invoice.terms = this.invoiceForm.value.terms;
     console.log(this.invoice);
+  }
+  downloadInvoice(): void {
+    console.log("download invoice");
   }
 }

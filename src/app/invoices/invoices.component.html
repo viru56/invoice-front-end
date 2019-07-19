@@ -2,12 +2,12 @@
   <p>
     <span class="title">Invoices</span>
 
-    <button mat-raised-button color="primary" (click)="newInvoice()">
+    <a [routerLink]="['new']" mat-raised-button color="primary">
       New Invoice
-    </button>
+    </a>
   </p>
 </div>
-<div class="mat-elevation-z1">
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length>0">
   <div style="display: flex">
     <mat-form-field class="filter">
       <input
@@ -112,4 +112,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 </div>
+</div>
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length===0">
+<p class="p20">No Invoice Found</p>
 </div>

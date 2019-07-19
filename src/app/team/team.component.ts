@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-export interface Iteam {
-  id: number;
-  name: string;
-  emailAddress: string;
-  role:string;
-}
+import { MatDialog } from "@angular/material/dialog";
+import { TeamDialogComponent, DialogConfig } from "../dialogs";
+import { Iteam } from '../models';
+import { MatTableDataSource } from '@angular/material';
 
 const TEAM_DATA: Iteam[] = [
   {id:1,name: 'abc', emailAddress:'abc@gmail.com',role:'admin'},
-  {id:2,name: 'xyz', emailAddress:'xyz@gmail.com',role:'read only'},
+  {id:2,name: 'xyz', emailAddress:'xyz@gmail.com',role:'readOnly'},
   {id:3,name: 'pqr', emailAddress:'pqr@gmail.com',role:'employee'}
 ];
 
@@ -19,15 +17,50 @@ const TEAM_DATA: Iteam[] = [
 })
 export class TeamComponent implements OnInit {
   displayedColumns: string[] = ['name', 'emailAddress', 'role', 'action'];
-  dataSource = TEAM_DATA;
-  constructor() { }
+  dataSource: MatTableDataSource<Iteam>;
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.dataSource = new MatTableDataSource(TEAM_DATA);
   }
-  deleteUser(id:number):void{
-    console.log(id);
+  addNewUser():void{
+      DialogConfig.data = null;
+      const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
+      dialogRef
+        .afterClosed()
+        .toPromise()
+        .then(
+          result => {
+            if(result){
+              result.id = TEAM_DATA.length + 1;
+              TEAM_DATA.push(result);
+              this.dataSource.data = TEAM_DATA;
+            }
+          },
+          err => console.log(err)
+        );
   }
-  editUser(id:number):void{
-    console.log(id);
+  deleteUser(index:number):void{
+    TEAM_DATA.splice(index,1);
+    this.dataSource.data = TEAM_DATA;
+  }
+  editUser(user:Iteam):void{
+    DialogConfig.data = user;
+    const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(
+        result => {
+          if(result){
+            for(let item of TEAM_DATA){
+              if(item.id === result.id){
+                item.role = result.role
+              }
+            }
+          }
+        },
+        err => console.log(err)
+      );
   }
 }

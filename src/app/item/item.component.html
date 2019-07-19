@@ -9,7 +9,7 @@
     Add and manage items.
   </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="dataSource.data.length>0">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -26,10 +26,10 @@
     </ng-container>
 
     <!-- Type Column -->
-    <ng-container matColumnDef="type">
+    <!-- <ng-container matColumnDef="type">
       <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element.type }} </mat-cell>
-    </ng-container>
+    </ng-container> -->
 
     <!-- Unit Cost Column -->
     <ng-container matColumnDef="unitCost">
@@ -46,16 +46,10 @@
       </mat-cell>
     </ng-container>
 
-    <!-- Tax Column -->
-    <ng-container matColumnDef="tax">
-      <mat-header-cell *matHeaderCellDef> Tax </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element.taxRate }} </mat-cell>
-    </ng-container>
-
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element; let index = index">
+      <mat-cell *matCellDef="let element; let index">
         <mat-icon (click)="editItem(element)" matTooltip="edit">
           edit
         </mat-icon>
@@ -67,4 +61,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+</div>
+<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1">
+    <p class="p20">No Item Found</p>
 </div>
