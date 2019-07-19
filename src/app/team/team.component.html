@@ -1,7 +1,7 @@
 <div class="header">
   <p>
     <span class="title">Team</span>
-    <button mat-raised-button color="primary">
+    <button mat-raised-button color="primary" (click)="addNewUser()">
       <mat-icon>add_box</mat-icon> Invite Member
     </button>
   </p>
@@ -9,7 +9,7 @@
     Grant others access to your business on Ind-Invoices.
   </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="dataSource.data.length > 0">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -17,13 +17,13 @@
       <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
     </ng-container>
 
-    <!-- Amount Column -->
+    <!-- Email Address Column -->
     <ng-container matColumnDef="emailAddress">
       <mat-header-cell *matHeaderCellDef> Email address </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.emailAddress }}</mat-cell>
     </ng-container>
 
-    <!-- Tax mode Column -->
+    <!-- Role Column -->
     <ng-container matColumnDef="role">
       <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
       <mat-cell *matCellDef="let element"
@@ -34,15 +34,12 @@
     <!-- Action Column -->
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <div *ngIf="element.id !== 1">
-          <mat-icon (click)="editUser(element.id)" matTooltip="edit"
+      <mat-cell *matCellDef="let element; let index = index">
+        <div>
+          <mat-icon (click)="editUser(element)" matTooltip="edit"
             >edit</mat-icon
           >
-          <mat-icon
-            color="warn"
-            (click)="deleteUser(element.id)"
-            matTooltip="delete"
+          <mat-icon color="warn" (click)="deleteUser(index)" matTooltip="delete"
             >delete_forever</mat-icon
           >
         </div>
@@ -51,4 +48,8 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+</div>
+
+<div *ngIf="dataSource.data.length === 0" class="mat-elevation-z1">
+  <p class="p20">No Tax Found</p>
 </div>

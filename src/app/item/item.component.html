@@ -9,7 +9,7 @@
     Add and manage items.
   </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="dataSource.data.length>0">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
@@ -61,4 +61,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+</div>
+<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1">
+    <p class="p20">No Item Found</p>
 </div>

@@ -97,8 +97,14 @@ body {
 .mb20 {
   margin-bottom: 20px;
 }
+.p20{
+  padding: 20px;
+}
 .dflex {
   display: flex;
+}
+.mat-select-panel,.mat-autocomplete-panel{
+  background-color: #fff;
 }
 .loader-container {
   background-color: white;

@@ -7,7 +7,7 @@
     </button>
   </p>
 </div>
-<div class="mat-elevation-z1">
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length>0">
   <div>
     <mat-form-field class="filter">
       <input
@@ -60,4 +60,7 @@
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 </div>
+</div>
+<div class="mat-elevation-z1" *ngIf="dataSource.data.length===0">
+  <p class="p20">No Customer Found</p>
 </div>

@@ -1,0 +1,56 @@
+<div class="dialog ">
+  <form action="submit" [formGroup]="teamForm" (ngSubmit)="submit()">
+    <h2 mat-dialog-title>
+      {{ title }}
+      <button [mat-dialog-close]="false">
+        <mat-icon class="clear-icon">clear</mat-icon>
+      </button>
+    </h2>
+    <mat-divider></mat-divider>
+    <mat-dialog-content>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Name"
+            formControlName="name"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Email Address"
+            formControlName="emailAddress"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <mat-select formControlName="role">
+            <mat-option *ngFor="let role of Roles" [value]="role">{{
+              role
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <!-- <button mat-button [mat-dialog-close]="false">Cancel</button> -->
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!teamForm.valid"
+        color="primary"
+      >
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
