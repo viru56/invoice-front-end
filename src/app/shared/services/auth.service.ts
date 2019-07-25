@@ -15,4 +15,10 @@ export class AuthService {
   ): Observable<any> {
     return this.apiService.put(path, body);
   }
+  forgotPassword(path: string, body: { email: string }): Observable<any> {
+    return this.apiService.post(path, body);
+  }
+  resetPassword(path: string, body: { email: string }): Observable<any> {
+    return this.apiService.put(path, body);
+  }
 }

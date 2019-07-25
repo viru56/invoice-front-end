@@ -1,28 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from "@angular/core";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { AuthService } from "src/app/shared/services";
+import {ToastrService} from 'ngx-toastr';
 @Component({
-  selector: 'app-forgot-password',
-  templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+  selector: "app-forgot-password",
+  templateUrl: "./forgot-password.component.html",
+  styleUrls: ["./forgot-password.component.scss"]
 })
 export class ForgotPasswordComponent implements OnInit {
-
   userForm: FormGroup;
   formErrors = {
-    'email': ''
+    email: ""
   };
   validationMessages = {
-    'email': {
-      'required': 'Please enter your email',
-      'email': 'please enter your vaild email'
+    email: {
+      required: "Please enter your email",
+      email: "please enter your vaild email"
     }
   };
 
-  constructor(private router: Router,
-              private fb: FormBuilder) {
-  }
-
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
     this.buildForm();
@@ -30,16 +31,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   buildForm() {
     this.userForm = this.fb.group({
-      'email': ['', [
-        Validators.required,
-        Validators.email
-      ]
-      ],
-      'password': ['', [
-        Validators.minLength(6),
-        Validators.maxLength(18)
-      ]
-      ],
+      email: ["", [Validators.required, Validators.email]]
     });
 
     this.userForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -53,13 +45,13 @@ export class ForgotPasswordComponent implements OnInit {
     const form = this.userForm;
     for (const field in this.formErrors) {
       if (Object.prototype.hasOwnProperty.call(this.formErrors, field)) {
-        this.formErrors[field] = '';
+        this.formErrors[field] = "";
         const control = form.get(field);
         if (control && control.dirty && !control.valid) {
           const messages = this.validationMessages[field];
           for (const key in control.errors) {
             if (Object.prototype.hasOwnProperty.call(control.errors, key)) {
-              this.formErrors[field] += messages[key] + ' ';
+              this.formErrors[field] += messages[key] + " ";
             }
           }
         }
@@ -67,7 +59,9 @@ export class ForgotPasswordComponent implements OnInit {
     }
   }
   submit() {
-    this.router.navigate(['/login']);
+    console.log(this.userForm.value);
+    this.authService
+      .forgotPassword("user/sendforgotpasswordmail", this.userForm.value)
+      .subscribe(data => this.toastr.success(data.message), console.log);
   }
-
 }

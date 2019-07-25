@@ -1,15 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "../../shared/services";
 import { ToastrService } from "ngx-toastr";
 @Component({
-  selector: "app-account-activation",
-  templateUrl: "./account-activation.component.html",
-  styleUrls: ["./account-activation.component.scss"]
+  selector: 'app-reset-password',
+  templateUrl: './reset-password.component.html',
+  styleUrls: ['./reset-password.component.scss']
 })
-export class AccountActivationComponent implements OnInit {
-  accountActivationForm: FormGroup;
+export class ResetPasswordComponent implements OnInit {
+  resetPasswordForm: FormGroup;
   formErrors = {
     password: "",
     confirmPassword: ""
@@ -36,7 +36,7 @@ export class AccountActivationComponent implements OnInit {
   }
 
   buildForm() {
-    this.accountActivationForm = this.fb.group(
+    this.resetPasswordForm = this.fb.group(
       {
         password: [
           "",
@@ -52,7 +52,7 @@ export class AccountActivationComponent implements OnInit {
       }
     );
 
-    this.accountActivationForm.valueChanges.subscribe(data =>
+    this.resetPasswordForm.valueChanges.subscribe(data =>
       this.onValueChanged(data)
     );
     this.onValueChanged();
@@ -76,10 +76,10 @@ export class AccountActivationComponent implements OnInit {
     };
   }
   onValueChanged(data?: any) {
-    if (!this.accountActivationForm) {
+    if (!this.resetPasswordForm) {
       return;
     }
-    const form = this.accountActivationForm;
+    const form = this.resetPasswordForm;
     for (const field in this.formErrors) {
       if (Object.prototype.hasOwnProperty.call(this.formErrors, field)) {
         this.formErrors[field] = "";
@@ -96,13 +96,13 @@ export class AccountActivationComponent implements OnInit {
     }
   }
   submit() {
-    this.accountActivationForm.value.token = this.router.parseUrl(
+    this.resetPasswordForm.value.token = this.router.parseUrl(
       this.router.url
     ).queryParams.token;
     this.authService
-      .accountActivation(
-        "user/accountactivation",
-        this.accountActivationForm.value
+      .resetPassword(
+        "user/forgotpassword",
+        this.resetPasswordForm.value
       )
       .toPromise()
       .then(res => {
