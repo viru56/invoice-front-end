@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, HostListener, ElementRef } from '@angular/core';
+import { AuthService } from '../../shared/services';
+import { Iuser } from 'src/app/shared/models';
 
 @Component({
   selector: 'app-user-menu',
@@ -9,10 +11,10 @@ export class UserMenuComponent implements OnInit {
 
   isOpen: boolean = false;
 
-  defaultUser = 'virender nehra';
+  defaultUser = '';
   
 
-  @Input() currentUser = null;
+  @Input() currentUser:Iuser = null;
   @HostListener('document:click', ['$event', '$event.target'])
   onClick(event: MouseEvent, targetElement: HTMLElement) {
     if (!targetElement) {
@@ -24,12 +26,13 @@ export class UserMenuComponent implements OnInit {
         this.isOpen = false;
     }
   }
-  
-  
-  constructor(private elementRef: ElementRef) { }
 
+  constructor(private elementRef: ElementRef, private authService:AuthService) { }
 
   ngOnInit() {
-    
+    this.authService.getUserDetails().subscribe(user=>this.currentUser= user);
+  }
+  logout(){
+    this.authService.logout();
   }
 }

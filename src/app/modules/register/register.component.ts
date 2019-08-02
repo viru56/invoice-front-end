@@ -1,8 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { AuthService } from "src/app/shared/services";
-import {ToastrService} from 'ngx-toastr';
+import { ToastrService } from "ngx-toastr";
 @Component({
   selector: "app-register",
   templateUrl: "./register.component.html",
@@ -14,7 +13,7 @@ export class RegisterComponent implements OnInit {
   formErrors = {
     email: "",
     // password: "",
-    firstName: "",
+    fullName: "",
     companyName: ""
   };
   validationMessages = {
@@ -36,10 +35,9 @@ export class RegisterComponent implements OnInit {
   };
 
   constructor(
-    private router: Router,
     private fb: FormBuilder,
     private authService: AuthService,
-    private tostr:ToastrService
+    private tostr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -80,9 +78,9 @@ export class RegisterComponent implements OnInit {
     }
   }
   submit() {
-    console.log(this.userForm.value);
+    this.serverError = '';
     this.authService
-      .createAccount("company", this.userForm.value)
+      .registerCompany(this.userForm.value)
       .toPromise()
       .then(res => {
         console.log(res);
@@ -90,14 +88,15 @@ export class RegisterComponent implements OnInit {
       })
       .catch(err => {
         console.log(err);
-        if (err.error.errmsg.indexOf("email") !== -1) {
-          this.serverError = "Email already exists";
-        } else if (err.error.errmsg.indexOf("company") !== -1) {
-          this.serverError = "Comapny name already exists";
+        if (err.error.errmsg) {
+          if (err.error.errmsg.indexOf("email") !== -1) {
+            this.serverError = "Email already exists";
+          } else if (err.error.errmsg.indexOf("name") !== -1) {
+            this.serverError = "Comapny name already exists";
+          }
         } else {
-          this.serverError = err.error.errmsg;
+          this.serverError = err.error.message
         }
       });
-    //this.router.navigate(["/auth/dashboard"]);
   }
 }

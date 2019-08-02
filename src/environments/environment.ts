@@ -4,7 +4,11 @@
 
 export const environment = {
   production: false,
-  base_url: "http://localhost:3000/"
+  base_url: "http://localhost:3000",
+  api_url:"http://localhost:3000/api",
+  user_url:"http://localhost:3000/user",
+  company_url:"http://localhost:3000/company",
+  invoice_url:"http://localhost:3000/invoice"
 };
 
 /*

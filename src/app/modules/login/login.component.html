@@ -13,7 +13,7 @@
         <form
           fxLayout="column"
           fxLayoutAlign="start stretch"
-          [formGroup]="userForm"
+          [formGroup]="loginForm"
           (ngSubmit)="submit()"
         >
           <mat-form-field class="full-width">
@@ -46,6 +46,9 @@
           <div *ngIf="formErrors.password" class="help is-danger">
             {{ formErrors.password }}
           </div>
+          <div class="is-danger" *ngIf="serverError">
+            {{serverError}}
+          </div>
           <div>
               <a
               [routerLink]="['/forgotpassword']"
@@ -60,7 +63,7 @@
                 mat-raised-button
                 color="primary"
                 type="submit"
-                [disabled]="!userForm.valid" 
+                [disabled]="!loginForm.valid" 
               >
                 Log In
               </button>

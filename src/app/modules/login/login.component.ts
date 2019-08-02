@@ -1,70 +1,65 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { AuthService } from "src/app/shared/services";
+
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"]
 })
 export class LoginComponent implements OnInit {
-
-  userForm: FormGroup;
+  loginForm: FormGroup;
+  serverError: string;
   formErrors = {
-    'email': '',
-    'password': ''
+    email: "",
+    password: ""
   };
   validationMessages = {
-    'email': {
-      'required': 'Please enter your email',
-      'email': 'please enter your vaild email'
+    email: {
+      required: "Please enter your email",
+      email: "please enter your vaild email"
     },
-    'password': {
-      'required': 'please enter your password',
-      'minlength': 'Please enter more than 6 characters',
-      'maxlength': 'Please enter less than 18 characters',
+    password: {
+      required: "please enter your password"
     }
   };
 
-  constructor(private router: Router,
-              private fb: FormBuilder) {
-  }
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.buildForm();
   }
 
   buildForm() {
-    this.userForm = this.fb.group({
-      'email': ['', [
-        Validators.required,
-        Validators.email
-      ]
-      ],
-      'password': ['', [
-        Validators.minLength(6),
-        Validators.maxLength(18)
-      ]
-      ],
+    this.loginForm = this.fb.group({
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required]]
     });
 
-    this.userForm.valueChanges.subscribe(data => this.onValueChanged(data));
+    this.loginForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   onValueChanged(data?: any) {
-    if (!this.userForm) {
+    this.serverError = "";
+    if (!this.loginForm) {
       return;
     }
-    const form = this.userForm;
+    const form = this.loginForm;
     for (const field in this.formErrors) {
       if (Object.prototype.hasOwnProperty.call(this.formErrors, field)) {
-        this.formErrors[field] = '';
+        this.formErrors[field] = "";
         const control = form.get(field);
         if (control && control.dirty && !control.valid) {
           const messages = this.validationMessages[field];
           for (const key in control.errors) {
             if (Object.prototype.hasOwnProperty.call(control.errors, key)) {
-              this.formErrors[field] += messages[key] + ' ';
+              this.formErrors[field] += messages[key] + " ";
             }
           }
         }
@@ -72,6 +67,15 @@ export class LoginComponent implements OnInit {
     }
   }
   submit() {
-    this.router.navigate(['/auth/dashboard']);
+    this.serverError = "";
+    this.authService.login(this.loginForm.value).subscribe(
+      data => {
+        this.router.navigate(["/auth/dashboard"]);
+      },
+      err => {
+        console.log(err);
+        this.serverError = err.error.message;
+      }
+    );
   }
 }

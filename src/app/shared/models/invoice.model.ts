@@ -21,6 +21,7 @@ export interface Iinvoice {
   terms: string;
   taxableAmount?: number;
   nonTaxableAmount?: number;
+  file?:File;
 }
 export interface IinvoiceTextLabel {
   invoiceName: string;

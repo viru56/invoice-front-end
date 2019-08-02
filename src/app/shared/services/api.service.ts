@@ -1,13 +1,17 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable, throwError } from "rxjs";
-import { environment } from "../../../environments/environment";
-
+import { Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { CookieService } from "ngx-cookie-service";
 @Injectable({
   providedIn: "root"
 })
 export class ApiService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private router: Router
+  ) {}
 
   private setHeaders(): HttpHeaders {
     const headerConfig = {
@@ -15,38 +19,38 @@ export class ApiService {
       Accept: "application/json"
     };
 
-    // if (this.jwtService.getToken()) {
-    //     headerConfig['Authorization'] = `Bearer ${this.jwtService.getToken()}`;
-    // }
+    if (this.cookieService.check("authorization")) {
+      headerConfig["Authorization"] = this.cookieService.get("authorization");
+    }
+    if (this.router.parseUrl(this.router.url).queryParams.token) {
+      headerConfig["Authorization"] = this.router.parseUrl(
+        this.router.url
+      ).queryParams.token;
+    }
     return new HttpHeaders(headerConfig);
   }
 
-  get(path: string): Observable<any> {
-    return this.http.get(`${environment.base_url}${path}`, {
+  get(apiUrl: string): Observable<any> {
+    return this.http.get(apiUrl, {
       headers: this.setHeaders()
     });
   }
-  post(path: string, body: Object = {}): Observable<any> {
-    return this.http.post(
-      `${environment.base_url}${path}`,
-      JSON.stringify(body),
-      {
-        headers: this.setHeaders()
-      }
-    );
-  }
-  put(path: string, body: Object = {}): Observable<any> {
-    return this.http.put(
-      `${environment.base_url}${path}`,
-      JSON.stringify(body),
-      {
-        headers: this.setHeaders()
-      }
-    );
-  }
-  delete(path): Observable<any> {
-    return this.http.delete(`${environment.base_url}${path}`, {
+  post(apiUrl: string, body: Object = {}): Observable<any> {
+    return this.http.post(apiUrl, JSON.stringify(body), {
       headers: this.setHeaders()
     });
+  }
+  put(apiUrl: string, body: Object = {}): Observable<any> {
+    return this.http.put(apiUrl, JSON.stringify(body), {
+      headers: this.setHeaders()
+    });
+  }
+  delete(apiUrl): Observable<any> {
+    return this.http.delete(apiUrl, {
+      headers: this.setHeaders()
+    });
+  }
+  upload(apiUrl: string, body: FormData): Observable<any> {
+    return this.http.post(apiUrl, body,{responseType: 'arraybuffer'});
   }
 }

@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "../../shared/services";
 import { ToastrService } from "ngx-toastr";
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss']
+  selector: "app-reset-password",
+  templateUrl: "./reset-password.component.html",
+  styleUrls: ["./reset-password.component.scss"]
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
@@ -96,14 +96,8 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
   submit() {
-    this.resetPasswordForm.value.token = this.router.parseUrl(
-      this.router.url
-    ).queryParams.token;
     this.authService
-      .resetPassword(
-        "user/forgotpassword",
-        this.resetPasswordForm.value
-      )
+      .resetPassword(this.resetPasswordForm.value)
       .toPromise()
       .then(res => {
         this.toastr.success(res.message);
@@ -114,7 +108,7 @@ export class ResetPasswordComponent implements OnInit {
           "click on forgot password to regenerate link",
           err.error.message
         );
-        this.router.navigate(['/login']);
+        this.router.navigate(["/login"]);
       });
   }
 }

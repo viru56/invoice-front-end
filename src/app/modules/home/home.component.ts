@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Iinvoice } from "../../shared/models";
+import { InvoiceService } from "src/app/shared/services";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-home",
@@ -15,7 +17,11 @@ export class HomeComponent implements OnInit {
   showDiscount: boolean;
   showTax: boolean;
   showShipping: boolean;
-  constructor(private sanitizer: DomSanitizer, private fb: FormBuilder) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private fb: FormBuilder,
+    private invoiceService: InvoiceService
+  ) {}
 
   ngOnInit() {
     this.showDiscount = false;
@@ -52,11 +58,13 @@ export class HomeComponent implements OnInit {
         amount: 0.0,
         taxable: true
       },
-      tax: [{
-        name: "",
-        amount: 0,
-        inclusive: false
-      }],
+      tax: [
+        {
+          name: "",
+          amount: 0,
+          inclusive: false
+        }
+      ],
       subtotal: 0.0,
       total: 0.0,
       balanceDue: 0.0,
@@ -106,19 +114,19 @@ export class HomeComponent implements OnInit {
       );
       if (files.item(0).type.indexOf("image") == -1) {
         alert("The file you have seleted is not an image");
-      } else if (fileSize > 2) {
+      } else if (fileSize > 10) {
         alert(
           "The image you have selected is too large. It must be 1MB or less"
         );
       } else {
-        const file = files.item(0);
+        this.invoice.file = files.item(0);
         const reader = new FileReader();
         reader.onload = e => {
           this.fileToUpload = this.sanitizer.bypassSecurityTrustResourceUrl(
             reader.result as string
           );
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(this.invoice.file);
       }
     }
   }
@@ -192,18 +200,44 @@ export class HomeComponent implements OnInit {
       type: this.invoiceForm.value.discount_type,
       value: this.invoiceForm.value.discount
     };
-    this.invoice.tax = [{
-      amount: this.invoiceForm.value.tax,
-      inclusive: false,
-      name: ""
-    }];
+    this.invoice.tax = [
+      {
+        amount: this.invoiceForm.value.tax,
+        inclusive: false,
+        name: ""
+      }
+    ];
     this.invoice.shipping = this.invoiceForm.value.shipping;
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.notes = this.invoiceForm.value.notes;
     this.invoice.terms = this.invoiceForm.value.terms;
-    console.log(this.invoice);
+
+    this.invoiceService.createInvoice(this.invoice).subscribe(
+      res => this.downLoadFile(res, "application/pdf"),
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  downLoadFile(data: any, type: string) {
+    let anchor = document.createElement("a");
+    anchor.download = "invoice.pdf";
+    let blob = new Blob([data], { type: type });
+    anchor.href = window.URL.createObjectURL(blob);
+    if (environment.production) {
+      // download pdf
+      anchor.dataset.downloadurl = [
+        "application/pdf",
+        anchor.download,
+        anchor.href
+      ].join(":");
+      anchor.click();
+    } else {
+      window.open(anchor.href);
+    }
   }
   downloadInvoice(): void {
-    console.log("download invoice");
+    this.onSubmit();
   }
 }

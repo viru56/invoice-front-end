@@ -96,14 +96,8 @@ export class AccountActivationComponent implements OnInit {
     }
   }
   submit() {
-    this.accountActivationForm.value.token = this.router.parseUrl(
-      this.router.url
-    ).queryParams.token;
     this.authService
-      .accountActivation(
-        "user/accountactivation",
-        this.accountActivationForm.value
-      )
+      .accountActivation(this.accountActivationForm.value)
       .toPromise()
       .then(res => {
         this.toastr.success(res.message);
@@ -114,7 +108,7 @@ export class AccountActivationComponent implements OnInit {
           "click on forgot password to regenerate link",
           err.error.message
         );
-        this.router.navigate(['/login']);
+        this.router.navigate(["/login"]);
       });
   }
 }
