@@ -5,20 +5,24 @@ import { ItemDialogComponent } from "./item-dialog/item-dialog.component";
 import { CustomerDialogComponent } from "./customer-dialog/customer-dialog.component";
 import { InvoiceDialogComponent } from "./invoice-dialog/invoice-dialog.component";
 import { TeamDialogComponent } from "./team-dialog/team-dialog.component";
+import { HomeDialogComponent } from './home-dialog/home-dialog.component';
 @NgModule({
   declarations: [
     TaxDialogComponent,
     ItemDialogComponent,
     CustomerDialogComponent,
     InvoiceDialogComponent,
-    TeamDialogComponent
+    TeamDialogComponent,
+    HomeDialogComponent
   ],
   imports: [BaseModule],
   entryComponents: [
     TaxDialogComponent,
     ItemDialogComponent,
     CustomerDialogComponent,
-    TeamDialogComponent
+    TeamDialogComponent,
+    InvoiceDialogComponent,
+    HomeDialogComponent
   ]
 })
 export class DialogModule {}

@@ -4,6 +4,9 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Iinvoice } from "../../shared/models";
 import { InvoiceService } from "src/app/shared/services";
 import { environment } from "src/environments/environment";
+import { ToastrService } from "ngx-toastr";
+import { MatDialog } from "@angular/material/dialog";
+import { HomeDialogComponent, DialogConfig } from "src/app/shared/dialogs";
 
 @Component({
   selector: "app-home",
@@ -20,7 +23,9 @@ export class HomeComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private toastr: ToastrService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -136,10 +141,10 @@ export class HomeComponent implements OnInit {
   addLineItem(): void {
     this.lineItems.push(
       this.fb.group({
-        name: [this.invoice.lineItem.name],
-        quantity: [this.invoice.lineItem.quantity],
-        rate: [this.invoice.lineItem.unitCost],
-        amount: [this.invoice.lineItem.amount]
+        name: [""],
+        quantity: [0],
+        rate: [0],
+        amount: [0]
       })
     );
   }
@@ -189,6 +194,30 @@ export class HomeComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.setInvoiceData()) {
+      DialogConfig.data = {
+        sender: this.invoice.sender,
+        receiver: this.invoice.receiver,
+        invoiceNumber: this.invoice.invoiceNumber
+      };
+      const dialogRef = this.dialog.open(HomeDialogComponent, DialogConfig);
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          this.invoice.mail = result;
+          this.createInvoice();
+        }
+      });
+    }
+  }
+  setInvoiceData(): boolean {
+    if (!this.invoice.file) {
+      alert("plese select a file");
+      return false;
+    }
+    if (!this.invoiceForm.value.sender && !this.invoiceForm.value.receiver) {
+      alert("required field is empty");
+      return false;
+    }
     this.invoice.sender = this.invoiceForm.value.sender;
     this.invoice.receiver = this.invoiceForm.value.receiver;
     this.invoice.date = this.invoiceForm.value.date;
@@ -211,15 +240,22 @@ export class HomeComponent implements OnInit {
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.notes = this.invoiceForm.value.notes;
     this.invoice.terms = this.invoiceForm.value.terms;
-
-    this.invoiceService.createInvoice(this.invoice).subscribe(
-      res => this.downLoadFile(res, "application/pdf"),
+    return true;
+  }
+  createInvoice(type: string = "mail"): void {
+    this.invoiceService.createInvoice(this.invoice, type).subscribe(
+      res => {
+        if (type === "mail") {
+          this.toastr.success(res.message);
+        } else {
+          this.downLoadFile(res, "application/pdf");
+        }
+      },
       err => {
         console.log(err);
       }
     );
   }
-
   downLoadFile(data: any, type: string) {
     let anchor = document.createElement("a");
     anchor.download = "invoice.pdf";
@@ -238,6 +274,6 @@ export class HomeComponent implements OnInit {
     }
   }
   downloadInvoice(): void {
-    this.onSubmit();
+    if (this.setInvoiceData()) this.createInvoice("download");
   }
 }

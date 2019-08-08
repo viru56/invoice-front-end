@@ -22,6 +22,12 @@ export interface Iinvoice {
   taxableAmount?: number;
   nonTaxableAmount?: number;
   file?:File;
+  mail?:{
+    sender:string;
+    receiver:string;
+    subject:string;
+    message:string;
+  }
 }
 export interface IinvoiceTextLabel {
   invoiceName: string;

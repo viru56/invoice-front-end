@@ -8,11 +8,11 @@ import { Observable } from 'rxjs';
 })
 export class InvoiceService {
   constructor(private apiService: ApiService) {}
-  createInvoice(body:Iinvoice):Observable<any> {
+  createInvoice(body:Iinvoice,path:string):Observable<any> {
     const invoiceFormData = new FormData();
     invoiceFormData.append('file',body.file);
     invoiceFormData.append('invoice',JSON.stringify(body))
    return  this.apiService
-      .upload(`${environment.invoice_url}`, invoiceFormData);
+      .upload(`${environment.invoice_url}/${path}`,invoiceFormData,path==='mail'?'json':'arrayBuffer');
   }
 }
