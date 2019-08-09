@@ -8,7 +8,7 @@ import { Subscription } from "rxjs";
   templateUrl: "./item-dialog.component.html",
   styleUrls: ["./item-dialog.component.scss"]
 })
-export class ItemDialogComponent implements OnInit, OnDestroy {
+export class ItemDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
@@ -17,7 +17,6 @@ export class ItemDialogComponent implements OnInit, OnDestroy {
   ) {}
   title: string;
   itemForm: FormGroup;
-  itemSubscription: Subscription;
   Types: string[] = ["Product", "Service", "Shipping"];
   serverError: string;
   ngOnInit() {
@@ -48,40 +47,17 @@ export class ItemDialogComponent implements OnInit, OnDestroy {
     //     }
     //   });
     // }
-    if (this.data) {
-      this.itemForm.value.id = this.data.id;
-      this.itemSubscription = this.itemService
-        .updateItem(this.itemForm.value)
-        .subscribe(
-          result => {
-            console.log(result);
-            this.dialogRef.close(this.itemForm.value);
-          },
-          err => {
-            console.log(err);
-            this.serverError =
-              err.error.errmsg ||
-              err.error.message ||
-              "server error: failed to add item";
-          }
-        );
-      // this.dialogRef.close(this.itemForm.value);
-    } else {
-      this.itemSubscription = this.itemService
-        .addItem(this.itemForm.value)
-        .subscribe(
-          item => this.dialogRef.close(item),
-          err => {
-            console.log(err);
-            this.serverError =
-              err.error.errmsg ||
-              err.error.message ||
-              "server error: failed to add item";
-          }
-        );
-    }
-  }
-  ngOnDestroy(): void {
-    if (this.itemSubscription) this.itemSubscription.unsubscribe();
+    if (this.data) this.itemForm.value.id = this.data.id;
+    this.itemService[this.data ? "updateItem" : "addItem"](this.itemForm.value)
+      .then(result => {
+        this.dialogRef.close(result);
+      })
+      .catch(err => {
+        console.log(err);
+        this.serverError =
+          err.error.errmsg ||
+          err.error.message ||
+          "server error: failed to add item";
+      });
   }
 }

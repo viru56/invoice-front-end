@@ -9,17 +9,17 @@
     Add and manage items.
   </div>
 </div>
-<div class="table-wrapper" *ngIf="dataSource.data.length>0">
-  <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
+<div class="table-wrapper mat-elevation-z1" *ngIf="dataSource.data.length>0">
+  <mat-table [dataSource]="dataSource" matSort>
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
     </ng-container>
 
     <!-- Description Column -->
     <ng-container matColumnDef="description">
-      <mat-header-cell *matHeaderCellDef>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
         <span></span> Description
       </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.description }}</mat-cell>
@@ -33,7 +33,7 @@
 
     <!-- Unit Cost Column -->
     <ng-container matColumnDef="unitCost">
-      <mat-header-cell *matHeaderCellDef> Unit cost </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Unit cost </mat-header-cell>
       <mat-cell *matCellDef="let element">Rs {{ element.unitCost }} </mat-cell>
     </ng-container>
 
@@ -58,10 +58,10 @@
         </mat-icon>
       </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 </div>
-<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1">
+<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1 m20">
     <p class="p20">{{itemLoading}}</p>
 </div>

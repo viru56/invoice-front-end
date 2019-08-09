@@ -11,9 +11,17 @@ export class ItemService {
   constructor(private apiService: ApiService) {
     this.itemStore = null;
   }
-  addItem(body: IlineItem): Observable<IlineItem> {
-    this.itemStore = null; // delete the store so next time it fetch updated data
-    return this.apiService.post(environment.item_url, body);
+  addItem(body: IlineItem): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .post(environment.item_url, body)
+        .toPromise()
+        .then(item => {
+          this.itemStore.push(item);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
   }
   getItem(id: string): Observable<IlineItem> {
     return this.apiService.get(`${environment.item_url}/${id}`);
@@ -34,12 +42,35 @@ export class ItemService {
         .catch(err => callback(err, null));
     }
   }
-  updateItem(body: IlineItem): Observable<any> {
-    this.itemStore = null; // delete the store so next time it fetch updated data
-    return this.apiService.put(environment.item_url, body);
+  updateItem(body: IlineItem): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .put(environment.item_url, body)
+        .toPromise()
+        .then(() => {
+          for (let item of this.itemStore) {
+            if (item.id === body.id) {
+              item.name = body.name;
+              item.description = body.description;
+              item.taxable = body.taxable;
+              item.unitCost = body.unitCost;
+            }
+          }
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
   }
-  deleteItem(id: string): Observable<any> {
-    this.itemStore = null; // delete the store so next time it fetch updated data
-    return this.apiService.delete(`${environment.item_url}/${id}`);
+  deleteItem(index: number, id: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .delete(`${environment.item_url}/${id}`)
+        .toPromise()
+        .then(() => {
+          this.itemStore.splice(index, 1);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
   }
 }

@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
+import { MatSort } from "@angular/material/sort";
 import { ItemDialogComponent, DialogConfig } from "../../shared/dialogs";
 import { IlineItem } from "../../shared/models";
 import { MatTableDataSource } from "@angular/material";
@@ -14,6 +15,8 @@ import { ToastrService } from "ngx-toastr";
 })
 export class ItemComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<IlineItem>;
+  @ViewChild(MatSort) sort: MatSort;
+
   currentScreenWidth: string = "";
   flexMediaWatcher: Subscription;
   itemSubscription: Subscription;
@@ -43,36 +46,6 @@ export class ItemComponent implements OnInit, OnDestroy {
     );
   }
   getAllItems(): void {
-    // this.itemSubscription = this.itemService.itemStore$.subscribe(
-    //   items => {
-    //     if (items) {
-    //       this.items = items;
-    //       this.dataSource.data = this.items;
-    //       if (items.length === 0) {
-    //         this.itemLoading = "No Item Found";
-    //       }
-    //     } else {
-    //       this.itemService
-    //         .getItems()
-    //         .toPromise()
-    //         .then(items => {
-    //           this.items = items;
-    //           this.dataSource.data = this.items;
-    //           if (items.length === 0) {
-    //             this.itemLoading = "No Item Found";
-    //           }
-    //         })
-    //         .catch(err => {
-    //           console.log(err);
-    //           this.toastr.error("faild to load items", "Server Error");
-    //         });
-    //     }
-    //   },
-    //   err => {
-    //     console.log(err);
-    //     this.toastr.error("faild to load items", "Server Error");
-    //   }
-    // );
     this.itemService.getItemStore((err, items) => {
       if (err) {
         console.log(err);
@@ -80,6 +53,7 @@ export class ItemComponent implements OnInit, OnDestroy {
       } else {
         this.items = items;
         this.dataSource.data = this.items;
+        setTimeout(()=>this.dataSource.sort = this.sort);
         if (items.length === 0) {
           this.itemLoading = "No Item Found";
         }
@@ -105,8 +79,7 @@ export class ItemComponent implements OnInit, OnDestroy {
     this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
       result => {
         if (result) {
-          this.items.push(result);
-          this.dataSource.data = this.items;
+          this.getAllItems();
         }
       },
       err => console.log(err)
@@ -118,14 +91,7 @@ export class ItemComponent implements OnInit, OnDestroy {
     this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
       result => {
         if (result) {
-          for (let item of this.items) {
-            if (item.id === result.id) {
-              item.name = result.name;
-              item.description = result.description;
-              item.taxable = result.taxable;
-              item.unitCost = result.unitCost;
-            }
-          }
+          this.getAllItems();
           this.toastr.success("Item is updated!");
         }
       },
@@ -133,22 +99,19 @@ export class ItemComponent implements OnInit, OnDestroy {
     );
   }
   deleteItem(index: number, id: string): void {
-    console.log(id);
-    this.itemSubscription = this.itemService.deleteItem(id).subscribe(
-      () => {
-        this.items.splice(index, 1);
-        this.dataSource.data = this.items;
+    this.itemService
+      .deleteItem(index, id)
+      .then(() => {
+        this.getAllItems();
         this.toastr.success("Item is deleted!");
-      },
-      err => {
+      })
+      .catch(err => {
         console.log(err);
         this.toastr.error("Failed to delete Item!", "Server error");
-      }
-    );
+      });
   }
   ngOnDestroy() {
     if (this.flexMediaWatcher) this.flexMediaWatcher.unsubscribe();
-    if (this.itemSubscription) this.itemSubscription.unsubscribe();
     if (this.dialogRefSubscription) this.dialogRefSubscription.unsubscribe();
   }
 }

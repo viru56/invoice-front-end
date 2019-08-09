@@ -82,7 +82,7 @@ export class NewInvoiceComponent implements OnInit {
   ];
   ITEM_DATA: IlineItem[] = [
     {
-      id: 1,
+      id: '1',
       name: "abc",
       description: "this is a test item",
       type: "service",
@@ -90,7 +90,7 @@ export class NewInvoiceComponent implements OnInit {
       taxable: true
     },
     {
-      id: 2,
+      id: '2',
       name: "work",
       description: "thai adf kladjf kladjf kladfj akldfa klsdfakls ",
       type: "product",
@@ -98,7 +98,7 @@ export class NewInvoiceComponent implements OnInit {
       taxable: true
     },
     {
-      id: 3,
+      id: '3',
       name: "iphone",
       description: "If you do not have an iphone,you do not have an iphone",
       type: "product",
@@ -106,7 +106,7 @@ export class NewInvoiceComponent implements OnInit {
       taxable: true
     },
     {
-      id: 4,
+      id: '4',
       name: "qwerty",
       description: "this is a blackberry phone",
       type: "product",
