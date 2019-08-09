@@ -46,7 +46,7 @@ import { UserMenuComponent } from "./user-menu/user-menu.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { ToolbarNotificationComponent } from "./toolbar-notification/toolbar-notification.component";
 import { RouterModule } from "@angular/router";
-import {ApiService,AuthService, InvoiceService} from '../shared/services';
+import {ApiService,AuthService, InvoiceService, ItemService} from '../shared/services';
 import {ToastrModule} from 'ngx-toastr';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from '../shared/guard';
@@ -150,7 +150,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    },ApiService,AuthService,CookieService,AuthGuard,InvoiceService
+    },ApiService,AuthService,CookieService,AuthGuard,InvoiceService,ItemService
   ]
 })
 export class BaseModule {}

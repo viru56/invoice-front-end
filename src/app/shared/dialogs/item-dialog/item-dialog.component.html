@@ -62,6 +62,9 @@
           </mat-checkbox>
         </section>
       </div>
+      <div *ngIf="serverError" class="is-danger">
+        {{serverError}}
+      </div>
       <!-- <div *ngIf="itemForm.value.taxable">
         <mat-form-field class="au-wt">
           <mat-label>Taxes</mat-label>

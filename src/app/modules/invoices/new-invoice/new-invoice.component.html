@@ -361,7 +361,7 @@
       <!--tax-->
       <div *ngIf="invoice.tax.length > 0" class="dflex">
         <div
-          *ngFor="let tax of invoice.tax; let index"
+          *ngFor="let tax of invoice.tax; let index = index"
           class="tax-item"
         >
           <p>

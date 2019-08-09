@@ -4,5 +4,6 @@ export const environment = {
   api_url:"/api",
   user_url:"/user",
   company_url:"/company",
-  invoice_url:"/invoice"
+  invoice_url:"/invoice",
+  item_url:"/item"
 };

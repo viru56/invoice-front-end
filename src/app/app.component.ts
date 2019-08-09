@@ -24,8 +24,8 @@ export class AppComponent implements OnInit {
     return outlet.activatedRouteData.animation;
   }
   ngOnInit(): void {
-    if (this.cookieService.check("authorization")) {
-      this.router.navigateByUrl('/auth/dashboard');
-    }
+    // if (this.cookieService.check("authorization")) {
+    //   this.router.navigateByUrl('/auth/dashboard');
+    // }
   }
 }

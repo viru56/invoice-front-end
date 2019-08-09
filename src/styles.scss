@@ -104,6 +104,10 @@ body {
 .dflex {
   display: flex;
 }
+.is-danger {
+  color:#f44336;
+  padding-bottom: 20px;
+}
 .mat-select-panel,.mat-autocomplete-panel{
   background-color: #fff;
 }

@@ -5,37 +5,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { ItemDialogComponent, DialogConfig } from "../../shared/dialogs";
 import { IlineItem } from "../../shared/models";
 import { MatTableDataSource } from "@angular/material";
-
-const ITEM_DATA: IlineItem[] = [
-  {
-    id: 1,
-    name: "abc",
-    description: "this is a test item",
-    unitCost: 100,
-    taxable: true
-  },
-  {
-    id: 2,
-    name: "work",
-    description: "thai adf kladjf kladjf kladfj akldfa klsdfakls ",
-    unitCost: 100,
-    taxable: true
-  },
-  {
-    id: 3,
-    name: "iphone",
-    description: "If you do not have an iphone,you do not have an iphone",
-    unitCost: 100000,
-    taxable: true,
-  },
-  {
-    id: 4,
-    name: "qwerty",
-    description: "this is a blackberry phone",
-    unitCost: 10000,
-    taxable: false
-  }
-];
+import { ItemService } from "src/app/shared/services";
+import { ToastrService } from "ngx-toastr";
 @Component({
   selector: "app-item",
   templateUrl: "./item.component.html",
@@ -45,13 +16,22 @@ export class ItemComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<IlineItem>;
   currentScreenWidth: string = "";
   flexMediaWatcher: Subscription;
+  itemSubscription: Subscription;
+  dialogRefSubscription: Subscription;
   displayedColumns: string[];
+  items: IlineItem[];
+  itemLoading: string;
   constructor(
     private mediaObserver: MediaObserver,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private itemService: ItemService,
+    private toastr: ToastrService
   ) {}
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(ITEM_DATA);
+    this.itemLoading = "loading...";
+    this.items = [];
+    this.dataSource = new MatTableDataSource(this.items);
+    this.getAllItems();
     // resize table as device resized
     this.flexMediaWatcher = this.mediaObserver.media$.subscribe(
       (mediaChange: MediaChange) => {
@@ -61,6 +41,50 @@ export class ItemComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+  getAllItems(): void {
+    // this.itemSubscription = this.itemService.itemStore$.subscribe(
+    //   items => {
+    //     if (items) {
+    //       this.items = items;
+    //       this.dataSource.data = this.items;
+    //       if (items.length === 0) {
+    //         this.itemLoading = "No Item Found";
+    //       }
+    //     } else {
+    //       this.itemService
+    //         .getItems()
+    //         .toPromise()
+    //         .then(items => {
+    //           this.items = items;
+    //           this.dataSource.data = this.items;
+    //           if (items.length === 0) {
+    //             this.itemLoading = "No Item Found";
+    //           }
+    //         })
+    //         .catch(err => {
+    //           console.log(err);
+    //           this.toastr.error("faild to load items", "Server Error");
+    //         });
+    //     }
+    //   },
+    //   err => {
+    //     console.log(err);
+    //     this.toastr.error("faild to load items", "Server Error");
+    //   }
+    // );
+    this.itemService.getItemStore((err, items) => {
+      if (err) {
+        console.log(err);
+        this.toastr.error("faild to load items", "Server Error");
+      } else {
+        this.items = items;
+        this.dataSource.data = this.items;
+        if (items.length === 0) {
+          this.itemLoading = "No Item Found";
+        }
+      }
+    });
   }
 
   configTable() {
@@ -72,54 +96,59 @@ export class ItemComponent implements OnInit, OnDestroy {
       "action"
     ];
     if (this.currentScreenWidth === "xs" || this.currentScreenWidth === "sm") {
-      this.displayedColumns = ["name", "unitCost","taxable", "action"];
+      this.displayedColumns = ["name", "unitCost", "taxable", "action"];
     }
   }
   addNewItem(): void {
     DialogConfig.data = null;
     const dialogRef = this.dialog.open(ItemDialogComponent, DialogConfig);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(
-        result => {
-          if(result){
-            result.id = ITEM_DATA.length + 1;
-            ITEM_DATA.push(result);
-            this.dataSource.data = ITEM_DATA;
-          }
-        },
-        err => console.log(err)
-      );
+    this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
+      result => {
+        if (result) {
+          this.items.push(result);
+          this.dataSource.data = this.items;
+        }
+      },
+      err => console.log(err)
+    );
   }
   editItem(item: IlineItem): void {
     DialogConfig.data = item;
     const dialogRef = this.dialog.open(ItemDialogComponent, DialogConfig);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(
-        result => {
-          if(result){
-            for(let item of ITEM_DATA){
-              if(item.id === result.id){
-                item.name = result.name;
-                item.description = result.description;
-                item.taxable = result.taxable;
-                item.type = result.type;
-                item.unitCost = result.unitCost;
-              }
+    this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
+      result => {
+        if (result) {
+          for (let item of this.items) {
+            if (item.id === result.id) {
+              item.name = result.name;
+              item.description = result.description;
+              item.taxable = result.taxable;
+              item.unitCost = result.unitCost;
             }
           }
-        },
-        err => console.log(err)
-      );
+          this.toastr.success("Item is updated!");
+        }
+      },
+      err => console.log(err)
+    );
   }
-  deleteItem(index: number): void {
-    ITEM_DATA.splice(index,1);
-    this.dataSource.data = ITEM_DATA;
+  deleteItem(index: number, id: string): void {
+    console.log(id);
+    this.itemSubscription = this.itemService.deleteItem(id).subscribe(
+      () => {
+        this.items.splice(index, 1);
+        this.dataSource.data = this.items;
+        this.toastr.success("Item is deleted!");
+      },
+      err => {
+        console.log(err);
+        this.toastr.error("Failed to delete Item!", "Server error");
+      }
+    );
   }
   ngOnDestroy() {
-    this.flexMediaWatcher.unsubscribe();
+    if (this.flexMediaWatcher) this.flexMediaWatcher.unsubscribe();
+    if (this.itemSubscription) this.itemSubscription.unsubscribe();
+    if (this.dialogRefSubscription) this.dialogRefSubscription.unsubscribe();
   }
 }
