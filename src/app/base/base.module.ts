@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import {HttpClientModule} from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 import {
   PerfectScrollbarModule,
   PerfectScrollbarConfigInterface,
@@ -46,10 +46,16 @@ import { UserMenuComponent } from "./user-menu/user-menu.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { ToolbarNotificationComponent } from "./toolbar-notification/toolbar-notification.component";
 import { RouterModule } from "@angular/router";
-import {ApiService,AuthService, InvoiceService, ItemService} from '../shared/services';
-import {ToastrModule} from 'ngx-toastr';
-import { CookieService } from 'ngx-cookie-service';
-import { AuthGuard } from '../shared/guard';
+import {
+  ApiService,
+  AuthService,
+  InvoiceService,
+  ItemService,
+  TaxService
+} from "../shared/services";
+import { ToastrModule } from "ngx-toastr";
+import { CookieService } from "ngx-cookie-service";
+import { AuthGuard } from "../shared/guard";
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
@@ -147,10 +153,17 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   ],
 
   providers: [
+    ApiService,
+    AuthService,
+    CookieService,
+    AuthGuard,
+    InvoiceService,
+    ItemService,
+    TaxService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    },ApiService,AuthService,CookieService,AuthGuard,InvoiceService,ItemService
+    }
   ]
 })
 export class BaseModule {}

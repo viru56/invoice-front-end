@@ -1,14 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { TaxDialogComponent, DialogConfig } from "../../shared/dialogs";
 import { MatTableDataSource } from "@angular/material";
-import {Itax} from '../../shared/models';
-
-const TAX_DATA: Itax[] = [
-  { id: 1, name: "C GST", amount: 5, inclusive: false },
-  { id: 2, name: "G GST", amount: 5, inclusive: false },
-  { id: 3, name: "service tax", amount: 8, inclusive: true }
-];
+import { MatSort } from "@angular/material/sort";
+import { Itax } from "../../shared/models";
+import { TaxService } from "src/app/shared/services";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-tax",
@@ -17,11 +14,35 @@ const TAX_DATA: Itax[] = [
 })
 export class TaxComponent implements OnInit {
   displayedColumns: string[] = ["name", "amount", "taxMode", "action"];
-  dataSource: MatTableDataSource<Itax>;
-  constructor(public dialog: MatDialog) {}
+  dataSource: MatTableDataSource<Itax>
+  @ViewChild(MatSort) sort: MatSort;
+  itemLoading: string;
+  constructor(
+    private dialog: MatDialog,
+    private taxService: TaxService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(TAX_DATA);
+    this.itemLoading = "loading...";
+    this.dataSource = new MatTableDataSource([]);
+    this.getAllTaxItems();
+  }
+  getAllTaxItems(): void {
+    this.taxService
+      .getTaxStore()
+      .then(items => {
+        this.dataSource.data = items;
+        setTimeout(() => (this.dataSource.sort = this.sort));
+        if (items.length === 0) {
+          this.itemLoading = "No Item Found";
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        this.itemLoading = `Server Error:   ${err.statusText}`;
+        this.toastr.error("faild to load items", "Server Error");
+      });
   }
   addNewTaxRate(): void {
     DialogConfig.data = null;
@@ -31,20 +52,27 @@ export class TaxComponent implements OnInit {
       .toPromise()
       .then(
         result => {
-          if(result){
-            result.id = TAX_DATA.length + 1;
-            TAX_DATA.push(result);
-            this.dataSource.data = TAX_DATA;
+          if (result) {
+            this.getAllTaxItems();
+            this.toastr.success('New tax item is added!');
           }
         },
         err => console.log(err)
       );
   }
-  deleteTaxRate(index: number): void {
-    TAX_DATA.splice(index,1);
-    this.dataSource.data = TAX_DATA;
+  deleteTaxRate(index: number, id: string): void {
+    this.taxService
+      .deleteTaxItem(index, id)
+      .then(() => {
+        this.getAllTaxItems();
+        this.toastr.success("Tax item is deleted!");
+      })
+      .catch(err => {
+        console.log(err);
+        this.toastr.error("Failed to delete Tax item!", "Server error");
+      });
   }
-  editTaxRate(taxData:Itax): void {
+  editTaxRate(taxData: Itax): void {
     DialogConfig.data = taxData;
     const dialogRef = this.dialog.open(TaxDialogComponent, DialogConfig);
     dialogRef
@@ -52,13 +80,10 @@ export class TaxComponent implements OnInit {
       .toPromise()
       .then(
         result => {
-          if(result){
-            for(let item of TAX_DATA){
-              if(item.id === result.id){
-                item.name = result.name;
-                item.inclusive = result.taxMode;
-                item.amount = result.amount;
-              }
+          if (result) {
+            if (result) {
+              this.getAllTaxItems();
+              this.toastr.success("Tax item is updated!");
             }
           }
         },

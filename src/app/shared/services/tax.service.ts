@@ -1,61 +1,61 @@
 import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
-import { IlineItem } from "../models";
+import { Itax } from "../models";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+
 @Injectable({
   providedIn: "root"
 })
-export class ItemService {
-  private itemStore: IlineItem[];
+export class TaxService {
+  private taxStore: Itax[];
   constructor(private apiService: ApiService) {
-    this.itemStore = null;
+    this.taxStore = null;
   }
-  addItem(body: IlineItem): Promise<boolean> {
+  addTaxItem(body: Itax): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.apiService
-        .post(environment.item_url, body)
+        .post(environment.tax_url, body)
         .toPromise()
         .then(item => {
-          this.itemStore.push(item);
+          this.taxStore.push(item);
           resolve(true);
         })
         .catch(err => reject(err));
     });
   }
-  getItem(id: string): Observable<IlineItem> {
-    return this.apiService.get(`${environment.item_url}/${id}`);
+  getTaxItem(id: string): Observable<Itax> {
+    return this.apiService.get(`${environment.tax_url}/${id}`);
   }
-  getItems(): Observable<IlineItem[]> {
-    return this.apiService.get(environment.item_url);
+  getTaxItems(): Observable<Itax[]> {
+    return this.apiService.get(environment.tax_url);
   }
-  getItemStore():Promise<IlineItem[]> {
+  getTaxStore(): Promise<Itax[]> {
     return new Promise((resolve, reject) => {
-      if (this.itemStore) {
-        resolve(this.itemStore);
+      if (this.taxStore) {
+        resolve(this.taxStore);
       } else {
-        this.getItems()
+        this.getTaxItems()
           .toPromise()
           .then(items => {
-            this.itemStore = items; // cache item data
-            resolve(this.itemStore);
+            this.taxStore = items; // cache item data
+            resolve(this.taxStore);
           })
           .catch(error => reject(error));
       }
     });
   }
-  updateItem(body: IlineItem): Promise<boolean> {
+  updateTaxItem(body: Itax): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.apiService
-        .put(environment.item_url, body)
+        .put(environment.tax_url, body)
         .toPromise()
         .then(() => {
-          for (let item of this.itemStore) {
+          for (let item of this.taxStore) {
             if (item.id === body.id) {
               item.name = body.name;
-              item.description = body.description;
-              item.taxable = body.taxable;
-              item.unitCost = body.unitCost;
+              item.amount = body.amount;
+              item.taxMode = body.taxMode;
             }
           }
           resolve(true);
@@ -63,13 +63,13 @@ export class ItemService {
         .catch(err => reject(err));
     });
   }
-  deleteItem(index: number, id: string): Promise<boolean> {
+  deleteTaxItem(index: number, id: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.apiService
-        .delete(`${environment.item_url}/${id}`)
+        .delete(`${environment.tax_url}/${id}`)
         .toPromise()
         .then(() => {
-          this.itemStore.splice(index, 1);
+          this.taxStore.splice(index, 1);
           resolve(true);
         })
         .catch(err => reject(err));

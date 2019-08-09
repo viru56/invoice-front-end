@@ -19,10 +19,7 @@ export class ItemComponent implements OnInit, OnDestroy {
 
   currentScreenWidth: string = "";
   flexMediaWatcher: Subscription;
-  itemSubscription: Subscription;
-  dialogRefSubscription: Subscription;
   displayedColumns: string[];
-  items: IlineItem[];
   itemLoading: string;
   constructor(
     private mediaObserver: MediaObserver,
@@ -32,8 +29,7 @@ export class ItemComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit() {
     this.itemLoading = "loading...";
-    this.items = [];
-    this.dataSource = new MatTableDataSource(this.items);
+    this.dataSource = new MatTableDataSource([]);
     this.getAllItems();
     // resize table as device resized
     this.flexMediaWatcher = this.mediaObserver.media$.subscribe(
@@ -46,19 +42,20 @@ export class ItemComponent implements OnInit, OnDestroy {
     );
   }
   getAllItems(): void {
-    this.itemService.getItemStore((err, items) => {
-      if (err) {
-        console.log(err);
-        this.toastr.error("faild to load items", "Server Error");
-      } else {
-        this.items = items;
-        this.dataSource.data = this.items;
-        setTimeout(()=>this.dataSource.sort = this.sort);
+    this.itemService
+      .getItemStore()
+      .then(items => {
+        this.dataSource.data = items;
+        setTimeout(() => (this.dataSource.sort = this.sort));
         if (items.length === 0) {
           this.itemLoading = "No Item Found";
         }
-      }
-    });
+      })
+      .catch(err => {
+        console.log(err);
+        this.itemLoading = `Server Error:   ${err.statusText}`;
+        this.toastr.error("faild to load items", "Server Error");
+      });
   }
 
   configTable() {
@@ -76,27 +73,34 @@ export class ItemComponent implements OnInit, OnDestroy {
   addNewItem(): void {
     DialogConfig.data = null;
     const dialogRef = this.dialog.open(ItemDialogComponent, DialogConfig);
-    this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
-      result => {
-        if (result) {
-          this.getAllItems();
-        }
-      },
-      err => console.log(err)
-    );
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(
+        result => {
+          if (result) {
+            this.getAllItems();
+            this.toastr.success('New item is added!')
+          }
+        },
+        err => console.log(err)
+      );
   }
   editItem(item: IlineItem): void {
     DialogConfig.data = item;
     const dialogRef = this.dialog.open(ItemDialogComponent, DialogConfig);
-    this.dialogRefSubscription = dialogRef.afterClosed().subscribe(
-      result => {
-        if (result) {
-          this.getAllItems();
-          this.toastr.success("Item is updated!");
-        }
-      },
-      err => console.log(err)
-    );
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(
+        result => {
+          if (result) {
+            this.getAllItems();
+            this.toastr.success("Item is updated!");
+          }
+        },
+        err => console.log(err)
+      );
   }
   deleteItem(index: number, id: string): void {
     this.itemService
@@ -112,6 +116,5 @@ export class ItemComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     if (this.flexMediaWatcher) this.flexMediaWatcher.unsubscribe();
-    if (this.dialogRefSubscription) this.dialogRefSubscription.unsubscribe();
   }
 }

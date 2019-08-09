@@ -1,9 +1,5 @@
 <div class="dialog ">
-  <form
-    action="submit"
-    [formGroup]="taxForm"
-    (ngSubmit)="submit()"
-  >
+  <form action="submit" [formGroup]="taxForm" (ngSubmit)="submit()">
     <h2 mat-dialog-title>
       {{ title }}
       <button [mat-dialog-close]="false">
@@ -14,7 +10,13 @@
     <mat-dialog-content>
       <div>
         <mat-form-field class="au-wt">
-          <input matInput type="text" autocomplete="off" placeholder="Name" formControlName="name" />
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Name"
+            formControlName="name"
+          />
         </mat-form-field>
       </div>
       <div>
@@ -34,6 +36,9 @@
             ><span style="padding-left: 10px;">Price include tax</span>
           </mat-checkbox>
         </section>
+      </div>
+      <div *ngIf="serverError" class="is-danger">
+        {{ serverError }}
       </div>
     </mat-dialog-content>
     <mat-divider></mat-divider>

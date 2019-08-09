@@ -1,6 +1,7 @@
 export interface Itax {
-  id?: number;
+  id?: string;
   name: string;
   amount: number;
-  inclusive: boolean;
+  taxMode?: string;
+  inclusive:boolean;
 }

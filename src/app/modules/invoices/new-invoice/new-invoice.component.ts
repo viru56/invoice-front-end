@@ -115,9 +115,9 @@ export class NewInvoiceComponent implements OnInit {
     }
   ];
   TAX_DATA: Itax[] = [
-    { id: 1, name: "C GST", amount: 5, inclusive: false },
-    { id: 2, name: "G GST", amount: 5, inclusive: false },
-    { id: 3, name: "service tax", amount: 8, inclusive: true }
+    { id: '1', name: "C GST", amount: 5, inclusive: false },
+    { id: '2', name: "G GST", amount: 5, inclusive: false },
+    { id: '3', name: "service tax", amount: 8, inclusive: true }
   ];
   filteredCustomerOptions: Observable<Icustomer[]>;
   constructor(private fb: FormBuilder) {}

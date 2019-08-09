@@ -9,7 +9,8 @@ export const environment = {
   user_url:"http://localhost:3000/user",
   company_url:"http://localhost:3000/company",
   invoice_url:"http://localhost:3000/invoice",
-  item_url:"http://localhost:3000/item"
+  item_url:"http://localhost:3000/item",
+  tax_url:"http://localhost:3000/tax"
 };
 
 /*
