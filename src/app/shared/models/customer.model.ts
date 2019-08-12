@@ -1,15 +1,10 @@
 export interface Icustomer {
-  id?:number;
-  name: string;
+  id?:string;
+  fullName: string;
   email: string;
   taxId: string;
-  account: string;
+  accountId: string;
   notes: string;
-  collections:number;
-  address: Iaddress;
-}
-
-export interface Iaddress {
   attentionTo: string;
   phone: number;
   address_1: string;
@@ -18,4 +13,5 @@ export interface Iaddress {
   state: string;
   postalCode: number;
   country: string;
+  collections?:number;
 }

@@ -23,14 +23,13 @@ export class NewInvoiceComponent implements OnInit {
   showDiscount: boolean;
   CUST_DATA: Icustomer[] = [
     {
-      id: 1,
-      name: "Virender nehra",
+      id: '1',
+      fullName: "Virender nehra",
       collections: 0,
       email: "nehra.virender@gmail.com",
       taxId: "135343",
-      account: "#00001",
+      accountId: "#00001",
       notes: "this is private notes for the customer",
-      address: {
         attentionTo: "virender",
         address_1: "hoorian arcade",
         address_2: "viganana nagar",
@@ -39,17 +38,15 @@ export class NewInvoiceComponent implements OnInit {
         country: "india",
         phone: 8123465672,
         postalCode: 560075
-      }
     },
     {
-      id: 2,
-      name: "ayush",
+      id: '2',
+      fullName: "ayush",
       collections: 0,
       email: "ayush.yadav@gmail.com",
       taxId: "345345",
-      account: "#00002",
+      accountId: "#00002",
       notes: "this is private notes for the customer",
-      address: {
         attentionTo: "ayush",
         address_1: "hoorian arcade",
         address_2: "viganana nagar",
@@ -58,26 +55,6 @@ export class NewInvoiceComponent implements OnInit {
         country: "india",
         phone: 8123465672,
         postalCode: 560075
-      }
-    },
-    {
-      id: 3,
-      name: "manoj",
-      collections: 0,
-      email: "manoj.ojha@gmail.com",
-      taxId: "13213",
-      account: "#00003",
-      notes: "this is private notes for the customer",
-      address: {
-        attentionTo: "manoj",
-        address_1: "hoorian arcade",
-        address_2: "viganana nagar",
-        city: "bangalore",
-        state: "karnataka",
-        country: "india",
-        phone: 8123465672,
-        postalCode: 560075
-      }
     }
   ];
   ITEM_DATA: IlineItem[] = [
@@ -203,12 +180,12 @@ export class NewInvoiceComponent implements OnInit {
     // this.updateSubtotal();
   }
   displayCustFn(customer?: Icustomer): string | undefined {
-    return customer ? customer.name : undefined;
+    return customer ? customer.fullName : undefined;
   }
   private _filter(name: string): any[] {
     const filterValue = name.toLowerCase();
     return this.CUST_DATA.filter(
-      option => option.name.toLowerCase().indexOf(filterValue) === 0
+      option => option.fullName.toLowerCase().indexOf(filterValue) === 0
     );
   }
   selectedCustomerValue() {

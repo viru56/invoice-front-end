@@ -56,6 +56,7 @@ import {
 import { ToastrModule } from "ngx-toastr";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "../shared/guard";
+import { CustomerService } from '../shared/services/customer.service';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
@@ -160,6 +161,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     InvoiceService,
     ItemService,
     TaxService,
+    CustomerService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

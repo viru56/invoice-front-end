@@ -6,5 +6,6 @@ export const environment = {
   company_url:"/company",
   invoice_url:"/invoice",
   item_url:"/item",
-  tax_url:"/tax"
+  tax_url:"/tax",
+  customer_url:"/customer"
 };

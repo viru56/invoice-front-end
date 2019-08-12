@@ -8,7 +8,7 @@
     </h2>
     <mat-divider></mat-divider>
     <mat-dialog-content>
-      <mat-tab-group >
+      <mat-tab-group>
         <mat-tab label="Basic">
           <div>
             <mat-form-field class="au-wt">
@@ -17,7 +17,7 @@
                 type="text"
                 autocomplete="off"
                 placeholder="Name"
-                formControlName="name"
+                formControlName="fullName"
               />
             </mat-form-field>
           </div>
@@ -38,8 +38,8 @@
                 matInput
                 type="text"
                 autocomplete="off"
-                placeholder="Account (generated if blank)"
-                formControlName="account"
+                placeholder="AccountId"
+                formControlName="accountId"
               />
             </mat-form-field>
           </div>
@@ -154,6 +154,9 @@
           </div>
         </mat-tab>
       </mat-tab-group>
+      <div *ngIf="serverError" class="is-danger">
+        {{ serverError }}
+      </div>
     </mat-dialog-content>
     <mat-divider></mat-divider>
     <mat-dialog-actions align="end">

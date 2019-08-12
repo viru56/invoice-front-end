@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { Iuser } from "../models";
+import { Router } from "@angular/router";
 @Injectable({
   providedIn: "root"
 })
@@ -13,9 +14,9 @@ export class AuthService {
   static userStore: Iuser[];
   constructor(
     private apiService: ApiService,
-    private cookieService: CookieService
-  ) {
-  }
+    private cookieService: CookieService,
+    private router: Router
+  ) {}
   registerCompany(body: any): Observable<any> {
     return this.apiService.post(`${environment.company_url}`, body);
   }
@@ -91,6 +92,7 @@ export class AuthService {
   }
   logout() {
     this.cookieService.deleteAll();
+    this.router.navigateByUrl("/login");
   }
 
   getUser(): Observable<Iuser> {
@@ -104,10 +106,17 @@ export class AuthService {
         this.getUser()
           .toPromise()
           .then(user => {
-            AuthService.currentUser = user;
-            resolve(user);
+            if(user){
+              AuthService.currentUser = user;
+              resolve(user);
+            }else {
+              this.logout();
+            }
           })
-          .catch(err => reject(err));
+          .catch(err => {
+            reject(err);
+            this.logout();
+          });
       }
     });
   }
