@@ -7,9 +7,8 @@ import { environment } from "../../../environments/environment";
   providedIn: "root"
 })
 export class ItemService {
-  private itemStore: IlineItem[];
+  static itemStore: IlineItem[];
   constructor(private apiService: ApiService) {
-    this.itemStore = null;
   }
   addItem(body: IlineItem): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -17,7 +16,7 @@ export class ItemService {
         .post(environment.item_url, body)
         .toPromise()
         .then(item => {
-          this.itemStore.push(item);
+          ItemService.itemStore.push(item);
           resolve(true);
         })
         .catch(err => reject(err));
@@ -31,14 +30,14 @@ export class ItemService {
   }
   getItemStore():Promise<IlineItem[]> {
     return new Promise((resolve, reject) => {
-      if (this.itemStore) {
-        resolve(this.itemStore);
+      if (ItemService.itemStore) {
+        resolve(ItemService.itemStore);
       } else {
         this.getItems()
           .toPromise()
           .then(items => {
-            this.itemStore = items; // cache item data
-            resolve(this.itemStore);
+            ItemService.itemStore = items; // cache item data
+            resolve(ItemService.itemStore);
           })
           .catch(error => reject(error));
       }
@@ -50,7 +49,7 @@ export class ItemService {
         .put(environment.item_url, body)
         .toPromise()
         .then(() => {
-          for (let item of this.itemStore) {
+          for (let item of ItemService.itemStore) {
             if (item.id === body.id) {
               item.name = body.name;
               item.description = body.description;
@@ -69,7 +68,7 @@ export class ItemService {
         .delete(`${environment.item_url}/${id}`)
         .toPromise()
         .then(() => {
-          this.itemStore.splice(index, 1);
+          ItemService.itemStore.splice(index, 1);
           resolve(true);
         })
         .catch(err => reject(err));

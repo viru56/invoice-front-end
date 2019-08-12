@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 import { CookieService } from "ngx-cookie-service";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { Iuser } from "../models";
@@ -10,12 +10,58 @@ import { Iuser } from "../models";
 })
 export class AuthService {
   static currentUser: Iuser;
+  static userStore: Iuser[];
   constructor(
     private apiService: ApiService,
     private cookieService: CookieService
-  ) {}
+  ) {
+  }
   registerCompany(body: any): Observable<any> {
     return this.apiService.post(`${environment.company_url}`, body);
+  }
+  addNewUser(body: {
+    fullName: string;
+    email: string;
+    role: string;
+  }): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .post(environment.user_url, body)
+        .toPromise()
+        .then(item => {
+          AuthService.userStore.push(item);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  userRoleUpdate(body: any): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .put(`${environment.user_url}/role`, body)
+        .toPromise()
+        .then(item => {
+          for (let item of AuthService.userStore) {
+            if (item.id === body.id) {
+              item.role = body.role;
+            }
+          }
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  deleteUser(index: number, id: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .delete(`${environment.user_url}/${id}`)
+        .toPromise()
+        .then(() => {
+          AuthService.userStore.splice(index, 1);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
   }
   accountActivation(body: { password: string }): Observable<any> {
     return this.apiService.put(
@@ -47,13 +93,41 @@ export class AuthService {
     this.cookieService.deleteAll();
   }
 
-  getUserDetails(): Observable<Iuser> {
-    if (AuthService.currentUser) {
-      return new Observable(observer => observer.next(AuthService.currentUser));
-    } else {
-      return this.apiService
-        .get(`${environment.user_url}/details`)
-        .pipe(tap(user => (AuthService.currentUser = user)));
-    }
+  getUser(): Observable<Iuser> {
+    return this.apiService.get(`${environment.user_url}/details`);
+  }
+  getUserDetails(): Promise<Iuser> {
+    return new Promise((resolve, reject) => {
+      if (AuthService.currentUser) {
+        resolve(AuthService.currentUser);
+      } else {
+        this.getUser()
+          .toPromise()
+          .then(user => {
+            AuthService.currentUser = user;
+            resolve(user);
+          })
+          .catch(err => reject(err));
+      }
+    });
+  }
+
+  getUsers(): Observable<Iuser[]> {
+    return this.apiService.get(environment.user_url);
+  }
+  getUserStore(): Promise<Iuser[]> {
+    return new Promise((resolve, reject) => {
+      if (AuthService.userStore) {
+        resolve(AuthService.userStore);
+      } else {
+        this.getUsers()
+          .toPromise()
+          .then(items => {
+            AuthService.userStore = items; // cache item data
+            resolve(AuthService.userStore);
+          })
+          .catch(error => reject(error));
+      }
+    });
   }
 }

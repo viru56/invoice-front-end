@@ -8,9 +8,8 @@ import { environment } from "../../../environments/environment";
   providedIn: "root"
 })
 export class TaxService {
-  private taxStore: Itax[];
+  static taxStore: Itax[];
   constructor(private apiService: ApiService) {
-    this.taxStore = null;
   }
   addTaxItem(body: Itax): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -18,7 +17,7 @@ export class TaxService {
         .post(environment.tax_url, body)
         .toPromise()
         .then(item => {
-          this.taxStore.push(item);
+          TaxService.taxStore.push(item);
           resolve(true);
         })
         .catch(err => reject(err));
@@ -32,14 +31,14 @@ export class TaxService {
   }
   getTaxStore(): Promise<Itax[]> {
     return new Promise((resolve, reject) => {
-      if (this.taxStore) {
-        resolve(this.taxStore);
+      if (TaxService.taxStore) {
+        resolve(TaxService.taxStore);
       } else {
         this.getTaxItems()
           .toPromise()
           .then(items => {
-            this.taxStore = items; // cache item data
-            resolve(this.taxStore);
+            TaxService.taxStore = items; // cache item data
+            resolve(TaxService.taxStore);
           })
           .catch(error => reject(error));
       }
@@ -51,7 +50,7 @@ export class TaxService {
         .put(environment.tax_url, body)
         .toPromise()
         .then(() => {
-          for (let item of this.taxStore) {
+          for (let item of TaxService.taxStore) {
             if (item.id === body.id) {
               item.name = body.name;
               item.amount = body.amount;
@@ -69,7 +68,7 @@ export class TaxService {
         .delete(`${environment.tax_url}/${id}`)
         .toPromise()
         .then(() => {
-          this.taxStore.splice(index, 1);
+          TaxService.taxStore.splice(index, 1);
           resolve(true);
         })
         .catch(err => reject(err));

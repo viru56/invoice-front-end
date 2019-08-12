@@ -1,50 +1,85 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { TeamDialogComponent, DialogConfig } from "../../shared/dialogs";
-import { Iteam } from '../../shared/models';
-import { MatTableDataSource } from '@angular/material';
-
-const TEAM_DATA: Iteam[] = [
-  {id:1,name: 'abc', emailAddress:'abc@gmail.com',role:'admin'},
-  {id:2,name: 'xyz', emailAddress:'xyz@gmail.com',role:'readOnly'},
-  {id:3,name: 'pqr', emailAddress:'pqr@gmail.com',role:'employee'}
-];
+import { Iteam, Iuser } from "../../shared/models";
+import { MatTableDataSource } from "@angular/material";
+import { AuthService } from "../../shared/services";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
-  selector: 'app-team',
-  templateUrl: './team.component.html',
-  styleUrls: ['./team.component.scss']
+  selector: "app-team",
+  templateUrl: "./team.component.html",
+  styleUrls: ["./team.component.scss"]
 })
 export class TeamComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'emailAddress', 'role', 'action'];
-  dataSource: MatTableDataSource<Iteam>;
-  constructor(public dialog: MatDialog) { }
+  displayedColumns: string[] = [
+    "fullName",
+    "email",
+    "role",
+    "status",
+    "action"
+  ];
+  dataSource: MatTableDataSource<Iuser>;
+  itemLoading: string;
+  currentUser: Iuser;
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(TEAM_DATA);
+    this.itemLoading = "loading...";
+    this.dataSource = new MatTableDataSource([]);
+    this.getAllUsers();
+    this.authService.getUserDetails().then(user=>this.currentUser = user,err=>console.log(err));
   }
-  addNewUser():void{
-      DialogConfig.data = null;
-      const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
-      dialogRef
-        .afterClosed()
-        .toPromise()
-        .then(
-          result => {
-            if(result){
-              result.id = TEAM_DATA.length + 1;
-              TEAM_DATA.push(result);
-              this.dataSource.data = TEAM_DATA;
-            }
-          },
-          err => console.log(err)
-        );
+  getAllUsers(): void {
+    this.authService
+      .getUserStore()
+      .then(items => {
+        this.dataSource.data = items;
+        if (items.length === 0) {
+          this.itemLoading = "No User Found";
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        this.itemLoading = `Server Error:   ${err.statusText}`;
+        this.toastr.error("faild to load users", "Server Error");
+      });
   }
-  deleteUser(index:number):void{
-    TEAM_DATA.splice(index,1);
-    this.dataSource.data = TEAM_DATA;
+  addNewUser(): void {
+    DialogConfig.data = null;
+    const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(
+        result => {
+          if (result) {
+            this.toastr.success(
+              "New user account is created and send a mail to set password!"
+            );
+            this.getAllUsers();
+          }
+        },
+        err => console.log(err)
+      );
   }
-  editUser(user:Iteam):void{
+  deleteUser(index: number, id: string): void {
+    this.authService
+      .deleteUser(index, id)
+      .then(() => {
+        this.getAllUsers();
+        this.toastr.success("User is deleted!");
+      })
+      .catch(err => {
+        console.log(err);
+        this.toastr.error("Failed to delete user!", "Server error");
+      });
+  }
+  editUser(user: Iteam): void {
     DialogConfig.data = user;
     const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
     dialogRef
@@ -52,12 +87,9 @@ export class TeamComponent implements OnInit {
       .toPromise()
       .then(
         result => {
-          if(result){
-            for(let item of TEAM_DATA){
-              if(item.id === result.id){
-                item.role = result.role
-              }
-            }
+          if (result) {
+            this.toastr.success("User is updated!");
+            this.getAllUsers();
           }
         },
         err => console.log(err)

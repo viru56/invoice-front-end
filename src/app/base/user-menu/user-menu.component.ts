@@ -30,7 +30,7 @@ export class UserMenuComponent implements OnInit {
   constructor(private elementRef: ElementRef, private authService:AuthService) { }
 
   ngOnInit() {
-    this.authService.getUserDetails().subscribe(user=>this.currentUser= user);
+    this.authService.getUserDetails().then(user=>this.currentUser= user,(err)=> console.log(err));
   }
   logout(){
     this.authService.logout();

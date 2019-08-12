@@ -6,5 +6,6 @@ export interface Iuser {
     phone?:Number;
     email:String;
     role:String;
+    status:string;
     company?:Icompany;
 }

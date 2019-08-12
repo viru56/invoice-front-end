@@ -14,8 +14,8 @@
             matInput
             type="text"
             autocomplete="off"
-            placeholder="Name"
-            formControlName="name"
+            placeholder="Full Name"
+            formControlName="fullName"
           />
         </mat-form-field>
       </div>
@@ -26,7 +26,7 @@
             type="text"
             autocomplete="off"
             placeholder="Email Address"
-            formControlName="emailAddress"
+            formControlName="email"
           />
         </mat-form-field>
       </div>
@@ -38,6 +38,61 @@
             }}</mat-option>
           </mat-select>
         </mat-form-field>
+      </div>
+      <div *ngIf="serverError" class="is-danger">
+        {{ serverError }}
+      </div>
+      <div *ngIf="!serverError">
+        <ul style="font-size: 0.8rem;padding-left: 15px;">
+          <li
+            *ngIf="
+              teamForm.value.role === 'admin' ||
+              teamForm.value.role === 'employee' ||
+              teamForm.value.role === 'readOnly'
+            "
+          >
+            Read customer-related data for this business
+          </li>
+          <li
+            *ngIf="
+              teamForm.value.role === 'admin' ||
+              teamForm.value.role === 'employee'
+            "
+          >
+            Create and modify customer-related data, including customers,
+            invoices, and payments
+          </li>
+          <li
+            *ngIf="
+              teamForm.value.role === 'admin' ||
+              teamForm.value.role === 'employee'
+            "
+          >
+            Modify settings, including the business profile, payment settings,
+            and invoicing settings
+          </li>
+          <li
+            *ngIf="
+              teamForm.value.role === 'admin' ||
+              teamForm.value.role === 'employee'
+            "
+          >
+            Manage the pricing catalog, including items, plans, coupons, and
+            taxes
+          </li>
+          <li
+            *ngIf="
+              teamForm.value.role === 'admin' ||
+              teamForm.value.role === 'employee'
+            "
+          >
+            Access and manage billing from us (Indi-Invoice)
+          </li>
+          <li *ngIf="teamForm.value.role === 'admin'">
+            Administer the business: add/remove team members and manage API
+            credentials
+          </li>
+        </ul>
       </div>
     </mat-dialog-content>
     <mat-divider></mat-divider>

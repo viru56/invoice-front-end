@@ -1,13 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
-import { AuthService } from "./shared/services";
 import {
   Router,
-  Event,
-  NavigationStart,
-  NavigationEnd,
-  NavigationError
 } from "@angular/router";
+import { Location } from "@angular/common";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -17,15 +13,17 @@ export class AppComponent implements OnInit {
   title = "ind-invoice";
   constructor(
     private cookieService: CookieService,
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
   getRouteAnimation(outlet) {
     return outlet.activatedRouteData.animation;
   }
   ngOnInit(): void {
-    // if (this.cookieService.check("authorization")) {
-    //   this.router.navigateByUrl('/auth/dashboard');
-    // }
+    if (this.cookieService.check("authorization")) {
+      this.location.path()
+        ? this.router.navigateByUrl(this.location.path())
+        : this.router.navigateByUrl("/auth/dashboard");
+    }
   }
 }

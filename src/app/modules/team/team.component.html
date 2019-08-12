@@ -12,22 +12,27 @@
 <div class="table-wrapper" *ngIf="dataSource.data.length > 0">
   <mat-table [dataSource]="dataSource" class="mat-elevation-z1">
     <!-- Name Column -->
-    <ng-container matColumnDef="name">
+    <ng-container matColumnDef="fullName">
       <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.fullName }} </mat-cell>
     </ng-container>
 
     <!-- Email Address Column -->
-    <ng-container matColumnDef="emailAddress">
+    <ng-container matColumnDef="email">
       <mat-header-cell *matHeaderCellDef> Email address </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.emailAddress }}</mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.email }}</mat-cell>
+    </ng-container>
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.status }}</mat-cell>
     </ng-container>
 
     <!-- Role Column -->
     <ng-container matColumnDef="role">
       <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
       <mat-cell *matCellDef="let element"
-        ><span class="tax-mode">{{ element.role }}</span>
+        ><span class="role">{{ element.role }}</span>
       </mat-cell>
     </ng-container>
 
@@ -35,13 +40,16 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
       <mat-cell *matCellDef="let element; let index = index">
-        <div>
+        <div *ngIf="currentUser && currentUser.id !== element.id">
           <mat-icon (click)="editUser(element)" matTooltip="edit"
-            >edit</mat-icon
-          >
-          <mat-icon color="warn" (click)="deleteUser(index)" matTooltip="delete"
-            >delete_forever</mat-icon
-          >
+            >edit
+          </mat-icon>
+          <mat-icon
+            color="warn"
+            (click)="deleteUser(index, element.id)"
+            matTooltip="delete"
+            >delete_forever
+          </mat-icon>
         </div>
       </mat-cell>
     </ng-container>
@@ -51,5 +59,5 @@
 </div>
 
 <div *ngIf="dataSource.data.length === 0" class="mat-elevation-z1">
-  <p class="p20">No Tax Found</p>
+  <p class="p20">{{ itemLoading }}</p>
 </div>
