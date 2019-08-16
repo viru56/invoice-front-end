@@ -1,8 +1,10 @@
 export interface Icompany {
+  id?:string;
   name: String;
   email?: String;
   sendTo?: String;
-  logoUrl?: String;
+  logoUrl?: string;
+  logo?:{data:any,contentType:string};
   address?: String;
   city?: String;
   state?: String;

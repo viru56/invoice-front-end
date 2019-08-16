@@ -8,7 +8,20 @@ import {
 } from "@angular/forms";
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
-import { Icustomer, IlineItem, Iinvoice, Itax } from "../../../shared/models";
+import {
+  Icustomer,
+  IlineItem,
+  Iinvoice,
+  Itax,
+  Iuser
+} from "../../../shared/models";
+import {
+  ItemService,
+  CustomerService,
+  TaxService,
+  AuthService
+} from "src/app/shared/services";
+import { ToastrService } from "ngx-toastr";
 @Component({
   selector: "app-new-invoice",
   templateUrl: "./new-invoice.component.html",
@@ -21,85 +34,22 @@ export class NewInvoiceComponent implements OnInit {
   invoiceLogo = "assets/branding-sample.png";
   seletedCustomer = new FormControl();
   showDiscount: boolean;
-  CUST_DATA: Icustomer[] = [
-    {
-      id: '1',
-      fullName: "Virender nehra",
-      collections: 0,
-      email: "nehra.virender@gmail.com",
-      taxId: "135343",
-      accountId: "#00001",
-      notes: "this is private notes for the customer",
-        attentionTo: "virender",
-        address_1: "hoorian arcade",
-        address_2: "viganana nagar",
-        city: "bangalore",
-        state: "karnataka",
-        country: "india",
-        phone: 8123465672,
-        postalCode: 560075
-    },
-    {
-      id: '2',
-      fullName: "ayush",
-      collections: 0,
-      email: "ayush.yadav@gmail.com",
-      taxId: "345345",
-      accountId: "#00002",
-      notes: "this is private notes for the customer",
-        attentionTo: "ayush",
-        address_1: "hoorian arcade",
-        address_2: "viganana nagar",
-        city: "bangalore",
-        state: "karnataka",
-        country: "india",
-        phone: 8123465672,
-        postalCode: 560075
-    }
-  ];
-  ITEM_DATA: IlineItem[] = [
-    {
-      id: '1',
-      name: "abc",
-      description: "this is a test item",
-      type: "service",
-      unitCost: 100,
-      taxable: true
-    },
-    {
-      id: '2',
-      name: "work",
-      description: "thai adf kladjf kladjf kladfj akldfa klsdfakls ",
-      type: "product",
-      unitCost: 100,
-      taxable: true
-    },
-    {
-      id: '3',
-      name: "iphone",
-      description: "If you do not have an iphone,you do not have an iphone",
-      type: "product",
-      unitCost: 100000,
-      taxable: true
-    },
-    {
-      id: '4',
-      name: "qwerty",
-      description: "this is a blackberry phone",
-      type: "product",
-      unitCost: 10000,
-      taxable: false
-    }
-  ];
-  TAX_DATA: Itax[] = [
-    { id: '1', name: "C GST", amount: 5, inclusive: false },
-    { id: '2', name: "G GST", amount: 5, inclusive: false },
-    { id: '3', name: "service tax", amount: 8, inclusive: true }
-  ];
+  customerData: Icustomer[] = [];
+  itemData: IlineItem[] = [];
+  taxData: Itax[] = [];
+  currentUser: Iuser;
   filteredCustomerOptions: Observable<Icustomer[]>;
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private itemService: ItemService,
+    private taxService: TaxService,
+    private customerService: CustomerService,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
+    this.getData();
     this.showDiscount = false;
     this.invoice = {
       invoiceNumber: null,
@@ -134,7 +84,7 @@ export class NewInvoiceComponent implements OnInit {
     this.filteredCustomerOptions = this.seletedCustomer.valueChanges.pipe(
       startWith(""),
       map(value => (typeof value === "string" ? value : value.name)),
-      map(name => (name ? this._filter(name) : this.CUST_DATA.slice()))
+      map(name => (name ? this._filter(name) : this.customerData.slice()))
     );
     this.invoiceForm = this.fb.group({
       invoiceName: ["INVOICE", [Validators.required]],
@@ -161,6 +111,36 @@ export class NewInvoiceComponent implements OnInit {
       notes: [""]
     });
   }
+  getData() {
+    this.authService.getUserDetails().then(
+      user => (this.currentUser = user),
+      err => {
+        console.log(err);
+        this.toastr.error("Can not get user", "Server Error");
+      }
+    );
+    this.itemService.getItemStore().then(
+      data => (this.itemData = data),
+      err => {
+        console.log(err);
+        this.toastr.error("Can not get Line Item", "Server Error");
+      }
+    );
+    this.taxService.getTaxStore().then(
+      data => (this.taxData = data),
+      err => {
+        console.log(err);
+        this.toastr.error("Can not get Tax Item", "Server Error");
+      }
+    );
+    this.customerService.getcustomerStore().then(
+      data => (this.customerData = data),
+      err => {
+        console.log(err);
+        this.toastr.error("Can not get Customers", "Server Error");
+      }
+    );
+  }
   get lineItems() {
     return this.invoiceForm.get("lineItems") as FormArray;
   }
@@ -184,7 +164,7 @@ export class NewInvoiceComponent implements OnInit {
   }
   private _filter(name: string): any[] {
     const filterValue = name.toLowerCase();
-    return this.CUST_DATA.filter(
+    return this.customerData.filter(
       option => option.fullName.toLowerCase().indexOf(filterValue) === 0
     );
   }
@@ -223,15 +203,17 @@ export class NewInvoiceComponent implements OnInit {
     this.updateTotal();
   }
   updateTotal(): void {
+    let totalTaxRate = 0;
     if (this.invoice.subtotal > 0) {
-      this.invoice.total = this.invoice.nonTaxableAmount;
-      this.invoice.total = this.invoice.total + this.invoice.taxableAmount;
-      if (this.invoice.tax.length > 0) {
-        for (let tax of this.invoice.tax) {
-          this.invoice.total =
-            this.invoice.total - (this.invoice.total * tax.amount) / 100;
+      for (let tax of this.invoice.tax) {
+        if (tax.taxMode === "Exclusive") {
+          totalTaxRate += tax.amount;
         }
       }
+      this.invoice.total =
+        this.invoice.nonTaxableAmount +
+        (this.invoice.taxableAmount -
+          (this.invoice.taxableAmount * totalTaxRate) / 100);
       if (this.invoiceForm.value.discount_type === "percentage") {
         this.invoice.total =
           this.invoice.total -
@@ -267,6 +249,7 @@ export class NewInvoiceComponent implements OnInit {
   }
   removeTaxItem(index: number): void {
     this.invoice.tax.splice(index, 1);
+    this.updateTotal();
   }
   onSubmit(): void {
     this.invoice.invoiceName = this.invoiceForm.value.invoiceName;

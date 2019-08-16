@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
         {
           name: "",
           amount: 0,
-          inclusive: false
+          taxMode :'Exclusive'
         }
       ],
       subtotal: 0.0,
@@ -232,7 +232,7 @@ export class HomeComponent implements OnInit {
     this.invoice.tax = [
       {
         amount: this.invoiceForm.value.tax,
-        inclusive: false,
+        taxMode:'Exclusive',
         name: ""
       }
     ];

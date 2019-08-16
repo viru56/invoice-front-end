@@ -13,6 +13,6 @@ export class InvoiceService {
     invoiceFormData.append('file',body.file);
     invoiceFormData.append('invoice',JSON.stringify(body))
    return  this.apiService
-      .upload(`${environment.invoice_url}/${path}`,invoiceFormData,path==='mail'?'json':'arrayBuffer');
+      .uploadPost(`${environment.invoice_url}/${path}`,invoiceFormData,path==='mail'?'json':'arrayBuffer');
   }
 }

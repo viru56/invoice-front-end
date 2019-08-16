@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { AuthService } from "src/app/shared/services";
+import { CompanyService } from "src/app/shared/services";
 import { ToastrService } from "ngx-toastr";
 @Component({
   selector: "app-register",
@@ -36,7 +36,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private companyService: CompanyService,
     private tostr: ToastrService
   ) {}
 
@@ -79,9 +79,8 @@ export class RegisterComponent implements OnInit {
   }
   submit() {
     this.serverError = '';
-    this.authService
-      .registerCompany(this.userForm.value)
-      .toPromise()
+    this.companyService
+      .addCompany(this.userForm.value)
       .then(res => {
         console.log(res);
         this.tostr.success(res.message);

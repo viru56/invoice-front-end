@@ -17,9 +17,6 @@ export class AuthService {
     private cookieService: CookieService,
     private router: Router
   ) {}
-  registerCompany(body: any): Observable<any> {
-    return this.apiService.post(`${environment.company_url}`, body);
-  }
   addNewUser(body: {
     fullName: string;
     email: string;
@@ -96,7 +93,7 @@ export class AuthService {
   }
 
   getUser(): Observable<Iuser> {
-    return this.apiService.get(`${environment.user_url}/details`);
+    return this.apiService.get(`${environment.user_url}`);
   }
   getUserDetails(): Promise<Iuser> {
     return new Promise((resolve, reject) => {
@@ -110,7 +107,7 @@ export class AuthService {
               AuthService.currentUser = user;
               resolve(user);
             }else {
-              this.logout();
+             this.logout();
             }
           })
           .catch(err => {
@@ -122,7 +119,7 @@ export class AuthService {
   }
 
   getUsers(): Observable<Iuser[]> {
-    return this.apiService.get(environment.user_url);
+    return this.apiService.get(`${environment.user_url}/all`);
   }
   getUserStore(): Promise<Iuser[]> {
     return new Promise((resolve, reject) => {

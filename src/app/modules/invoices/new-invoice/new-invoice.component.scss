@@ -1,4 +1,5 @@
 .header {
+  height: 50px;
   p {
     margin: 20px 20px 20px 20px;
     .title {
@@ -17,7 +18,10 @@
 }
 
 .new-invoice-container {
-  margin: 0 20px;
+  background: #fff;
+  margin: 20px;
+  overflow: auto;
+  height: 80%;
   .logo-preview {
     max-width: 200px;
     max-height: 150px;
@@ -99,7 +103,7 @@
     .clear-icon {
       display: none;
       position: absolute;
-      top: 5px;
+      top: 0;
       right: 5px;
     }
   }
@@ -108,10 +112,19 @@
       display: block;
     }
   }
+  .total-tax{
+    margin: 0;
+    font-size: 0.75rem;
+    margin-top: -10px;
+  }
 }
 
 @media screen and (max-width: 699px) {
     .new-invoice-container {
         margin: 0;
+        height: 80%;
+    }
+    .header{
+      height: 12%;
     }
   }
