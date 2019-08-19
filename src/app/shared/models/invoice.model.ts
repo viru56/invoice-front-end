@@ -1,18 +1,20 @@
 import { Itax } from "./tax.model";
 import { IlineItem } from "./item.model";
 export interface Iinvoice {
+  id?:string;
   label?: IinvoiceTextLabel;
-  invoiceName: string;
-  invoiceNumber: number;
+  name: string;
+  number: number;
   sender: string;
   receiver: string;
   date: string;
   paymentTerms?: string;
   dueDate: string;
-  lineItem: IlineItem;
+  lineItems: IlineItem;
   subtotal: number;
-  discount: Itype;
-  tax?: Itax[];
+  discountType: string;
+  discountValue:number;
+  taxItems?: Itax[];
   total: number;
   shipping: number;
   amountPaid: number;
@@ -27,10 +29,12 @@ export interface Iinvoice {
     receiver:string;
     subject:string;
     message:string;
-  }
+  },
+  customer?:string;
+  customerName?:string;
 }
 export interface IinvoiceTextLabel {
-  invoiceName: string;
+  name: string;
   date: string;
   paymentTerms: string;
   dueDate: string;

@@ -20,7 +20,7 @@ export class HomeDialogComponent implements OnInit {
       receiver: ["", [Validators.required, Validators.email]],
       subject: [
         {
-          value: `Invoice from ${this.data.sender} #${this.data.invoiceNumber}`,
+          value: `Invoice from ${this.data.sender} #${this.data.number}`,
           disabled: true
         }
       ],
@@ -32,7 +32,7 @@ export class HomeDialogComponent implements OnInit {
   }
   submit(): void {
     this.invoiceForm.value.subject = `Invoice from ${this.data.sender} #${
-      this.data.invoiceNumber
+      this.data.number
     }`;
     this.dialogRef.close(this.invoiceForm.value);
   }

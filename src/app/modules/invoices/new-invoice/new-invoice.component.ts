@@ -19,9 +19,12 @@ import {
   ItemService,
   CustomerService,
   TaxService,
-  AuthService
+  AuthService,
+  InvoiceService
 } from "src/app/shared/services";
 import { ToastrService } from "ngx-toastr";
+import { environment } from "src/environments/environment";
+import { Router } from "@angular/router";
 @Component({
   selector: "app-new-invoice",
   templateUrl: "./new-invoice.component.html",
@@ -31,13 +34,14 @@ export class NewInvoiceComponent implements OnInit {
   invoiceForm: FormGroup;
   filterValue: string;
   invoice: Iinvoice;
-  invoiceLogo = "assets/branding-sample.png";
+  invoiceLogo: string;
   seletedCustomer = new FormControl();
   showDiscount: boolean;
   customerData: Icustomer[] = [];
   itemData: IlineItem[] = [];
   taxData: Itax[] = [];
   currentUser: Iuser;
+  formError: string;
   filteredCustomerOptions: Observable<Icustomer[]>;
   constructor(
     private fb: FormBuilder,
@@ -45,21 +49,23 @@ export class NewInvoiceComponent implements OnInit {
     private taxService: TaxService,
     private customerService: CustomerService,
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private invoiceService: InvoiceService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.getData();
     this.showDiscount = false;
     this.invoice = {
-      invoiceNumber: null,
-      invoiceName: "INVOICE",
+      number: null,
+      name: "INVOICE",
       sender: "",
       receiver: "",
       date: new Date().toDateString(),
       dueDate: new Date().toString(),
       paymentTerms: null,
-      lineItem: {
+      lineItems: {
         name: "",
         quantity: 0,
         unitCost: 0,
@@ -71,15 +77,13 @@ export class NewInvoiceComponent implements OnInit {
       nonTaxableAmount: 0,
       total: 0,
       balanceDue: 0,
-      discount: {
-        type: "flat",
-        value: 0
-      },
+      discountType: "flat",
+      discountValue: 0,
       amountPaid: 0,
       shipping: 0,
       notes: "",
       terms: "",
-      tax: []
+      taxItems: []
     };
     this.filteredCustomerOptions = this.seletedCustomer.valueChanges.pipe(
       startWith(""),
@@ -87,8 +91,8 @@ export class NewInvoiceComponent implements OnInit {
       map(name => (name ? this._filter(name) : this.customerData.slice()))
     );
     this.invoiceForm = this.fb.group({
-      invoiceName: ["INVOICE", [Validators.required]],
-      invoiceNumber: [""],
+      name: ["INVOICE", [Validators.required]],
+      number: [""],
       date: [new Date(), [Validators.required]],
       dueDate: [
         new Date(new Date().setDate(new Date().getDate() + 7)),
@@ -106,14 +110,19 @@ export class NewInvoiceComponent implements OnInit {
           amount: [0]
         })
       ]),
-      discount: [0],
-      discount_type: ["flat"],
+      discountValue: [0],
+      discountType: ["flat"],
       notes: [""]
     });
   }
   getData() {
     this.authService.getUserDetails().then(
-      user => (this.currentUser = user),
+      user => {
+        this.currentUser = user;
+        this.invoiceLogo = `${environment.base_url}/${
+          this.currentUser.company.logoUrl
+        }`;
+      },
       err => {
         console.log(err);
         this.toastr.error("Can not get user", "Server Error");
@@ -157,7 +166,7 @@ export class NewInvoiceComponent implements OnInit {
   }
   removeLineItem(index: number): void {
     this.lineItems.removeAt(index);
-    // this.updateSubtotal();
+    this.updateSubtotal();
   }
   displayCustFn(customer?: Icustomer): string | undefined {
     return customer ? customer.fullName : undefined;
@@ -169,6 +178,7 @@ export class NewInvoiceComponent implements OnInit {
     );
   }
   selectedCustomerValue() {
+    this.invoice.customer = this.seletedCustomer.value.id;
     console.log(this.seletedCustomer.value);
   }
   selectedLineItem() {
@@ -203,65 +213,80 @@ export class NewInvoiceComponent implements OnInit {
     this.updateTotal();
   }
   updateTotal(): void {
-    let totalTaxRate = 0;
+    let exclusiveTax = 0;
     if (this.invoice.subtotal > 0) {
-      for (let tax of this.invoice.tax) {
+      for (let tax of this.invoice.taxItems) {
         if (tax.taxMode === "Exclusive") {
-          totalTaxRate += tax.amount;
+          exclusiveTax += tax.amount;
         }
       }
       this.invoice.total =
-        this.invoice.nonTaxableAmount +
-        (this.invoice.taxableAmount -
-          (this.invoice.taxableAmount * totalTaxRate) / 100);
-      if (this.invoiceForm.value.discount_type === "percentage") {
+        this.invoice.taxableAmount +
+        (this.invoice.taxableAmount * exclusiveTax) / 100 +
+        this.invoice.nonTaxableAmount;
+      if (this.invoiceForm.value.discountType === "percentage") {
         this.invoice.total =
           this.invoice.total -
-          (this.invoice.total * this.invoiceForm.value.discount) / 100;
-      } else if (this.invoiceForm.value.discount_type === "flat") {
+          (this.invoice.total * this.invoiceForm.value.discountValue) / 100;
+      } else if (this.invoiceForm.value.discountType === "flat") {
         this.invoice.total =
-          this.invoice.total - this.invoiceForm.value.discount;
+          this.invoice.total - this.invoiceForm.value.discountValue;
       }
       if (this.invoiceForm.value.shippin) {
         this.invoice.total -= this.invoiceForm.value.shipping;
       }
-      this.invoice.balanceDue =
-        this.invoice.total - this.invoiceForm.value.amountPaid;
+      this.invoice.balanceDue = Number(
+        (this.invoice.total - this.invoiceForm.value.amountPaid).toFixed(2)
+      );
     }
   }
   removeDiscount(): void {
     this.showDiscount = false;
-    this.invoiceForm.controls["discount"].setValue(0);
+    this.invoiceForm.controls["discountValue"].setValue(0);
     this.updateTotal();
   }
   selectedTaxChange(): void {
     let newItem = true;
-    for (let tax of this.invoice.tax) {
+    for (let tax of this.invoice.taxItems) {
       if (tax.id === this.invoiceForm.value.selectedTax.id) {
         newItem = false;
       }
     }
     if (newItem) {
-      this.invoice.tax.push(this.invoiceForm.value.selectedTax);
+      this.invoice.taxItems.push(this.invoiceForm.value.selectedTax);
       this.updateTotal();
     }
     this.invoiceForm.controls["selectedTax"].setValue(null);
   }
   removeTaxItem(index: number): void {
-    this.invoice.tax.splice(index, 1);
+    this.invoice.taxItems.splice(index, 1);
     this.updateTotal();
   }
   onSubmit(): void {
-    this.invoice.invoiceName = this.invoiceForm.value.invoiceName;
-    this.invoice.invoiceNumber = this.invoiceForm.value.invoiceNumber;
+    this.formError = "";
+    this.invoice.name = this.invoiceForm.value.name;
+    this.invoice.number = this.invoiceForm.value.number || 1;
     this.invoice.date = this.invoiceForm.value.date;
     this.invoice.dueDate = this.invoiceForm.value.dueDate;
-    this.invoice.lineItem = this.invoiceForm.value.lineItem;
+    this.invoice.lineItems = this.invoiceForm.value.lineItems;
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
-    this.invoice.discount = {
-      value: this.invoiceForm.value.discount,
-      type: this.invoiceForm.value.discount_type
-    };
-    this.invoice.notes = this.invoiceForm.value.notes;
+    this.invoice.discountType = this.invoiceForm.value.discountType;
+    (this.invoice.discountValue = this.invoiceForm.value.discountValue),
+      (this.invoice.notes = this.invoiceForm.value.notes);
+    this.invoiceService
+      .addInvoice(this.invoice)
+      .then(res => this.router.navigateByUrl("/auth/invoices"))
+      .catch(err => {
+        console.log(err);
+        this.formError =
+          err.error.errmsg ||
+          err.error.message ||
+          "Server error: failed to create invoice";
+        this.toastr.error(
+          err.error.errmsg || err.error.message || "failed to create invoice",
+          "Server error"
+        );
+        console.log(err);
+      });
   }
 }

@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
     this.showShipping = false;
     this.invoice = {
       label: {
-        invoiceName: "INVOICE",
+        name: "INVOICE",
         date: "Date",
         paymentTerms: "Payment terms",
         dueDate: "Due date",
@@ -52,32 +52,30 @@ export class HomeComponent implements OnInit {
         notes: "Notes",
         terms: "Terms"
       },
-      invoiceName: "INVOICE",
-      invoiceNumber: Date.now(),
+      name: "INVOICE",
+      number: Date.now(),
       sender: "",
       receiver: "",
-      lineItem: {
+      lineItems: {
         name: "",
         unitCost: 0,
         quantity: 0,
         amount: 0.0,
         taxable: true
       },
-      tax: [
+      taxItems: [
         {
           name: "",
           amount: 0,
-          taxMode :'Exclusive'
+          taxMode: "Exclusive"
         }
       ],
       subtotal: 0.0,
       total: 0.0,
       balanceDue: 0.0,
       amountPaid: 0.0,
-      discount: {
-        type: "flat",
-        value: 0
-      },
+      discountType: "flat",
+      discountValue: 0,
       shipping: 0,
       paymentTerms: "",
       date: new Date().toISOString(),
@@ -86,7 +84,7 @@ export class HomeComponent implements OnInit {
       terms: ""
     };
     this.invoiceForm = this.fb.group({
-      invoiceNumber: [this.invoice.invoiceNumber],
+      number: [this.invoice.number],
       sender: [this.invoice.sender, Validators.required],
       receiver: [this.invoice.receiver, Validators.required],
       date: [this.invoice.date],
@@ -94,15 +92,15 @@ export class HomeComponent implements OnInit {
       dueDate: [this.invoice.dueDate],
       lineItems: this.fb.array([
         this.fb.group({
-          name: [this.invoice.lineItem.name],
-          quantity: [this.invoice.lineItem.quantity],
-          rate: [this.invoice.lineItem.unitCost],
-          amount: [this.invoice.lineItem.amount]
+          name: [this.invoice.lineItems.name],
+          quantity: [this.invoice.lineItems.quantity],
+          rate: [this.invoice.lineItems.unitCost],
+          amount: [this.invoice.lineItems.amount]
         })
       ]),
-      discount: [this.invoice.discount.value],
-      discount_type: [this.invoice.discount.type],
-      tax: [this.invoice.tax[0].amount],
+      discountValue: [this.invoice.discountValue],
+      discountType: [this.invoice.discountType],
+      tax: [this.invoice.taxItems[0].amount],
       shipping: [this.invoice.shipping],
       notes: [this.invoice.notes],
       terms: [this.invoice.terms],
@@ -198,11 +196,11 @@ export class HomeComponent implements OnInit {
       DialogConfig.data = {
         sender: this.invoice.sender,
         receiver: this.invoice.receiver,
-        invoiceNumber: this.invoice.invoiceNumber
+        number: this.invoice.number
       };
       const dialogRef = this.dialog.open(HomeDialogComponent, DialogConfig);
       dialogRef.afterClosed().subscribe(result => {
-        if(result){
+        if (result) {
           this.invoice.mail = result;
           this.createInvoice();
         }
@@ -223,16 +221,14 @@ export class HomeComponent implements OnInit {
     this.invoice.date = this.invoiceForm.value.date;
     this.invoice.dueDate = this.invoiceForm.value.dueDate;
     // this.invoice.paymentTerms = this.invoiceForm.value.paymentTerms;
-    this.invoice.invoiceNumber = this.invoiceForm.value.invoiceNumber;
-    this.invoice.lineItem = this.invoiceForm.value.lineItems;
-    this.invoice.discount = {
-      type: this.invoiceForm.value.discount_type,
-      value: this.invoiceForm.value.discount
-    };
-    this.invoice.tax = [
+    this.invoice.number = this.invoiceForm.value.number;
+    this.invoice.lineItems = this.invoiceForm.value.lineItems;
+    this.invoice.discountType = this.invoiceForm.value.discountType;
+    this.invoice.discountValue = this.invoiceForm.value.discountValue;
+    this.invoice.taxItems = [
       {
         amount: this.invoiceForm.value.tax,
-        taxMode:'Exclusive',
+        taxMode: "Exclusive",
         name: ""
       }
     ];

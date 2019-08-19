@@ -1,16 +1,12 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from "@angular/animations";
+import { InvoiceService, CustomerService } from "../../shared/services";
+import { Iinvoice } from "src/app/shared/models";
+import { ToastrService } from "ngx-toastr";
 export interface Icustomer {
   id: number;
-  invoiceNumber: string;
+  number: string;
   customer: string;
   status: string;
   date: string;
@@ -18,100 +14,62 @@ export interface Icustomer {
   balance: number;
 }
 
-const CUST_DATA: Icustomer[] = [
-  {
-    id: 1,
-    invoiceNumber: "Virender",
-    customer: "nehra",
-    status: "paid",
-    date: "Jul,5 2019",
-    total: 1000,
-    balance: 100
-  },
-  {
-    id: 2,
-    invoiceNumber: "Virender",
-    customer: "viru",
-    status: "sent",
-    date: "Jul,5 2019",
-    total: 2000,
-    balance: 1000
-  },
-  {
-    id: 3,
-    invoiceNumber: "Virender",
-    customer: "jay",
-    status: "draft",
-    date: "Jul,5 2019",
-    total: 4000,
-    balance: 2500
-  },
-  {
-    id: 4,
-    invoiceNumber: "Virender",
-    customer: "viru",
-    status: "outstanding",
-    date: "Jul,5 2019",
-    total: 1000,
-    balance: 0
-  },
-  {
-    id: 5,
-    invoiceNumber: "Virender",
-    customer: "ajay",
-    status: "paid",
-    date: "Jul,5 2019",
-    total: 1000,
-    balance: 500
-  },
-  {
-    id: 6,
-    invoiceNumber: "Virender",
-    customer: "jay",
-    status: "sent",
-    date: "Jul,5 2019",
-    total: 5000,
-    balance: 0
-  }
-];
-
 @Component({
   selector: "app-invoices",
   templateUrl: "./invoices.component.html",
-  styleUrls: ["./invoices.component.scss"],
-  animations: [
-    trigger("detailExpand", [
-      state(
-        "collapsed",
-        style({ height: "0px", minHeight: "0", display: "none" })
-      ),
-      state("expanded", style({ height: "*" })),
-      transition(
-        "expanded <=> collapsed",
-        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-      )
-    ])
-  ]
+  styleUrls: ["./invoices.component.scss"]
 })
 export class InvoicesComponent implements OnInit {
-  dataSource: MatTableDataSource<Icustomer>;
+  dataSource: MatTableDataSource<Iinvoice>;
   @ViewChild(MatSort) sort: MatSort;
+  itemLoading: string;
   displayedColumns: string[] = [
-    "invoiceNumber",
-    "customer",
+    "name",
+    "customerName",
     "date",
     "total",
-    "balance",
+    "balanceDue",
     "action"
   ];
   statusData: string[] = ["Draft", "Sent", "Paid", "Outstanding", "All"];
-  status:string;
-  constructor() {
-    this.dataSource = new MatTableDataSource(CUST_DATA);
-  }
+  status: string;
+  constructor(
+    private invoiceService: InvoiceService,
+    private toastr: ToastrService,
+    private customerService: CustomerService
+  ) {}
 
   ngOnInit() {
-    this.dataSource.sort = this.sort;
+    this.itemLoading = "loading...";
+    this.dataSource = new MatTableDataSource([]);
+    this.getAllInvoices();
+  }
+  getAllInvoices(): void {
+    this.invoiceService
+      .getInvoiceStore()
+      .then(items => {
+        this.customerService.getcustomerStore().then(customers=>{
+          for(let customer of customers){
+            if(customer){
+              for(let item of items){
+                if(item.customer === customer.id){
+                  item.customerName = customer.fullName;
+                }
+              }
+            }
+          }
+          this.dataSource.data = items;
+        },err=>console.log(err));
+        setTimeout(() => (this.dataSource.sort = this.sort));
+        if (items.length === 0) {
+          this.itemLoading = "No Invoice Found";
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        this.itemLoading = `Server Error:   ${err.statusText}`;
+        this.toastr.error("faild to load invoices", "Server Error");
+      });
   }
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -125,8 +83,9 @@ export class InvoicesComponent implements OnInit {
   newInvoice() {
     alert("new invoice");
   }
-  
-  changeStatus():void{
-    this.dataSource.filter = this.status.toLowerCase() !=='all' ? this.status.toLowerCase() : ''
+
+  changeStatus(): void {
+    this.dataSource.filter =
+      this.status.toLowerCase() !== "all" ? this.status.toLowerCase() : "";
   }
 }
