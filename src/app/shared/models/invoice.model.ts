@@ -4,12 +4,12 @@ export interface Iinvoice {
   id?:string;
   label?: IinvoiceTextLabel;
   name: string;
-  number: number;
+  number: string;
   sender: string;
   receiver: string;
-  date: string;
+  date: Date;
   paymentTerms?: string;
-  dueDate: string;
+  dueDate: Date;
   lineItems: IlineItem;
   subtotal: number;
   discountType: string;

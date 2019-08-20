@@ -10,7 +10,7 @@ const appRoutes: Routes = [
     component: InvoicesComponent
   },
   {
-    path: "new",
+    path: "new/:invoiceNumber",
     component: NewInvoiceComponent
   }
 ];

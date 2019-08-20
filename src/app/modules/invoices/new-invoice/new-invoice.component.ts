@@ -24,7 +24,7 @@ import {
 } from "src/app/shared/services";
 import { ToastrService } from "ngx-toastr";
 import { environment } from "src/environments/environment";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 @Component({
   selector: "app-new-invoice",
   templateUrl: "./new-invoice.component.html",
@@ -51,7 +51,8 @@ export class NewInvoiceComponent implements OnInit {
     private authService: AuthService,
     private toastr: ToastrService,
     private invoiceService: InvoiceService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -62,8 +63,8 @@ export class NewInvoiceComponent implements OnInit {
       name: "INVOICE",
       sender: "",
       receiver: "",
-      date: new Date().toDateString(),
-      dueDate: new Date().toString(),
+      date: new Date(),
+      dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
       paymentTerms: null,
       lineItems: {
         name: "",
@@ -85,22 +86,23 @@ export class NewInvoiceComponent implements OnInit {
       terms: "",
       taxItems: []
     };
+    this.route.paramMap.subscribe(params=>this.invoice.number = params.get('invoiceNumber'));
     this.filteredCustomerOptions = this.seletedCustomer.valueChanges.pipe(
       startWith(""),
       map(value => (typeof value === "string" ? value : value.name)),
       map(name => (name ? this._filter(name) : this.customerData.slice()))
     );
     this.invoiceForm = this.fb.group({
-      name: ["INVOICE", [Validators.required]],
-      number: [""],
-      date: [new Date(), [Validators.required]],
+      name: [this.invoice.name, [Validators.required]],
+      number: [`INV-000${this.invoice.number}`],
+      date: [this.invoice.date, [Validators.required]],
       dueDate: [
-        new Date(new Date().setDate(new Date().getDate() + 7)),
+       this.invoice.dueDate,
         [Validators.required]
       ],
       selectedItem: [null],
       selectedTax: [null],
-      amountPaid: [0],
+      amountPaid: [this.invoice.amountPaid],
       lineItems: this.fb.array([
         this.fb.group({
           name: ["", [Validators.required]],
@@ -110,9 +112,9 @@ export class NewInvoiceComponent implements OnInit {
           amount: [0]
         })
       ]),
-      discountValue: [0],
-      discountType: ["flat"],
-      notes: [""]
+      discountValue: [this.invoice.discountValue],
+      discountType: [this.invoice.discountType],
+      notes: [this.invoice.notes]
     });
   }
   getData() {
@@ -156,7 +158,7 @@ export class NewInvoiceComponent implements OnInit {
   addLineItem(item?: IlineItem): void {
     this.lineItems.push(
       this.fb.group({
-        name: [item ? item.name : ""],
+        name: [ item ? item.name : ""],
         quantity: [item ? 1 : 0],
         rate: [item ? item.unitCost : 0],
         amount: [item ? item.unitCost : 0],
@@ -179,7 +181,6 @@ export class NewInvoiceComponent implements OnInit {
   }
   selectedCustomerValue() {
     this.invoice.customer = this.seletedCustomer.value.id;
-    console.log(this.seletedCustomer.value);
   }
   selectedLineItem() {
     this.addLineItem(this.invoiceForm.value.selectedItem);

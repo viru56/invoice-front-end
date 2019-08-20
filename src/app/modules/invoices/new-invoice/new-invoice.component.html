@@ -496,14 +496,25 @@
       </div>
     </div>
     <div fxlayout="row" fxLayoutAlign="end start" class="m20">
-      <div class="is-danger pr20" *ngIf="formError">{{formError}}</div>
+      <div class="is-danger pr20" *ngIf="formError">{{ formError }}</div>
+      <button
+        mat-raised-button
+        class="mr20"
+        color="primary"
+        [disabled]="!invoiceForm.valid || !seletedCustomer.value"
+        (click)="onSubmit()"
+        matTooltip="save as draft"
+      >
+        Draft
+      </button>
       <button
         mat-raised-button
         color="primary"
-        [disabled]="!invoiceForm.valid || !seletedCustomer.value "
+        [disabled]="!invoiceForm.valid || !seletedCustomer.value"
         (click)="onSubmit()"
+        matTooltip="save and send invoice"
       >
-        Save
+        Send
       </button>
     </div>
   </form>

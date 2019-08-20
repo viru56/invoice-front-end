@@ -24,9 +24,9 @@ export class InvoicesComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   itemLoading: string;
   displayedColumns: string[] = [
-    "name",
+    "number",
     "customerName",
-    "date",
+    "dueDate",
     "total",
     "balanceDue",
     "action"
@@ -74,8 +74,17 @@ export class InvoicesComponent implements OnInit {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  deleteTaxRate(id: number): void {
-    console.log(id);
+  deleteTaxRate(id: string,index:number): void {
+    this.invoiceService
+    .deleteInvoice(id,index)
+    .then(() => {
+      this.getAllInvoices();
+      this.toastr.success("Invoice is deleted!");
+    })
+    .catch(err => {
+      console.log(err);
+      this.toastr.error("Failed to delete Invoice!", "Server error");
+    });
   }
   editTaxRate(id: number): void {
     console.log(id);

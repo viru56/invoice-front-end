@@ -51,4 +51,16 @@ export class InvoiceService {
       }
     });
   }
+  deleteInvoice(id: string,index: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .delete(`${environment.invoice_url}/${id}`)
+        .toPromise()
+        .then(() => {
+          InvoiceService.invoiceStore.splice(index, 1);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
 }

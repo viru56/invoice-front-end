@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
         terms: "Terms"
       },
       name: "INVOICE",
-      number: Date.now(),
+      number: Date.now().toString(),
       sender: "",
       receiver: "",
       lineItems: {
@@ -78,8 +78,8 @@ export class HomeComponent implements OnInit {
       discountValue: 0,
       shipping: 0,
       paymentTerms: "",
-      date: new Date().toISOString(),
-      dueDate: new Date().toISOString(),
+      date: new Date(),
+      dueDate: new Date(),
       notes: "",
       terms: ""
     };

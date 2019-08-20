@@ -2,7 +2,11 @@
   <p>
     <span class="title">Invoices</span>
 
-    <a [routerLink]="['new']" mat-raised-button color="primary">
+    <a
+      [routerLink]="['new', dataSource.data.length + 1]"
+      mat-raised-button
+      color="primary"
+    >
       New Invoice
     </a>
   </p>
@@ -32,12 +36,12 @@
   <div class="table-wrapper">
     <mat-table [dataSource]="dataSource" matSort>
       <!-- Invoice Name Column -->
-      <ng-container matColumnDef="name">
+      <ng-container matColumnDef="number">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           Invoice
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{ element.name }}
+          {{ element.number }}
         </mat-cell>
       </ng-container>
 
@@ -46,14 +50,18 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           Customer
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.customerName }} </mat-cell>
+        <mat-cell *matCellDef="let element">
+          {{ element.customerName }}
+        </mat-cell>
       </ng-container>
       <!-- date Column -->
-      <ng-container matColumnDef="date">
+      <ng-container matColumnDef="dueDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           Date
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.date | date }} </mat-cell>
+        <mat-cell *matCellDef="let element">
+          {{ element.dueDate | date }}
+        </mat-cell>
       </ng-container>
 
       <!-- Total Column -->
@@ -69,13 +77,15 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           Balance
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">Rs {{ element.balanceDue }} </mat-cell>
+        <mat-cell *matCellDef="let element"
+          >Rs {{ element.balanceDue }}
+        </mat-cell>
       </ng-container>
 
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element;let index = index">
           <div style="display: flex;">
             <mat-icon
               (click)="editInvoice(element.id)"
@@ -109,7 +119,7 @@
             >
             <mat-icon
               color="warn"
-              (click)="deleteTaxRate(element.id)"
+              (click)="deleteTaxRate(element.id,index)"
               matTooltip="delete"
               >delete_forever</mat-icon
             >
@@ -124,5 +134,5 @@
   </div>
 </div>
 <div class="mat-elevation-z1" *ngIf="dataSource.data.length === 0">
-  <p class="p20">{{itemLoading}}</p>
+  <p class="p20">{{ itemLoading }}</p>
 </div>
