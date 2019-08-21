@@ -85,20 +85,32 @@
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-        <mat-cell *matCellDef="let element;let index = index">
+        <mat-cell *matCellDef="let element; let index = index">
           <div style="display: flex;">
-            <mat-icon
-              (click)="editInvoice(element.id)"
+            <a
               *ngIf="element.balanceDue > 0"
-              matTooltip="edit"
-              >edit</mat-icon
+              style="color: rgba(0, 0, 0, 0.87);"
+              [routerLink]="['edit', element.id]"
             >
-            <mat-icon
+              <mat-icon matTooltip="edit">edit</mat-icon>
+            </a>
+            <a
+              *ngIf="element.balanceDue > 0"
+              style="color: #42a5f5;"
+              [routerLink]="[
+                'duplicate',
+                element.id,
+                dataSource.data.length + 1
+              ]"
+            >
+              <mat-icon matTooltip="duplicate">file_copy</mat-icon>
+            </a>
+            <!-- <mat-icon
               color="primary"
               (click)="duplicateInvoice(element.id)"
               matTooltip="duplicate"
               >file_copy</mat-icon
-            >
+            > -->
             <mat-icon
               (click)="downloadInvoice(element.id)"
               matTooltip="download"
@@ -119,7 +131,7 @@
             >
             <mat-icon
               color="warn"
-              (click)="deleteTaxRate(element.id,index)"
+              (click)="deleteInvoice(element.id, index)"
               matTooltip="delete"
               >delete_forever</mat-icon
             >

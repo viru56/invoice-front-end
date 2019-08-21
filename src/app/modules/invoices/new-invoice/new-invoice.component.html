@@ -3,14 +3,14 @@
     <a [routerLink]="['/auth/invoices']" color="primary">
       Invoices
     </a>
-    / New Invoice
+    / <span *ngIf="!invoice.id">New</span><span *ngIf="invoice.id">Edit</span> Invoice
     <mat-form-field class="float-right" style="width:220px;">
       <input
         type="text"
         placeholder="Search and select a Customer"
         aria-label="customer"
         matInput
-        [formControl]="seletedCustomer"
+        [formControl]="selectedCustomer"
         [matAutocomplete]="auto"
       />
       <mat-autocomplete
@@ -75,7 +75,6 @@
                 </mat-form-field>
               </div>
               <div>
-                <span style="padding: 4px;">#</span>
                 <mat-form-field class="invoice-number wd-150">
                   <input
                     matInput
@@ -83,7 +82,6 @@
                     placeholder="Invoice number"
                     formControlName="number"
                     autocomplete="off"
-                    matTooltip="auto generate if blank"
                   />
                 </mat-form-field>
               </div>
@@ -95,35 +93,37 @@
             <div>
               <p>Bill To:</p>
               <p
-                *ngIf="seletedCustomer.value && seletedCustomer.value.fullName"
+                *ngIf="
+                  selectedCustomer.value && selectedCustomer.value.fullName
+                "
               >
-                <span *ngIf="seletedCustomer.value.attentionTo">
-                  ATTN: {{ seletedCustomer.value.attentionTo }}</span
+                <span *ngIf="selectedCustomer.value.attentionTo">
+                  ATTN: {{ selectedCustomer.value.attentionTo }}</span
                 >
                 <br />
                 <span class="text-bold"
-                  >{{ seletedCustomer.value.fullName }}
+                  >{{ selectedCustomer.value.fullName }}
                 </span>
                 <br />
-                <span *ngIf="seletedCustomer.value.address_1">
-                  {{ seletedCustomer.value.address_1 }},</span
+                <span *ngIf="selectedCustomer.value.address_1">
+                  {{ selectedCustomer.value.address_1 }},</span
                 >
-                <span *ngIf="seletedCustomer.value.address_2">
-                  {{ seletedCustomer.value.address_2 }} </span
+                <span *ngIf="selectedCustomer.value.address_2">
+                  {{ selectedCustomer.value.address_2 }} </span
                 ><br />
-                <span *ngIf="seletedCustomer.value.city">
-                  {{ seletedCustomer.value.city }}</span
+                <span *ngIf="selectedCustomer.value.city">
+                  {{ selectedCustomer.value.city }}</span
                 >
-                <span *ngIf="seletedCustomer.value.state">
-                  {{ seletedCustomer.value.state }} -</span
+                <span *ngIf="selectedCustomer.value.state">
+                  {{ selectedCustomer.value.state }} -</span
                 >
-                <span *ngIf="seletedCustomer.value.postalCode">
-                  {{ seletedCustomer.value.postalCode }}</span
+                <span *ngIf="selectedCustomer.value.postalCode">
+                  {{ selectedCustomer.value.postalCode }}</span
                 >
               </p>
               <p
                 *ngIf="
-                  !(seletedCustomer.value && seletedCustomer.value.fullName)
+                  !(selectedCustomer.value && selectedCustomer.value.fullName)
                 "
               >
                 please select a customer
@@ -244,7 +244,7 @@
                     matInput
                     type="number"
                     placeholder="Rate"
-                    formControlName="rate"
+                    formControlName="unitCost"
                     (keyup)="updateLineItemAmount(itemIndex)"
                     autocomplete="off"
                   />
@@ -364,8 +364,10 @@
                   Rs
                   {{
                     (
-                      (100 / (invoice.taxableAmount + tax.amount)) *
-                      tax.amount
+                      (100 /
+                        (invoice.taxableAmount +
+                          (invoice.taxableAmount * tax.amount) / 100)) *
+                      invoice.taxableAmount
                     ).toFixed(2)
                   }}
                 </span>
@@ -407,7 +409,7 @@
               (click)="showDiscount = !showDiscount"
               type="button"
             >
-              + Discount
+              + Discount {{showDiscount}}
             </button>
             <div *ngIf="showDiscount" class="dflex">
               <div class="dflex discount">
@@ -501,20 +503,18 @@
         mat-raised-button
         class="mr20"
         color="primary"
-        [disabled]="!invoiceForm.valid || !seletedCustomer.value"
+        [disabled]="!invoiceForm.valid || !selectedCustomer.value"
         (click)="onSubmit()"
-        matTooltip="save as draft"
       >
-        Draft
+        Save as Draft
       </button>
       <button
         mat-raised-button
         color="primary"
-        [disabled]="!invoiceForm.valid || !seletedCustomer.value"
+        [disabled]="!invoiceForm.valid || !selectedCustomer.value"
         (click)="onSubmit()"
-        matTooltip="save and send invoice"
       >
-        Send
+         Save and Issue
       </button>
     </div>
   </form>

@@ -10,7 +10,7 @@ export interface Iinvoice {
   date: Date;
   paymentTerms?: string;
   dueDate: Date;
-  lineItems: IlineItem;
+  lineItems: IlineItem[];
   subtotal: number;
   discountType: string;
   discountValue:number;

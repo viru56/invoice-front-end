@@ -12,6 +12,14 @@ const appRoutes: Routes = [
   {
     path: "new/:invoiceNumber",
     component: NewInvoiceComponent
+  },
+  {
+    path: "edit/:id",
+    component: NewInvoiceComponent
+  },
+  {
+    path: "duplicate/:id/:invoiceNumber",
+    component: NewInvoiceComponent
   }
 ];
 @NgModule({

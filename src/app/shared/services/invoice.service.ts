@@ -38,7 +38,6 @@ export class InvoiceService {
   getInvoiceStore(): Promise<Iinvoice[]> {
     return new Promise((resolve, reject) => {
       if (InvoiceService.invoiceStore) {
-        console.log('return from cache');
         resolve(InvoiceService.invoiceStore);
       } else {
         this.getInvoices()
@@ -49,6 +48,40 @@ export class InvoiceService {
           })
           .catch(error => reject(error));
       }
+    });
+  }
+  updateInvoice(body: Iinvoice): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .put(environment.invoice_url, body)
+        .toPromise()
+        .then(() => {
+          for (let inv of InvoiceService.invoiceStore) {
+            if (inv.id === body.id) {
+              inv.name = body.name;
+              inv.number = body.number;
+              inv.amountPaid = body.amountPaid;
+              inv.balanceDue = body.balanceDue;
+              inv.customer = body.customer;
+              inv.date = body.date;
+              inv.discountType = body.discountType;
+              inv.discountValue = body.discountValue;
+              inv.dueDate = body.dueDate;
+              inv.lineItems = body.lineItems;
+              inv.nonTaxableAmount = body.nonTaxableAmount;
+              inv.notes = body.notes;
+              inv.receiver = body.receiver;
+              inv.sender = body.sender;
+              inv.shipping = body.shipping;
+              inv.subtotal = body.subtotal;
+              inv.taxItems = body.taxItems;
+              inv.terms = body.terms;
+              inv.total = body.total;
+            }
+          }
+          resolve(true);
+        })
+        .catch(err => reject(err));
     });
   }
   deleteInvoice(id: string,index: number): Promise<boolean> {

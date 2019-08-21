@@ -56,13 +56,13 @@ export class HomeComponent implements OnInit {
       number: Date.now().toString(),
       sender: "",
       receiver: "",
-      lineItems: {
+      lineItems: [{
         name: "",
         unitCost: 0,
         quantity: 0,
         amount: 0.0,
         taxable: true
-      },
+      }],
       taxItems: [
         {
           name: "",
@@ -92,10 +92,10 @@ export class HomeComponent implements OnInit {
       dueDate: [this.invoice.dueDate],
       lineItems: this.fb.array([
         this.fb.group({
-          name: [this.invoice.lineItems.name],
-          quantity: [this.invoice.lineItems.quantity],
-          rate: [this.invoice.lineItems.unitCost],
-          amount: [this.invoice.lineItems.amount]
+          name: [this.invoice.lineItems[0].name],
+          quantity: [this.invoice.lineItems[0].quantity],
+          rate: [this.invoice.lineItems[0].unitCost],
+          amount: [this.invoice.lineItems[0].amount]
         })
       ]),
       discountValue: [this.invoice.discountValue],

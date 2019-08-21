@@ -74,7 +74,7 @@ export class InvoicesComponent implements OnInit {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  deleteTaxRate(id: string,index:number): void {
+  deleteInvoice(id: string,index:number): void {
     this.invoiceService
     .deleteInvoice(id,index)
     .then(() => {
@@ -86,13 +86,6 @@ export class InvoicesComponent implements OnInit {
       this.toastr.error("Failed to delete Invoice!", "Server error");
     });
   }
-  editTaxRate(id: number): void {
-    console.log(id);
-  }
-  newInvoice() {
-    alert("new invoice");
-  }
-
   changeStatus(): void {
     this.dataSource.filter =
       this.status.toLowerCase() !== "all" ? this.status.toLowerCase() : "";

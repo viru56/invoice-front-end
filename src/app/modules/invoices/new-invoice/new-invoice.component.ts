@@ -35,7 +35,7 @@ export class NewInvoiceComponent implements OnInit {
   filterValue: string;
   invoice: Iinvoice;
   invoiceLogo: string;
-  seletedCustomer = new FormControl();
+  selectedCustomer = new FormControl();
   showDiscount: boolean;
   customerData: Icustomer[] = [];
   itemData: IlineItem[] = [];
@@ -52,54 +52,114 @@ export class NewInvoiceComponent implements OnInit {
     private toastr: ToastrService,
     private invoiceService: InvoiceService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.getData();
+    this.initilizeInvoice();
+    this.buildForm();
     this.showDiscount = false;
+  }
+  initilizeInvoice(): void {
     this.invoice = {
-      number: null,
+      number: Date.now().toString(),
       name: "INVOICE",
       sender: "",
       receiver: "",
       date: new Date(),
       dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
       paymentTerms: null,
-      lineItems: {
-        name: "",
-        quantity: 0,
-        unitCost: 0,
-        taxable: true,
-        amount: 0
-      },
       subtotal: 0,
       taxableAmount: 0,
       nonTaxableAmount: 0,
       total: 0,
       balanceDue: 0,
       discountType: "flat",
-      discountValue: 0,
+      discountValue: null,
       amountPaid: 0,
       shipping: 0,
       notes: "",
       terms: "",
-      taxItems: []
+      taxItems: [],
+      lineItems: [
+        {
+          name: "",
+          quantity: 0,
+          unitCost: 0,
+          taxable: true,
+          amount: 0
+        }
+      ]
     };
-    this.route.paramMap.subscribe(params=>this.invoice.number = params.get('invoiceNumber'));
-    this.filteredCustomerOptions = this.seletedCustomer.valueChanges.pipe(
-      startWith(""),
-      map(value => (typeof value === "string" ? value : value.name)),
-      map(name => (name ? this._filter(name) : this.customerData.slice()))
+    this.route.paramMap.subscribe(params => {
+      if (params.has("id")) {
+        this.invoiceService.getInvoiceStore().then(invoices => {
+          for (let inv of invoices) {
+            if (inv.id === params.get("id")) {
+              this.invoice = {
+                id: inv.id,
+                number: inv.number,
+                name: inv.name,
+                sender: "",
+                receiver: "",
+                date: inv.date,
+                dueDate: inv.dueDate,
+                paymentTerms: null,
+                subtotal: inv.subtotal,
+                taxableAmount: 0,
+                nonTaxableAmount: 0,
+                total: inv.total,
+                balanceDue: inv.balanceDue,
+                discountType: inv.discountType || "flat",
+                discountValue: inv.discountValue,
+                amountPaid: inv.amountPaid || 0,
+                shipping: inv.shipping || 0,
+                notes: inv.notes,
+                terms: inv.terms,
+                customer: inv.customer,
+                taxItems: inv.taxItems || [],
+                lineItems: inv.lineItems
+              };
+              for (let item of inv.lineItems) {
+                this.addLineItem(item);
+              }
+              if (params.has("invoiceNumber")) {
+                this.invoice.number = params.get("invoiceNumber");
+                delete this.invoice.id;
+              }
+              this.copyForm();
+            }
+          }
+        }, console.log);
+      }
+    });
+  }
+  copyForm(): void {
+    if (this.invoice.discountValue) this.showDiscount = true;
+    this.invoiceForm.controls["name"].setValue(this.invoice.name);
+    this.invoiceForm.controls["number"].setValue(
+      `INV-000${this.invoice.number}`
     );
+    this.invoiceForm.controls["date"].setValue(this.invoice.date);
+    this.invoiceForm.controls["dueDate"].setValue(this.invoice.dueDate);
+    this.invoiceForm.controls["amountPaid"].setValue(this.invoice.amountPaid);
+    this.invoiceForm.controls["discountType"].setValue(
+      this.invoice.discountType
+    );
+    this.invoiceForm.controls["discountValue"].setValue(
+      this.invoice.discountValue
+    );
+    this.invoiceForm.controls["notes"].setValue(this.invoice.notes);
+    this.removeLineItem(0);
+    this.getCustomers();
+  }
+  buildForm(): void {
     this.invoiceForm = this.fb.group({
       name: [this.invoice.name, [Validators.required]],
-      number: [`INV-000${this.invoice.number}`],
+      number: [{ value: `INV-000${this.invoice.number}`, disabled: true }],
       date: [this.invoice.date, [Validators.required]],
-      dueDate: [
-       this.invoice.dueDate,
-        [Validators.required]
-      ],
+      dueDate: [this.invoice.dueDate, [Validators.required]],
       selectedItem: [null],
       selectedTax: [null],
       amountPaid: [this.invoice.amountPaid],
@@ -107,7 +167,7 @@ export class NewInvoiceComponent implements OnInit {
         this.fb.group({
           name: ["", [Validators.required]],
           quantity: [0, [Validators.required]],
-          rate: [0, [Validators.required]],
+          unitCost: [0, [Validators.required]],
           taxable: [true],
           amount: [0]
         })
@@ -117,7 +177,8 @@ export class NewInvoiceComponent implements OnInit {
       notes: [this.invoice.notes]
     });
   }
-  getData() {
+  getData(): void {
+    this.getCustomers();
     this.authService.getUserDetails().then(
       user => {
         this.currentUser = user;
@@ -144,8 +205,27 @@ export class NewInvoiceComponent implements OnInit {
         this.toastr.error("Can not get Tax Item", "Server Error");
       }
     );
+  }
+  getCustomers(): void {
     this.customerService.getcustomerStore().then(
-      data => (this.customerData = data),
+      data => {
+        this.customerData = data;
+        if (this.invoice.customer) {
+          for (let cust of data) {
+            if (cust.id === this.invoice.customer) {
+              this.selectedCustomer.setValue(cust);
+            }
+          }
+        }
+        // initialize filter
+        this.filteredCustomerOptions = this.selectedCustomer.valueChanges.pipe(
+          startWith(""),
+          map(value => (typeof value === "string" ? value : value.fullName)),
+          map(fullName =>
+            fullName ? this._filter(fullName) : this.customerData.slice()
+          )
+        );
+      },
       err => {
         console.log(err);
         this.toastr.error("Can not get Customers", "Server Error");
@@ -158,10 +238,10 @@ export class NewInvoiceComponent implements OnInit {
   addLineItem(item?: IlineItem): void {
     this.lineItems.push(
       this.fb.group({
-        name: [ item ? item.name : ""],
-        quantity: [item ? 1 : 0],
-        rate: [item ? item.unitCost : 0],
-        amount: [item ? item.unitCost : 0],
+        name: [item ? item.name : ""],
+        quantity: [item ? item.quantity : 0],
+        unitCost: [item ? item.unitCost : 0],
+        amount: [item ? item.quantity * item.unitCost : 0],
         taxable: [item ? item.taxable : true]
       })
     );
@@ -180,7 +260,9 @@ export class NewInvoiceComponent implements OnInit {
     );
   }
   selectedCustomerValue() {
-    this.invoice.customer = this.seletedCustomer.value.id;
+    console.log(this.selectedCustomer);
+    if (this.selectedCustomer.value)
+      this.invoice.customer = this.selectedCustomer.value.id;
   }
   selectedLineItem() {
     this.addLineItem(this.invoiceForm.value.selectedItem);
@@ -192,7 +274,7 @@ export class NewInvoiceComponent implements OnInit {
       .get("amount")
       .setValue(
         Math.round(
-          this.lineItems.controls[index].get("rate").value *
+          this.lineItems.controls[index].get("unitCost").value *
             this.lineItems.controls[index].get("quantity").value
         )
       );
@@ -266,17 +348,22 @@ export class NewInvoiceComponent implements OnInit {
   onSubmit(): void {
     this.formError = "";
     this.invoice.name = this.invoiceForm.value.name;
-    this.invoice.number = this.invoiceForm.value.number || 1;
     this.invoice.date = this.invoiceForm.value.date;
     this.invoice.dueDate = this.invoiceForm.value.dueDate;
     this.invoice.lineItems = this.invoiceForm.value.lineItems;
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.discountType = this.invoiceForm.value.discountType;
-    (this.invoice.discountValue = this.invoiceForm.value.discountValue),
-      (this.invoice.notes = this.invoiceForm.value.notes);
-    this.invoiceService
-      .addInvoice(this.invoice)
-      .then(res => this.router.navigateByUrl("/auth/invoices"))
+    this.invoice.discountValue = this.invoiceForm.value.discountValue;
+    this.invoice.notes = this.invoiceForm.value.notes;
+    this.invoiceService[this.invoice.id ? "updateInvoice" : "addInvoice"](
+      this.invoice
+    )
+      .then(res => {
+        this.toastr.success(
+          this.invoice.id ? "Invoice is updated" :"New invoice added!"
+        );
+        this.router.navigateByUrl("/auth/invoices");
+      })
       .catch(err => {
         console.log(err);
         this.formError =
