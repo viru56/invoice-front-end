@@ -26,7 +26,7 @@ export class CompanyService {
       businessFormData.append("logo", file);
       businessFormData.append("data", JSON.stringify(body));
       this.apiService
-        .uploadPut(environment.company_url, businessFormData)
+        .putFile(environment.company_url, businessFormData)
         .toPromise()
         .then((data) => {
           if (AuthService.currentUser.company) {

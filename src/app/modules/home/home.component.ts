@@ -56,13 +56,15 @@ export class HomeComponent implements OnInit {
       number: Date.now().toString(),
       sender: "",
       receiver: "",
-      lineItems: [{
-        name: "",
-        unitCost: 0,
-        quantity: 0,
-        amount: 0.0,
-        taxable: true
-      }],
+      lineItems: [
+        {
+          name: "",
+          unitCost: 0,
+          quantity: 0,
+          amount: 0.0,
+          taxable: true
+        }
+      ],
       taxItems: [
         {
           name: "",
@@ -94,7 +96,7 @@ export class HomeComponent implements OnInit {
         this.fb.group({
           name: [this.invoice.lineItems[0].name],
           quantity: [this.invoice.lineItems[0].quantity],
-          rate: [this.invoice.lineItems[0].unitCost],
+          unitCost: [this.invoice.lineItems[0].unitCost],
           amount: [this.invoice.lineItems[0].amount]
         })
       ]),
@@ -141,7 +143,7 @@ export class HomeComponent implements OnInit {
       this.fb.group({
         name: [""],
         quantity: [0],
-        rate: [0],
+        unitCost: [0],
         amount: [0]
       })
     );
@@ -155,13 +157,26 @@ export class HomeComponent implements OnInit {
       ? (this.showShipping = false)
       : (this.showShipping = true);
   }
+  removeTaxDiscountShipping(property: string): void {
+    if (property === "discount") {
+      this.showDiscount = false;
+      this.invoiceForm.controls["discountValue"].setValue(0);
+    } else if (property === "tax") {
+      this.showTax = false;
+      this.invoiceForm.controls["tax"].setValue(0);
+    } else if (property === "shipping") {
+      this.showShipping = false;
+      this.invoiceForm.controls["shipping"].setValue(0);
+    }
 
+    this.updateTotal();
+  }
   updateLineItemAmount(index: number): void {
     this.lineItems.controls[index]
       .get("amount")
       .setValue(
         Math.round(
-          this.lineItems.controls[index].get("rate").value *
+          this.lineItems.controls[index].get("unitCost").value *
             this.lineItems.controls[index].get("quantity").value
         )
       );
@@ -176,17 +191,15 @@ export class HomeComponent implements OnInit {
   }
   updateTotal(): void {
     this.invoice.total = this.invoice.subtotal;
-    if (this.invoiceForm.value.discount_type === "percentage") {
-      this.invoice.total =
-        this.invoice.total -
-        (this.invoice.total * this.invoiceForm.value.discount) / 100;
-    } else if (this.invoiceForm.value.discount_type === "flat") {
-      this.invoice.total = this.invoice.total - this.invoiceForm.value.discount;
+    if (this.invoiceForm.value.discountType === "percentage") {
+      this.invoice.total -=
+        (this.invoice.total * this.invoiceForm.value.discountValue) / 100;
+    } else if (this.invoiceForm.value.discountType === "flat") {
+      this.invoice.total -= this.invoiceForm.value.discountValue;
     }
-    this.invoice.total =
-      this.invoice.total -
+    this.invoice.total +=
       (this.invoice.total * this.invoiceForm.value.tax) / 100;
-    this.invoice.total = this.invoice.total - this.invoiceForm.value.shipping;
+    this.invoice.total += this.invoiceForm.value.shipping;
     this.invoice.balanceDue =
       this.invoice.total - this.invoiceForm.value.amountPaid;
   }
@@ -202,6 +215,7 @@ export class HomeComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.invoice.mail = result;
+          this.invoice.mail.userName = this.invoice.receiver;
           this.createInvoice();
         }
       });
@@ -244,30 +258,13 @@ export class HomeComponent implements OnInit {
         if (type === "mail") {
           this.toastr.success(res.message);
         } else {
-          this.downLoadFile(res, "application/pdf");
+          this.invoiceService.downLoadFile(res);
         }
       },
       err => {
         console.log(err);
       }
     );
-  }
-  downLoadFile(data: any, type: string) {
-    let anchor = document.createElement("a");
-    anchor.download = "invoice.pdf";
-    let blob = new Blob([data], { type: type });
-    anchor.href = window.URL.createObjectURL(blob);
-    if (environment.production) {
-      // download pdf
-      anchor.dataset.downloadurl = [
-        "application/pdf",
-        anchor.download,
-        anchor.href
-      ].join(":");
-      anchor.click();
-    } else {
-      window.open(anchor.href);
-    }
   }
   downloadInvoice(): void {
     if (this.setInvoiceData()) this.createInvoice("download");

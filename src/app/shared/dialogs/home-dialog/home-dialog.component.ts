@@ -16,8 +16,8 @@ export class HomeDialogComponent implements OnInit {
   invoiceForm: FormGroup;
   ngOnInit() {
     this.invoiceForm = this.fb.group({
-      sender: ["", [Validators.required, Validators.email]],
-      receiver: ["", [Validators.required, Validators.email]],
+      from: ["", [Validators.required, Validators.email]],
+      to: ["", [Validators.required, Validators.email]],
       subject: [
         {
           value: `Invoice from ${this.data.sender} #${this.data.number}`,

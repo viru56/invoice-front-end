@@ -25,10 +25,12 @@ export interface Iinvoice {
   nonTaxableAmount?: number;
   file?:File;
   mail?:{
-    sender:string;
-    receiver:string;
+    userName:string,
+    from:string;
+    to:string;
     subject:string;
     message:string;
+    bcc:string
   },
   customer?:string;
   customerName?:string;

@@ -504,7 +504,7 @@
         class="mr20"
         color="primary"
         [disabled]="!invoiceForm.valid || !selectedCustomer.value"
-        (click)="onSubmit()"
+        (click)="saveAsDraft()"
       >
         Save as Draft
       </button>
@@ -512,7 +512,7 @@
         mat-raised-button
         color="primary"
         [disabled]="!invoiceForm.valid || !selectedCustomer.value"
-        (click)="onSubmit()"
+        (click)="saveAndIssue()"
       >
          Save and Issue
       </button>

@@ -25,6 +25,8 @@ import {
 import { ToastrService } from "ngx-toastr";
 import { environment } from "src/environments/environment";
 import { Router, ActivatedRoute } from "@angular/router";
+import { MatDialog } from "@angular/material/dialog";
+import { InvoiceDialogComponent, DialogConfig } from "../../../shared/dialogs";
 @Component({
   selector: "app-new-invoice",
   templateUrl: "./new-invoice.component.html",
@@ -43,6 +45,7 @@ export class NewInvoiceComponent implements OnInit {
   currentUser: Iuser;
   formError: string;
   filteredCustomerOptions: Observable<Icustomer[]>;
+  sendMail: boolean;
   constructor(
     private fb: FormBuilder,
     private itemService: ItemService,
@@ -52,7 +55,8 @@ export class NewInvoiceComponent implements OnInit {
     private toastr: ToastrService,
     private invoiceService: InvoiceService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -297,15 +301,26 @@ export class NewInvoiceComponent implements OnInit {
   }
   updateTotal(): void {
     let exclusiveTax = 0;
+    let inclusiveTax = 0;
     if (this.invoice.subtotal > 0) {
       for (let tax of this.invoice.taxItems) {
         if (tax.taxMode === "Exclusive") {
-          exclusiveTax += tax.amount;
+          exclusiveTax += (this.invoice.taxableAmount * tax.amount) / 100;
+        } else if (tax.taxMode === "Inclusive") {
+          inclusiveTax += Number(
+            (
+              (100 /
+                (this.invoice.taxableAmount +
+                  (this.invoice.taxableAmount * tax.amount) / 100)) *
+              this.invoice.taxableAmount
+            ).toFixed(2)
+          );
         }
       }
+      this.invoice.subtotal -= inclusiveTax;
       this.invoice.total =
         this.invoice.taxableAmount +
-        (this.invoice.taxableAmount * exclusiveTax) / 100 +
+        exclusiveTax +
         this.invoice.nonTaxableAmount;
       if (this.invoiceForm.value.discountType === "percentage") {
         this.invoice.total =
@@ -358,11 +373,38 @@ export class NewInvoiceComponent implements OnInit {
     this.invoiceService[this.invoice.id ? "updateInvoice" : "addInvoice"](
       this.invoice
     )
-      .then(res => {
+      .then(invoiceId => {
         this.toastr.success(
-          this.invoice.id ? "Invoice is updated" :"New invoice added!"
+          this.invoice.id ? "Invoice is updated" : "New invoice added!"
         );
         this.router.navigateByUrl("/auth/invoices");
+        if (this.sendMail) {
+          DialogConfig.data = {
+            id: invoiceId,
+            to: this.selectedCustomer.value.email,
+            companyName: this.currentUser.company.name,
+            number: this.invoice.number,
+            balanceDue: this.invoice.balanceDue,
+            userName:
+              this.selectedCustomer.value.attentionTo ||
+              this.selectedCustomer.value.fullName
+          };
+          const dialogRef = this.dialog.open(
+            InvoiceDialogComponent,
+            DialogConfig
+          );
+          dialogRef
+            .afterClosed()
+            .toPromise()
+            .then(
+              result => {
+                if (result) {
+                  this.toastr.success("Invoice is sent!");
+                }
+              },
+              err => console.log(err)
+            );
+        }
       })
       .catch(err => {
         console.log(err);
@@ -376,5 +418,13 @@ export class NewInvoiceComponent implements OnInit {
         );
         console.log(err);
       });
+  }
+  saveAndIssue(): void {
+    this.sendMail = true;
+    this.onSubmit();
+  }
+  saveAsDraft(): void {
+    this.sendMail = false;
+    this.onSubmit();
   }
 }

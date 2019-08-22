@@ -112,13 +112,13 @@
               >file_copy</mat-icon
             > -->
             <mat-icon
-              (click)="downloadInvoice(element.id)"
+              (click)="downloadInvoice(element.id,element.name)"
               matTooltip="download"
               >vertical_align_bottom</mat-icon
             >
             <mat-icon
               color="primary"
-              (click)="sendInvoice(element.id)"
+              (click)="sendInvoice(element)"
               matTooltip="send"
               >send</mat-icon
             >

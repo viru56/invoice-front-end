@@ -50,18 +50,26 @@ export class ApiService {
       headers: this.setHeaders()
     });
   }
-  uploadPost(
+  postFile(
     apiUrl: string,
     body: FormData,
     responseType: any = "arraybuffer"
   ): Observable<any> {
     return this.http.post(apiUrl, body, { responseType: responseType });
   }
-  uploadPut(apiUrl: string, body: FormData): Observable<any> {
+  putFile(apiUrl: string, body: FormData): Observable<any> {
     return this.http.put(apiUrl, body, {
       headers: new HttpHeaders({
         Authorization: this.cookieService.get("authorization")
       })
+    });
+  }
+  getFile(apiUrl: string): Observable<any> {
+    return this.http.get(apiUrl, {
+      headers: new HttpHeaders({
+        Authorization: this.cookieService.get("authorization")
+      }),
+      responseType: "arraybuffer"
     });
   }
 }

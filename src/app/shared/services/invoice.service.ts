@@ -13,13 +13,13 @@ export class InvoiceService {
     const invoiceFormData = new FormData();
     invoiceFormData.append("file", body.file);
     invoiceFormData.append("invoice", JSON.stringify(body));
-    return this.apiService.uploadPost(
+    return this.apiService.postFile(
       `${environment.invoice_url}/${path}`,
       invoiceFormData,
       path === "mail" ? "json" : "arrayBuffer"
     );
   }
-  addInvoice(body: Iinvoice): Promise<boolean> {
+  addInvoice(body: Iinvoice): Promise<string> {
     return new Promise((resolve, reject) => {
       this.apiService
         .post(environment.invoice_url, body)
@@ -27,7 +27,7 @@ export class InvoiceService {
         .then(item => {
           if (InvoiceService.invoiceStore)
             InvoiceService.invoiceStore.push(item);
-          resolve(true);
+          resolve(item.id);
         })
         .catch(err => reject(err));
     });
@@ -50,7 +50,7 @@ export class InvoiceService {
       }
     });
   }
-  updateInvoice(body: Iinvoice): Promise<boolean> {
+  updateInvoice(body: Iinvoice): Promise<string> {
     return new Promise((resolve, reject) => {
       this.apiService
         .put(environment.invoice_url, body)
@@ -79,12 +79,12 @@ export class InvoiceService {
               inv.total = body.total;
             }
           }
-          resolve(true);
+          resolve(body.id);
         })
         .catch(err => reject(err));
     });
   }
-  deleteInvoice(id: string,index: number): Promise<boolean> {
+  deleteInvoice(id: string, index: number): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.apiService
         .delete(`${environment.invoice_url}/${id}`)
@@ -95,5 +95,45 @@ export class InvoiceService {
         })
         .catch(err => reject(err));
     });
+  }
+  downloadInvoice(id: string, filename: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .getFile(`${environment.invoice_url}/download/${id}`)
+        .toPromise()
+        .then(res => {
+          this.downLoadFile(res, filename);
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  sendInvoice(body:any): Promise<boolean>{
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .put(`${environment.invoice_url}/mail`,body)
+        .toPromise()
+        .then(res => {
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  downLoadFile(data: any, filename?: string) {
+    let anchor = document.createElement("a");
+    anchor.download = filename ? `${filename}.pdf` : "invoice.pdf";
+    let blob = new Blob([data], { type: "application/pdf" });
+    anchor.href = window.URL.createObjectURL(blob);
+    if (environment.production) {
+      // download pdf
+      anchor.dataset.downloadurl = [
+        "application/pdf",
+        anchor.download,
+        anchor.href
+      ].join(":");
+      anchor.click();
+    } else {
+      window.open(anchor.href);
+    }
   }
 }

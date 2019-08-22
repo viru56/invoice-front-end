@@ -1,18 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
-import { InvoiceService, CustomerService } from "../../shared/services";
-import { Iinvoice } from "src/app/shared/models";
+import {
+  InvoiceService,
+  CustomerService,
+  AuthService
+} from "../../shared/services";
+import { Iinvoice, Icustomer } from "src/app/shared/models";
 import { ToastrService } from "ngx-toastr";
-export interface Icustomer {
-  id: number;
-  number: string;
-  customer: string;
-  status: string;
-  date: string;
-  total: number;
-  balance: number;
-}
+import { InvoiceDialogComponent, DialogConfig } from "src/app/shared/dialogs";
+import { MatDialog } from "@angular/material";
 
 @Component({
   selector: "app-invoices",
@@ -23,6 +20,7 @@ export class InvoicesComponent implements OnInit {
   dataSource: MatTableDataSource<Iinvoice>;
   @ViewChild(MatSort) sort: MatSort;
   itemLoading: string;
+  customers: Icustomer[];
   displayedColumns: string[] = [
     "number",
     "customerName",
@@ -36,7 +34,9 @@ export class InvoicesComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private toastr: ToastrService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -48,18 +48,22 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService
       .getInvoiceStore()
       .then(items => {
-        this.customerService.getcustomerStore().then(customers=>{
-          for(let customer of customers){
-            if(customer){
-              for(let item of items){
-                if(item.customer === customer.id){
-                  item.customerName = customer.fullName;
+        this.customerService.getcustomerStore().then(
+          customers => {
+            this.customers = customers;
+            for (let customer of customers) {
+              if (customer) {
+                for (let item of items) {
+                  if (item.customer === customer.id) {
+                    item.customerName = customer.fullName;
+                  }
                 }
               }
             }
-          }
-          this.dataSource.data = items;
-        },err=>console.log(err));
+            this.dataSource.data = items;
+          },
+          err => console.log(err)
+        );
         setTimeout(() => (this.dataSource.sort = this.sort));
         if (items.length === 0) {
           this.itemLoading = "No Invoice Found";
@@ -74,20 +78,68 @@ export class InvoicesComponent implements OnInit {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  deleteInvoice(id: string,index:number): void {
+  deleteInvoice(id: string, index: number): void {
     this.invoiceService
-    .deleteInvoice(id,index)
-    .then(() => {
-      this.getAllInvoices();
-      this.toastr.success("Invoice is deleted!");
-    })
-    .catch(err => {
-      console.log(err);
-      this.toastr.error("Failed to delete Invoice!", "Server error");
-    });
+      .deleteInvoice(id, index)
+      .then(() => {
+        this.getAllInvoices();
+        this.toastr.success("Invoice is deleted!");
+      })
+      .catch(err => {
+        console.log(err);
+        this.toastr.error("Failed to delete Invoice!", "Server error");
+      });
   }
   changeStatus(): void {
     this.dataSource.filter =
       this.status.toLowerCase() !== "all" ? this.status.toLowerCase() : "";
+  }
+  downloadInvoice(id: string, filename: string) {
+    this.toastr.info("invoice is downloading!");
+    this.invoiceService
+      .downloadInvoice(id, filename)
+      .then(() => {
+        this.toastr.clear();
+      })
+      .catch(err => {
+        console.log(err);
+        this.toastr.error("Failed to download invoice", "Server error");
+      });
+  }
+  sendInvoice(invoice: Iinvoice) {
+    try {
+      this.customerService
+        .getCustomerDetails(invoice.customer)
+        .then(customer => {
+          this.authService.getUserDetails().then(user => {
+            DialogConfig.data = {
+              id: invoice.id,
+              to: customer.email,
+              companyName: user.company.name,
+              number: invoice.number,
+              balanceDue: invoice.balanceDue,
+              userName: customer.attentionTo || customer.fullName
+            };
+            const dialogRef = this.dialog.open(
+              InvoiceDialogComponent,
+              DialogConfig
+            );
+            dialogRef
+              .afterClosed()
+              .toPromise()
+              .then(
+                result => {
+                  if (result) {
+                    console.log(result);
+                    this.toastr.success("Invoice is sent!");
+                  }
+                },
+                err => console.log(err)
+              );
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
