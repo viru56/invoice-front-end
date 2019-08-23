@@ -108,12 +108,17 @@ export class InvoiceService {
         .catch(err => reject(err));
     });
   }
-  sendInvoice(body:any): Promise<boolean>{
+  sendInvoice(body: any): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.apiService
-        .put(`${environment.invoice_url}/mail`,body)
+        .put(`${environment.invoice_url}/mail`, body)
         .toPromise()
         .then(res => {
+          for (let inv of InvoiceService.invoiceStore) {
+            if (inv.id === body.id) {
+              inv.status = "Sent";
+            }
+          }
           resolve(true);
         })
         .catch(err => reject(err));

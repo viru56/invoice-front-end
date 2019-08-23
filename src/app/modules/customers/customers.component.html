@@ -23,6 +23,8 @@
         [matDatepicker]="satrtDate"
         placeholder="start date"
         autocomplete="off"
+        [max]="maxDate"
+        (dateChange)="dateChange('start', $event.value)"
       />
       <mat-datepicker-toggle
         matSuffix
@@ -36,6 +38,8 @@
         [matDatepicker]="endDate"
         placeholder="end date"
         autocomplete="off"
+        [max]="maxDate"
+        (dateChange)="dateChange('end', $event.value)"
       />
       <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
       <mat-datepicker #endDate></mat-datepicker>
@@ -84,5 +88,5 @@
   </div>
 </div>
 <div class="mat-elevation-z1" *ngIf="dataSource.data.length === 0">
-  <p class="pl20">{{itemLoading}}</p>
+  <p class="pl20">{{ itemLoading }}</p>
 </div>

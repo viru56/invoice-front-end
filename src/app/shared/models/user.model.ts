@@ -1,11 +1,13 @@
-import { Icompany } from './company.model';
+import { Icompany } from "./company.model";
 
 export interface Iuser {
-    id?:string;
-    fullName:String;
-    phone?:Number;
-    email:String;
-    role:String;
-    status:string;
-    company?:Icompany;
+  id?: string;
+  fullName: String;
+  phone?: Number;
+  email: String;
+  role: String;
+  status: string;
+  company?: Icompany;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

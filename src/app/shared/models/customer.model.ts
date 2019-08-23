@@ -1,5 +1,5 @@
 export interface Icustomer {
-  id?:string;
+  id?: string;
   fullName: string;
   email: string;
   taxId: string;
@@ -13,5 +13,7 @@ export interface Icustomer {
   state: string;
   postalCode: number;
   country: string;
-  collections?:number;
+  collections?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

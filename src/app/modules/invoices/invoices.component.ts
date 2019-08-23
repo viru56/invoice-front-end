@@ -31,6 +31,7 @@ export class InvoicesComponent implements OnInit {
   ];
   statusData: string[] = ["Draft", "Sent", "Paid", "Outstanding", "All"];
   status: string;
+  invoices:Iinvoice[];
   constructor(
     private invoiceService: InvoiceService,
     private toastr: ToastrService,
@@ -48,15 +49,14 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService
       .getInvoiceStore()
       .then(items => {
+        this.invoices = items;
         this.customerService.getcustomerStore().then(
           customers => {
             this.customers = customers;
-            for (let customer of customers) {
-              if (customer) {
-                for (let item of items) {
-                  if (item.customer === customer.id) {
-                    item.customerName = customer.fullName;
-                  }
+            for (let item of items) {
+              for (let customer of customers) {
+                if (item.customer === customer.id) {
+                  item.customerName = customer.fullName;
                 }
               }
             }
@@ -91,8 +91,19 @@ export class InvoicesComponent implements OnInit {
       });
   }
   changeStatus(): void {
-    this.dataSource.filter =
-      this.status.toLowerCase() !== "all" ? this.status.toLowerCase() : "";
+    const filteredData = [];
+    this.dataSource.data = this.invoices;
+    if (this.status.toLowerCase() === "outstanding") {
+      for (let item of this.invoices) {
+        if (new Date(item.dueDate) < new Date()) {
+          filteredData.push(item);
+        }
+      }
+      this.dataSource.data = filteredData;
+    } else {
+      this.dataSource.filter =
+        this.status.toLowerCase() !== "all" ? this.status.toLowerCase() : "";
+    }
   }
   downloadInvoice(id: string, filename: string) {
     this.toastr.info("invoice is downloading!");
@@ -132,6 +143,7 @@ export class InvoicesComponent implements OnInit {
                   if (result) {
                     console.log(result);
                     this.toastr.success("Invoice is sent!");
+                    this.getAllInvoices();
                   }
                 },
                 err => console.log(err)

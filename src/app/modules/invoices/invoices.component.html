@@ -95,7 +95,6 @@
               <mat-icon matTooltip="edit">edit</mat-icon>
             </a>
             <a
-              *ngIf="element.balanceDue > 0"
               style="color: #42a5f5;"
               [routerLink]="[
                 'duplicate',
@@ -105,12 +104,6 @@
             >
               <mat-icon matTooltip="duplicate">file_copy</mat-icon>
             </a>
-            <!-- <mat-icon
-              color="primary"
-              (click)="duplicateInvoice(element.id)"
-              matTooltip="duplicate"
-              >file_copy</mat-icon
-            > -->
             <mat-icon
               (click)="downloadInvoice(element.id,element.name)"
               matTooltip="download"
