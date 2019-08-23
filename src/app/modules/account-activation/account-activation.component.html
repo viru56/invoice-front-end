@@ -1,0 +1,66 @@
+<div
+  fxLayout="column"
+  fxFlexFill
+  fxLayoutAlign="start center"
+  fxLayoutAlign.lt-sm="start center"
+  style="background-color:#F8F8F8; padding: 5%;"
+>
+<h2>Indi-Invoice</h2>
+  <div class="account-activation-box">
+    <mat-card>
+      <mat-card-title>Set Password
+                </mat-card-title>
+      <mat-card-content>
+          <h5>set a new password for your account 
+            </h5>
+        <form
+          fxLayout="column"
+          fxLayoutAlign="start stretch"
+          [formGroup]="accountActivationForm"
+          (ngSubmit)="submit()"
+        >
+          <mat-form-field class="full-width">
+            <input
+              type="password"
+              id="password"
+              class="input"
+              placeholder="Password"
+              formControlName="password"
+              matInput
+              autocomplete="off"
+              matTooltip="password between 8 to 24 characters which contain at least one numeric digit, one uppercase and one lowercase letter."
+            />
+          </mat-form-field>
+          <div *ngIf="formErrors.password" class="help is-danger">
+            {{ formErrors.password }}
+          </div>
+          <mat-form-field class="full-width">
+            <input
+              type="password"
+              id="cunfirm_password"
+              class="input"
+              placeholder="Confirm password"
+              formControlName="confirmPassword"
+              matInput
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <div *ngIf="formErrors.confirmPassword" class="help is-danger">
+            {{ formErrors.confirmPassword }}
+          </div>
+          <div>
+              <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              style="float:right"
+              [disabled]="!accountActivationForm.valid" 
+            >
+            Submit
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

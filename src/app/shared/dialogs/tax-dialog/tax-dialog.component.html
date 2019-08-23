@@ -1,0 +1,57 @@
+<div class="dialog ">
+  <form action="submit" [formGroup]="taxForm" (ngSubmit)="submit()">
+    <h2 mat-dialog-title>
+      {{ title }}
+      <button [mat-dialog-close]="false">
+        <mat-icon class="clear-icon">clear</mat-icon>
+      </button>
+    </h2>
+    <mat-divider></mat-divider>
+    <mat-dialog-content>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            placeholder="Name"
+            formControlName="name"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="number"
+            autocomplete="off"
+            placeholder="Amount (%)"
+            formControlName="amount"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <section style="height:35px;">
+          <mat-checkbox color="primary" formControlName="taxMode"
+            ><span style="padding-left: 10px;">Price include tax</span>
+          </mat-checkbox>
+        </section>
+      </div>
+      <div *ngIf="serverError" class="is-danger">
+        {{ serverError }}
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <!-- <button mat-button [mat-dialog-close]="false">Cancel</button> -->
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!taxForm.valid"
+        color="primary"
+      >
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

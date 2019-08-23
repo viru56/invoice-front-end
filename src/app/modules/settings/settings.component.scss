@@ -1,0 +1,100 @@
+.expansion-container {
+  .expansion-panel {
+    border-radius: 4px;
+    margin-bottom: 10px;
+    .mat-expanded {
+      border-radius: 0;
+    }
+    .expansion-panel-header {
+      background-color: #327ebd;
+      .mat-expansion-panel-header-title {
+        font-size: 1rem;
+        color: white;
+      }
+    }
+    .bp-form{
+      max-height: 500px;
+      overflow: auto;
+    }
+    .invoice-logo {
+      label {
+        padding: 60px 30px;
+      }
+      .inputfile {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+      }
+      .inputfile + label {
+        font-size: 1.25em;
+        font-weight: 700;
+        background-color: #eee;
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .inputfile + label * {
+        pointer-events: none;
+      }
+      .img-container {
+        position: relative;
+        .logoPreview {
+          max-height: 150px;
+          max-width: 200px;
+          cursor: pointer;
+          display: inline-block;
+          border-radius: 4px;
+        }
+        .clear-icon {
+          background-color: #eee;
+          cursor: pointer;
+          height: 20px;
+          width: 20px;
+          font-size: 20px;
+          border-radius: 4px;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .clear-icon:hover {
+          background-color: #42a5f5;
+        }
+      }
+    }
+    .bx-s-none {
+      button {
+        box-shadow: none;
+        color: #fff;
+      }
+    }
+    .status {
+      color: #5d5d5d;
+    }
+    .info-text {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #555;
+    }
+    .info-text-date{
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background: #555;
+    }
+    .text-center {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+  }
+
+  mat-divider {
+    margin-bottom: 10px;
+  }
+}

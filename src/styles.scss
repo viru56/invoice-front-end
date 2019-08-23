@@ -1,9 +1,10 @@
 @import "~@angular/material/theming";
+@import "../node_modules/ngx-toastr/toastr.css";
 @import "./app/auth/auth.component.scss";
 @import "./app/base/sidemenu/sidemenu.component.scss";
 @import "./app/base/sidemenu-item/sidemenu-item.component.scss";
-@import "./app/home/home.component.scss";
-@import "./app/invoices/new-invoice/new-invoice.component.scss";
+@import "./app/modules/home/home.component.scss";
+@import "./app/modules/invoices/new-invoice/new-invoice.component.scss";
 
 $mat-light-theme-background: (
   status-bar: map_get($mat-grey, 300),
@@ -75,6 +76,7 @@ body {
 }
 .ps-content {
   height: 100%;
+  overflow: hidden;
 }
 .wd-150 {
   width: 150px;
@@ -100,10 +102,29 @@ body {
 .p20{
   padding: 20px;
 }
+.pr20 {
+  padding-right: 20px;
+}
+.pl20 {
+  padding-left: 20px;
+}
+.pt20 {
+  padding-top: 20px;
+}
+.pb20 {
+  padding-bottom: 20px;
+}
 .dflex {
   display: flex;
 }
-.mat-select-panel,.mat-autocomplete-panel{
+.is-danger {
+  color:#f44336;
+  padding-bottom: 20px;
+}
+.text-bold{
+  font-weight: bold;
+}
+.mat-select-panel,.mat-autocomplete-panel,.mat-calendar{
   background-color: #fff;
 }
 .loader-container {

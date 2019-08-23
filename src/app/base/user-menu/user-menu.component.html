@@ -1,4 +1,4 @@
-<div class="toolbar-user-container">
+<div class="toolbar-user-container" *ngIf="currentUser">
   <button
     mat-button
     (click)="isOpen = !isOpen"
@@ -9,7 +9,7 @@
     <span fxLayout="row" fxLayoutAlign="start center">
       <!-- <img class="avatar" [src]="currentUser?.photoURL || 'assets/default-user.png'"> -->
       <span class="name"
-        >{{ currentUser?.currentUserName || defaultUser }} Nehra</span
+        >{{ currentUser.fullName }}</span
       >
       <mat-icon class="icon">keyboard_arrow_down</mat-icon>
     </span>
@@ -34,7 +34,7 @@
         <mat-divider></mat-divider>
 
         <mat-list-item>
-          <a matLine [routerLink]="['/login']"
+          <a matLine [routerLink]="['/login']" (click)="logout()"
             >Logout
             <mat-icon>power_settings_new</mat-icon>
           </a>

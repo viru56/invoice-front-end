@@ -1,0 +1,241 @@
+<div
+  fxLayout="column"
+  class="components-container-gt-xs"
+  [ngClass.xs]="'components-container-xs'"
+  fxLayoutGap="20px"
+>
+  <div fxFlex>
+    <div class="expansion-container">
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="20px">
+        <div fxFlexLayoutWrap fxFlex="100">
+          <mat-accordion>
+            <mat-expansion-panel class="expansion-panel" >
+              <mat-expansion-panel-header class="expansion-panel-header">
+                <mat-panel-title>
+                  Business Profile
+                </mat-panel-title>
+                <mat-panel-description>
+                  Manage contact information and branding
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <form
+                action="submit"
+                (ngSubmit)="submit()"
+                [formGroup]="businessProfileForm"
+                class="bp-form"
+              >
+                <div
+                  fxLayout="row"
+                  fxLayout.lt-sm="column"
+                  fxLayout.lt-xs="column"
+                  class="pt20"
+                >
+                  <div class="invoice-logo" fxFlex="30">
+                    <div *ngIf="!fileToUpload">
+                      <input
+                        type="file"
+                        name="file"
+                        id="file"
+                        class="inputfile"
+                        accept="images/*"
+                        (change)="handleFileInput($event.target.files)"
+                      />
+                      <label for="file">+ Add your logo</label>
+                    </div>
+                    <div class="img-container" *ngIf="fileToUpload">
+                      <img
+                        [src]="fileToUpload"
+                        alt="fileTOUpload"
+                        class="logoPreview"
+                      />
+                      <mat-icon class="clear-icon" (click)="clearLogoPreview()"
+                        >clear</mat-icon
+                      >
+                    </div>
+                  </div>
+                  <div fxFlex="30" fxLayoutAlign="start center">
+                    <mat-form-field>
+                      <input
+                        matInput
+                        placeholder="Bussiness name"
+                        autocomplete="off"
+                        formControlName="name"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="30" fxLayoutAlign="start center">
+                    <mat-form-field
+                      matTooltip="Customers will be able to reply to this address. We will also send any billing or account-related emails here."
+                    >
+                      <input
+                        matInput
+                        placeholder="Email"
+                        autocomplete="off"
+                        formControlName="email"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div
+                  fxLayout="row"
+                  fxLayout.lt-sm="column"
+                  fxLayout.lt-xs="column"
+                  class="pt20"
+                >
+                  <div fxFlex="40">
+                    <mat-form-field class="pr20" style="width:450px">
+                      <input
+                        matInput
+                        placeholder="Send to (max of 5 emails with comma seperated)"
+                        autocomplete="off"
+                        formControlName="sendTo"
+                        type="text"
+                        matTooltip="Where should email updates be sent? You can specify up to 5 email addresses, comma-separated."
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="60">
+                    <mat-form-field class="pr20" style="width:450px;">
+                      <input
+                        matInput
+                        placeholder="Address"
+                        autocomplete="off"
+                        formControlName="address"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div
+                  fxLayout="row"
+                  fxLayout.lt-sm="column"
+                  fxLayout.lt-xs="column"
+                  class="pt20"
+                >
+                  <div fxFlex="20">
+                    <mat-form-field class="pr20">
+                      <input
+                        matInput
+                        placeholder="City"
+                        autocomplete="off"
+                        formControlName="city"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="20">
+                    <mat-form-field class="pr20">
+                      <input
+                        matInput
+                        placeholder="State/Province"
+                        autocomplete="off"
+                        formControlName="state"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="20">
+                    <mat-form-field class="pr20">
+                      <input
+                        matInput
+                        placeholder="Zip/Postal code"
+                        autocomplete="off"
+                        formControlName="postalCode"
+                        type="text"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="20">
+                    <mat-form-field class="pr20">
+                      <input
+                        matInput
+                        placeholder="Tax id"
+                        autocomplete="off"
+                        formControlName="taxId"
+                        type="text"
+                        matTooltip="Please use this field if you need your tax ID displayed on your invoices. It will be visible to customers underneath your address."
+                      />
+                    </mat-form-field>
+                  </div>
+
+                  <div fxFlex="20">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      type="submit"
+                      [disabled]="!businessProfileForm.valid"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="expansion-panel billing" >
+              <mat-expansion-panel-header class="expansion-panel-header">
+                <mat-panel-title>
+                  Billing
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </mat-panel-title>
+                <mat-panel-description>
+                  Cancel and update billing information
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div fxLayout="row" class="p20">
+                <div fxFlex="100">
+                  <div fxFlex="40" class="text-center fb">
+                    Plan
+                  </div>
+                  <div fxFlex="60">
+                    <div class="bx-s-none" *ngIf="company">
+                      <span class="info-text">{{company.subscription}} - </span>
+                      <button mat-raised-button color="primary" *ngIf="company.subscription === 'Trial'">
+                        Upgrade
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div fxLayout="row" class="p20">
+                <div fxFlex="100">
+                  <div fxFlex="40" class="text-center">
+                    Plan End
+                  </div>
+                  <div fxFlex="60" *ngIf="company">
+                    <span class="info-text-date">{{company.subscriptionEndDate | date}}</span>
+                  </div>
+                </div>
+              </div>
+              <div fxLayout="row" class="p20">
+                <div fxFlex="100">
+                  <div fxFlex="40" class="text-center">
+                    Cancel
+                  </div>
+                  <div fxFlex="60" class="bx-s-none">
+                    <button mat-raised-button color="warn">
+                      Cancel my account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="expansion-panel">
+              <mat-expansion-panel-header class="expansion-panel-header">
+                <mat-panel-title>
+                  Payment &nbsp;
+                </mat-panel-title>
+                <mat-panel-description>
+                  How do you want to get paid?
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <h4>Paypal</h4>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

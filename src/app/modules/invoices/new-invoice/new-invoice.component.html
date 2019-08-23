@@ -1,0 +1,521 @@
+<div class="header">
+  <p>
+    <a [routerLink]="['/auth/invoices']" color="primary">
+      Invoices
+    </a>
+    / <span *ngIf="!invoice.id">New</span><span *ngIf="invoice.id">Edit</span> Invoice
+    <mat-form-field class="float-right" style="width:220px;">
+      <input
+        type="text"
+        placeholder="Search and select a Customer"
+        aria-label="customer"
+        matInput
+        [formControl]="selectedCustomer"
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="displayCustFn"
+        (closed)="selectedCustomerValue()"
+      >
+        <mat-option
+          style="line-height: 20px;
+        border-bottom: 1px solid #ccc;"
+          *ngFor="let customer of filteredCustomerOptions | async"
+          [value]="customer"
+        >
+          {{ customer.fullName }}
+          <br /><span style="font-size:12px">{{ customer.email }}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </p>
+</div>
+<div class="new-invoice-container mat-elevation-z1 ">
+  <form [formGroup]="invoiceForm" (keydown.enter)="$event.preventDefault()">
+    <div fxlayout="row" style="width:100%" class="mb20" fxLayoutGap="20px">
+      <div fxFlex="100" class="components-container-gt-xs" fxLayout="column">
+        <div fxLayout="row" fxLayout.lt-sm="column" fxLayout.lt-xs="column">
+          <div
+            fxFlex.xs="100"
+            fxFlex.lg="80"
+            fxFlex.md="70"
+            fxFlex.sm="50"
+            class="invoice-logo"
+          >
+            <div class="img-container">
+              <img
+                *ngIf="invoiceLogo"
+                [src]="invoiceLogo"
+                alt="invoiceLogo"
+                class="logo-preview"
+              />
+              <p *ngIf="currentUser">{{ currentUser.company.name }}</p>
+            </div>
+          </div>
+          <div
+            fxFlex.xs="100"
+            fxFlex.lg="20"
+            fxFlex.md="30"
+            fxFlex.sm="50"
+            fxLayoutAlign.lt.sm="start start"
+            fxLayout.lt-sm="column"
+            fxLayoutAlign="space-around start"
+          >
+            <div>
+              <div class="invoice-name">
+                <mat-form-field class="invoice-name wd-150">
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Invoice"
+                    formControlName="name"
+                    autocomplete="off"
+                  />
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field class="invoice-number wd-150">
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Invoice number"
+                    formControlName="number"
+                    autocomplete="off"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayout.lt-sm="column">
+          <div fxFlex.xs="100" fxFlex.lg="60" fxFlex.md="50" fxFlex.sm="40">
+            <div>
+              <p>Bill To:</p>
+              <p
+                *ngIf="
+                  selectedCustomer.value && selectedCustomer.value.fullName
+                "
+              >
+                <span *ngIf="selectedCustomer.value.attentionTo">
+                  ATTN: {{ selectedCustomer.value.attentionTo }}</span
+                >
+                <br />
+                <span class="text-bold"
+                  >{{ selectedCustomer.value.fullName }}
+                </span>
+                <br />
+                <span *ngIf="selectedCustomer.value.address_1">
+                  {{ selectedCustomer.value.address_1 }},</span
+                >
+                <span *ngIf="selectedCustomer.value.address_2">
+                  {{ selectedCustomer.value.address_2 }} </span
+                ><br />
+                <span *ngIf="selectedCustomer.value.city">
+                  {{ selectedCustomer.value.city }}</span
+                >
+                <span *ngIf="selectedCustomer.value.state">
+                  {{ selectedCustomer.value.state }} -</span
+                >
+                <span *ngIf="selectedCustomer.value.postalCode">
+                  {{ selectedCustomer.value.postalCode }}</span
+                >
+              </p>
+              <p
+                *ngIf="
+                  !(selectedCustomer.value && selectedCustomer.value.fullName)
+                "
+              >
+                please select a customer
+              </p>
+            </div>
+          </div>
+          <div
+            fxFlex.xs="100"
+            fxFlex.lg="40"
+            fxFlex.md="50"
+            fxFlex.sm="60"
+            fxLayout="column"
+            fxLayoutAlign="space-around end"
+          >
+            <div>
+              <mat-form-field class="date wd-150">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  formControlName="date"
+                  autocomplete="off"
+                  placeholder="Date"
+                  type="text"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field class="date wd-150">
+                <input
+                  matInput
+                  [matDatepicker]="picker1"
+                  formControlName="dueDate"
+                  autocomplete="off"
+                  placeholder="Due Date"
+                  type="text"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker1"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start center" class="item-list">
+          <div fxFlex="100" class="item-header" fxLayoutGap="10px">
+            <div fxFlex="30">
+              Item
+            </div>
+            <div fxFlex="10">
+              Taxable
+            </div>
+            <div fxFlex="20">
+              Quantity
+            </div>
+            <div fxFlex="20">
+              Rate
+            </div>
+            <div fxFlex="20">
+              Amount
+            </div>
+          </div>
+        </div>
+        <div
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          class="item"
+          formArrayName="lineItems"
+        >
+          <div fxFlex="100" fxLayoutGap="10px">
+            <div
+              *ngFor="let item of lineItems.controls; let itemIndex = index"
+              [formGroupName]="itemIndex"
+              class="item-row"
+            >
+              <div fxFlex="30">
+                <mat-form-field>
+                  <input
+                    matInput
+                    placeholder="Name of the product or service"
+                    formControlName="name"
+                    autocomplete="off"
+                    type="text"
+                  />
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <section>
+                  <mat-checkbox
+                    (change)="updateSubtotal()"
+                    color="primary"
+                    formControlName="taxable"
+                  >
+                  </mat-checkbox>
+                </section>
+              </div>
+              <div fxFlex="20">
+                <mat-form-field>
+                  <input
+                    matInput
+                    placeholder="Quantity"
+                    formControlName="quantity"
+                    (keyup)="updateLineItemAmount(itemIndex)"
+                    autocomplete="off"
+                    type="number"
+                  />
+                </mat-form-field>
+              </div>
+              <div fxFlex="20">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="number"
+                    placeholder="Rate"
+                    formControlName="unitCost"
+                    (keyup)="updateLineItemAmount(itemIndex)"
+                    autocomplete="off"
+                  />
+                </mat-form-field>
+              </div>
+              <div fxFlex="20" style="display:flex">
+                <p
+                  style="display:flex"
+                  [ngStyle]="{
+                    'margin-left':
+                      itemIndex === lineItems.controls.length - 1 ? '-8px' : 0
+                  }"
+                >
+                  Rs
+                  <input
+                    readonly
+                    type="number"
+                    style="margin: 0 0 15px 5px;"
+                    matInput
+                    formControlName="amount"
+                    autocomplete="off"
+                  />
+                </p>
+                <div style="padding-top:20px">
+                  <mat-icon
+                    class="clear-icon"
+                    (click)="removeLineItem(itemIndex)"
+                    >clear</mat-icon
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start center" class="item">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="addLineItem()"
+            type="button"
+          >
+            + Line Item
+          </button>
+          <div class="ml20">
+            <mat-form-field>
+              <mat-select
+                (selectionChange)="selectedLineItem()"
+                placeholder="Pick a line item"
+                formControlName="selectedItem"
+              >
+                <mat-option
+                  style="line-height: 20px;
+                  border-bottom: 1px solid #ccc;"
+                  *ngFor="let item of itemData"
+                  [value]="item"
+                >
+                  {{ item.name }}
+                  <br /><span style="font-size:12px"
+                    >Rs{{ item.unitCost }}</span
+                  >
+                  <span
+                    class="float-right"
+                    style="font-size:12px"
+                    *ngIf="item.taxable"
+                    >Taxable</span
+                  >
+                  <span
+                    class="float-right"
+                    style="font-size:12px"
+                    *ngIf="!item.taxable"
+                    >Non taxable</span
+                  >
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="column" fxLayoutAlign="start end">
+          <!-- subtotal -->
+          <div class="invoice-balance">
+            <div class="balance-name">
+              <h4>
+                Subtotal
+              </h4>
+            </div>
+            <div class="balance-amount">Rs {{ invoice.subtotal }}</div>
+          </div>
+          <p style="margin:0">
+            <span style="font-size: .75rem;"
+              >Taxable Rs {{ invoice.taxableAmount }}</span
+            ><br /><span style="font-size: .75rem;"
+              >Non Taxable Amount Rs {{ invoice.nonTaxableAmount }}</span
+            >
+          </p>
+          <!--tax-->
+          <div *ngIf="invoice.taxItems.length > 0">
+            <div
+              *ngFor="let tax of invoice.taxItems; let index = index"
+              class="tax-item"
+            >
+              <p>
+                <span>{{ tax.name }} </span
+                ><span style="font-size:0.75rem;"
+                  >({{ tax.amount }}% {{ tax.taxMode | slice: 0:2 }})</span
+                >
+                <span
+                  *ngIf="tax.taxMode === 'Exclusive'"
+                  style="font-size:0.8rem;padding-left: 20px;"
+                >
+                  Rs
+                  {{ ((invoice.taxableAmount * tax.amount) / 100).toFixed(2) }}
+                </span>
+                <span
+                  *ngIf="tax.taxMode === 'Inclusive'"
+                  style="font-size:0.8rem;padding-left: 20px;"
+                >
+                  Rs
+                  {{
+                    (
+                      (100 /
+                        (invoice.taxableAmount +
+                          (invoice.taxableAmount * tax.amount) / 100)) *
+                      invoice.taxableAmount
+                    ).toFixed(2)
+                  }}
+                </span>
+              </p>
+              <mat-icon class="clear-icon" (click)="removeTaxItem(index)">
+                clear
+              </mat-icon>
+            </div>
+          </div>
+          <div class="ml20">
+            <mat-form-field style="width:150px;">
+              <mat-select
+                (selectionChange)="selectedTaxChange()"
+                placeholder="Apply tax"
+                formControlName="selectedTax"
+              >
+                <mat-option
+                  style="line-height: 20px;
+                    border-bottom: 1px solid #ccc;"
+                  *ngFor="let item of taxData"
+                  [value]="item"
+                >
+                  {{ item.name }}
+                  <br /><span style="font-size:12px">{{ item.amount }} %</span>
+                  <span class="float-right" style="font-size:12px">{{
+                    item.taxMode
+                  }}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!--discount-->
+          <div style="padding:5px">
+            <button
+              mat-raised-button
+              color="primary"
+              *ngIf="!showDiscount"
+              (click)="showDiscount = !showDiscount"
+              type="button"
+            >
+              + Discount {{showDiscount}}
+            </button>
+            <div *ngIf="showDiscount" class="dflex">
+              <div class="dflex discount">
+                <h4 style="padding-right:5px;">
+                  Discount
+                </h4>
+                <mat-form-field style="width:100px; text-align: right">
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="discountValue"
+                    (keyup)="updateTotal()"
+                    autocomplete="off"
+                  />
+                </mat-form-field>
+                <mat-form-field style="width:50px;padding-left:5px;">
+                  <mat-select
+                    formControlName="discountType"
+                    (selectionChange)="updateTotal()"
+                  >
+                    <mat-option value="flat">Rs</mat-option>
+                    <mat-option value="percentage">%</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-icon class="clear-icon mt20" (click)="removeDiscount()">
+                clear
+              </mat-icon>
+            </div>
+          </div>
+          <!-- amount paid -->
+          <div class="dflex amount-paid mr20">
+            <h4>
+              Amount Paid
+            </h4>
+            <mat-form-field style="width:100px;">
+              <input
+                matInput
+                type="number"
+                formControlName="amountPaid"
+                (keyup)="updateTotal()"
+                autocomplete="off"
+              />
+            </mat-form-field>
+          </div>
+          <!-- total -->
+          <div class="invoice-balance">
+            <div class="balance-name">
+              <h4>
+                Total
+              </h4>
+            </div>
+            <div class="balance-amount">Rs {{ invoice.total }}</div>
+          </div>
+          <!-- Balance Due -->
+          <div class="invoice-balance">
+            <div class="balance-name">
+              <h4>
+                Balance Due
+              </h4>
+            </div>
+            <div class="balance-amount">Rs {{ invoice.balanceDue }}</div>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="20px">
+          <div class="invoice-balance">
+            <div class="balance-name">
+              <h4>
+                Notes
+              </h4>
+            </div>
+          </div>
+          <mat-form-field style="width:80%">
+            <textarea
+              matInput
+              type="text"
+              matTextareaAutosize
+              matAutosizeMinRows="2"
+              matAutosizeMaxRows="5"
+              formControlName="notes"
+              placeholder="Notes - any relevant information not already covered"
+              autocomplete="off"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div fxlayout="row" fxLayoutAlign="end start" class="m20">
+      <div class="is-danger pr20" *ngIf="formError">{{ formError }}</div>
+      <button
+        mat-raised-button
+        class="mr20"
+        color="primary"
+        [disabled]="!invoiceForm.valid || !selectedCustomer.value"
+        (click)="saveAsDraft()"
+      >
+        Save as Draft
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!invoiceForm.valid || !selectedCustomer.value"
+        (click)="saveAndIssue()"
+      >
+         Save and Issue
+      </button>
+    </div>
+  </form>
+</div>

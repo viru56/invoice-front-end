@@ -1,11 +1,13 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
 import {
   PerfectScrollbarModule,
   PerfectScrollbarConfigInterface,
   PERFECT_SCROLLBAR_CONFIG
 } from "ngx-perfect-scrollbar";
+
 import {
   MatListModule,
   MatSidenavModule,
@@ -44,7 +46,18 @@ import { UserMenuComponent } from "./user-menu/user-menu.component";
 import { ToolbarComponent } from "./toolbar/toolbar.component";
 import { ToolbarNotificationComponent } from "./toolbar-notification/toolbar-notification.component";
 import { RouterModule } from "@angular/router";
-
+import {
+  ApiService,
+  AuthService,
+  InvoiceService,
+  ItemService,
+  TaxService,
+  CompanyService
+} from "../shared/services";
+import { ToastrModule } from "ngx-toastr";
+import { CookieService } from "ngx-cookie-service";
+import { AuthGuard } from "../shared/guard";
+import { CustomerService } from '../shared/services/customer.service';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
@@ -93,7 +106,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule,
+    ToastrModule.forRoot()
   ],
   exports: [
     CommonModule,
@@ -134,10 +149,21 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule,
+    ToastrModule
   ],
 
   providers: [
+    ApiService,
+    AuthService,
+    CookieService,
+    AuthGuard,
+    InvoiceService,
+    ItemService,
+    TaxService,
+    CustomerService,
+    CompanyService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

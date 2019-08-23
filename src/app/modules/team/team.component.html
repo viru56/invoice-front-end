@@ -1,0 +1,65 @@
+<div class="header">
+  <p>
+    <span class="title">Team</span>
+    <button mat-raised-button color="primary" (click)="addNewUser()">
+      <mat-icon>add_box</mat-icon> Invite Member
+    </button>
+  </p>
+  <div class="subtitle">
+    Grant others access to your business on Ind-Invoices.
+  </div>
+</div>
+<div class="table-wrapper mat-elevation-z1" *ngIf="dataSource.data.length > 0">
+  <mat-table [dataSource]="dataSource">
+    <!-- Name Column -->
+    <ng-container matColumnDef="fullName">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.fullName }} </mat-cell>
+    </ng-container>
+
+    <!-- Email Address Column -->
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef> Email address </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.email }}</mat-cell>
+    </ng-container>
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.status }}</mat-cell>
+    </ng-container>
+
+    <!-- Role Column -->
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+      <mat-cell *matCellDef="let element"
+        ><span class="role">{{ element.role }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element; let index = index">
+        <div *ngIf="currentUser && currentUser.id !== element.id">
+          <mat-icon (click)="editUser(element)" matTooltip="edit"
+            >edit
+          </mat-icon>
+          <mat-icon
+            color="warn"
+            (click)="deleteUser(index, element.id)"
+            matTooltip="delete"
+            >delete_forever
+          </mat-icon>
+        </div>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row
+      *matHeaderRowDef="displayedColumns; sticky: true"
+    ></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+</div>
+
+<div *ngIf="dataSource.data.length === 0" class="mat-elevation-z1">
+  <p class="p20">{{ itemLoading }}</p>
+</div>

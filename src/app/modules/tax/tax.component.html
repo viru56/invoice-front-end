@@ -1,0 +1,62 @@
+<div class="header">
+  <p>
+    <span class="title">Taxes</span>
+
+    <button mat-raised-button color="primary" (click)="addNewTaxRate()">
+      <mat-icon>add_box</mat-icon> New Tax Rate
+    </button>
+  </p>
+  <div class="subtitle">
+    You can create tax rates that can be applied to subtotals.
+  </div>
+</div>
+<div class="table-wrapper mat-elevation-z1" *ngIf="dataSource.data.length > 0">
+  <mat-table [dataSource]="dataSource" matSort>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+    </ng-container>
+
+    <!-- Amount Column -->
+    <ng-container matColumnDef="amount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.amount }} %</mat-cell>
+    </ng-container>
+
+    <!-- Tax mode Column -->
+    <ng-container matColumnDef="taxMode">
+      <mat-header-cell *matHeaderCellDef > Tax mode </mat-header-cell>
+      <mat-cell *matCellDef="let element"
+        ><span
+          class="tax-mode"
+          [ngClass]="{'Inclusive': element.taxMode === 'Inclusive'}"
+        >
+          {{ element.taxMode }}</span
+        >
+      </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element; let index = index">
+        <mat-icon (click)="editTaxRate(element)" matTooltip="edit"
+          >edit</mat-icon
+        >
+        <mat-icon
+          color="warn"
+          (click)="deleteTaxRate(index,element.id)"
+          matTooltip="delete"
+          >delete_forever</mat-icon
+        >
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+</div>
+
+<div *ngIf="dataSource.data.length===0" class="mat-elevation-z1 m20">
+  <p class="p20">{{itemLoading}}</p>
+</div>
