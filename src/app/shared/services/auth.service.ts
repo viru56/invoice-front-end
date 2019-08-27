@@ -39,9 +39,29 @@ export class AuthService {
         .put(`${environment.user_url}/role`, body)
         .toPromise()
         .then(item => {
+          if(AuthService.userStore){
           for (let item of AuthService.userStore) {
             if (item.id === body.id) {
               item.role = body.role;
+            }
+          }
+        }
+          resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  userUpdate(body:any):Promise<boolean>{
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .put(`${environment.user_url}`, body)
+        .toPromise()
+        .then(item => {
+          if(AuthService.userStore){
+            for (let item of AuthService.userStore) {
+              if (item.id === body.id) {
+                item.fullName = body.fullName;
+              }
             }
           }
           resolve(true);
