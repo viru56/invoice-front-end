@@ -29,7 +29,6 @@ export class SettingsComponent implements OnInit {
       .getUserDetails()
       .then(user => {
         this.company = user.company;
-        console.log(this.company);
         this.fileToUpload = `${environment.base_url}/uploads/Screenshot.png`;
         this.copyForm();
       })

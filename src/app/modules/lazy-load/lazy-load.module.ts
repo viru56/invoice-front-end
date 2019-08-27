@@ -38,6 +38,11 @@ const routes: Routes = [
     path: "",
     loadChildren: "../home/home.module#HomeModule",
    canActivate: [NoAuthGuard]
+  },
+  {
+    path: "plan",
+    loadChildren: "../plan/plan.module#PlanModule",
+    canActivate: [AuthGuard]
   }
 ];
 

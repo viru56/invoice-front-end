@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { AuthService } from "../../shared/services";
 import { Iuser } from "../../shared/models";
 import * as moment from "moment";
+import { Router } from '@angular/router';
 @Component({
   selector: "app-toolbar",
   templateUrl: "./toolbar.component.html",
@@ -23,7 +24,7 @@ export class ToolbarComponent implements OnInit {
     ],
     currentUser: null
   };
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router:Router) {}
 
   ngOnInit() {
     this.authService.getUserDetails().then(
@@ -31,7 +32,10 @@ export class ToolbarComponent implements OnInit {
         this.data.currentUser = user;
         this.subscriptionRemainingDays = moment(
           this.data.currentUser.company.subscriptionEndDate
-        ).diff(moment(), "days");
+        ).diff(moment(), "days") + 1;
+        if(this.subscriptionRemainingDays < 1){
+          this.router.navigateByUrl('plan');
+        }
       },
       err => console.log(err)
     );

@@ -191,10 +191,10 @@
                   </div>
                   <div fxFlex="60">
                     <div class="bx-s-none" *ngIf="company">
-                      <span class="info-text">{{company.subscription}} - </span>
-                      <button mat-raised-button color="primary" *ngIf="company.subscription === 'Trial'">
+                      <span class="info-text"> {{company.subscription}} </span> 
+                      <a [routerLink]="['/plan']" mat-raised-button color="primary" *ngIf="company.subscription === 'Trial'">
                         Upgrade
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
