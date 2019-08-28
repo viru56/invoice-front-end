@@ -1,5 +1,9 @@
+
 .plan-container {
   margin: 20px auto;
+  .info{
+    font-size: 1rem;
+  }
   .logout {
     box-shadow: none;
     text-decoration: underline;
@@ -25,10 +29,10 @@
     .payment-info {
       list-style-type: none;
       padding: 0;
-      .mat-icon{
-          background: #42a5f5;
-          border-radius: 50%;
-          color: #fff;
+      .mat-icon {
+        background: #42a5f5;
+        border-radius: 50%;
+        color: #fff;
       }
     }
   }

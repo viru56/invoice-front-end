@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService, CompanyService } from "src/app/shared/services";
 import { Iuser } from "src/app/shared/models";
-import * as moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import * as moment from "moment";
+import { ToastrService } from "ngx-toastr";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-plan",
@@ -12,12 +12,6 @@ import { Router } from '@angular/router';
 })
 export class PlanComponent implements OnInit {
   currentUser: Iuser;
-  constructor(
-    private authService: AuthService,
-    private companyService: CompanyService,
-    private toastr:ToastrService,
-    private router: Router
-  ) {}
   plans: Array<any> = [
     {
       name: "Monthly",
@@ -48,27 +42,41 @@ export class PlanComponent implements OnInit {
       ]
     }
   ];
+  planExpired: boolean;
+  constructor(
+    private authService: AuthService,
+    private companyService: CompanyService,
+    private toastr: ToastrService,
+    private router: Router
+  ) {}
+
   ngOnInit() {
-    this.authService
-      .getUserDetails()
-      .then(user => (this.currentUser = user), console.log);
+    this.authService.getUserDetails().then(user => {
+      this.currentUser = user;
+      this.planExpired =
+        moment(this.currentUser.company.subscriptionEndDate) > moment();
+    }, console.log);
   }
   doPayment(plan: string): void {
     let subscriptionEndDate = moment();
-   if(plan.toLowerCase()=="monthly"){
-    subscriptionEndDate.add(1,'M');
-    if(moment(this.currentUser.company.subscriptionEndDate) > moment()){
-      subscriptionEndDate = moment(this.currentUser.company.subscriptionEndDate).add(1,'M');
+    if (plan.toLowerCase() == "monthly") {
+      subscriptionEndDate.add(1, "M");
+      if (moment(this.currentUser.company.subscriptionEndDate) > moment()) {
+        subscriptionEndDate = moment(
+          this.currentUser.company.subscriptionEndDate
+        ).add(1, "M");
+      }
+    } else {
+      subscriptionEndDate.add(1, "y");
     }
-   }else{
-    subscriptionEndDate.add(1,'y');
-   }
-   this.currentUser.company.subscription = plan;
-   this.currentUser.company.subscriptionEndDate = new Date(subscriptionEndDate.toString());
-   this.companyService.updateCompany(this.currentUser.company).then(res=>{
-    this.toastr.success('Suscription is renewed!');
-  this.router.navigateByUrl('auth/dashboard');
-   },console.log)
+    this.currentUser.company.subscription = plan;
+    this.currentUser.company.subscriptionEndDate = new Date(
+      subscriptionEndDate.toString()
+    );
+    this.companyService.updateCompany(this.currentUser.company).then(res => {
+      this.toastr.success("Suscription is renewed!");
+      this.router.navigateByUrl("auth/dashboard");
+    }, console.log);
   }
   logout(): void {
     this.authService.logout();

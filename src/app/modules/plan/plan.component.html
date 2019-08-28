@@ -1,6 +1,5 @@
 <div
   fxLayout="column"
-  class="dashboard"
   fxLayoutAlign="space-between stretch"
   fxLayoutGap="20px"
   fxFlexFill
@@ -20,6 +19,15 @@
             IND-INVOICES
           </h1>
           <span fxFlex></span>
+          <span *ngIf="currentUser" class="info">
+            {{ currentUser?.fullName }}, the
+            {{ currentUser?.company?.subscription }} subscription for
+            {{ currentUser?.company?.name }}
+            <span *ngIf="planExpired">has ended</span>
+            <span *ngIf="!planExpired">will end</span> on
+            {{ currentUser?.company?.subscriptionEndDate | date }}.</span
+          >
+          <span fxFlex></span>
           <button
             mat-raised-button
             class="logout"
@@ -36,52 +44,18 @@
         <mat-card class="payment-card">
           <mat-card-header>
             <div class="title">
-              {{plan.name}} <span class="float-right price">Rs {{plan.amount}}</span>
-            </div>
-          </mat-card-header>
-          <mat-card-content>
-              <p class="text-center p20">
-                 {{plan.description}}
-                </p>
-              <ul class="payment-info">
-                <li class="p10">
-                  Included Customers <span class="float-right">{{plan.customerIncludes}}</span>
-                </li>
-                <li class="p10">
-                  <span
-                    matTooltip="Users within your organization that can access Invoiced"
-                  >
-                    Included Users
-                  </span>
-                  <span class="float-right">{{plan.userIncludes}}</span>
-                </li>
-                <li class="p10" *ngFor="let fe of plan.features">
-                  <span>
-                   {{fe}}
-                  </span>
-                  <mat-icon class="float-right">done</mat-icon>
-                </li>
-              </ul>
-            </mat-card-content>
-            <mat-card-actions align="end">
-              <button (click)="doPayment(plan.name)" color="warn" mat-raised-button>SELECT</button>
-            </mat-card-actions>
-        </mat-card>
-      </div>
-      <!-- <div fxFlex="100">
-        <mat-card class="payment-card">
-          <mat-card-header style="display:block;">
-            <div class="title">
-              Yearly <span class="float-right price">Rs 10000</span>
+              {{ plan.name }}
+              <span class="float-right price">Rs {{ plan.amount }}</span>
             </div>
           </mat-card-header>
           <mat-card-content>
             <p class="text-center p20">
-              The plan for businesses that need simple online invoicing.
+              {{ plan.description }}
             </p>
             <ul class="payment-info">
               <li class="p10">
-                Included Customers <span class="float-right">unlimited</span>
+                Included Customers
+                <span class="float-right">{{ plan.customerIncludes }}</span>
               </li>
               <li class="p10">
                 <span
@@ -89,39 +63,27 @@
                 >
                   Included Users
                 </span>
-                <span class="float-right">unlimited</span>
+                <span class="float-right">{{ plan.userIncludes }}</span>
               </li>
-              <li class="p10">
+              <li class="p10" *ngFor="let fe of plan.features">
                 <span>
-                  Create and send invoices
+                  {{ fe }}
                 </span>
                 <mat-icon class="float-right">done</mat-icon>
               </li>
-              <li class="p10">
-                <span>
-                  PayPal payments
-                </span>
-                <mat-icon class="float-right">done</mat-icon>
-              </li>
-              <li class="p10">
-                <span>
-                  Email Support
-                </span>
-                <mat-icon class="float-right">done</mat-icon>
-              </li>
-              <li class="p10">
-                  <span>
-                      Roles and Permissions
-                  </span>
-                  <mat-icon class="float-right">done</mat-icon>
-                </li>
             </ul>
           </mat-card-content>
           <mat-card-actions align="end">
-            <button (click)="doPayment('yearly')" color="warn" mat-raised-button>SELECT</button>
+            <button
+              (click)="doPayment(plan.name)"
+              color="warn"
+              mat-raised-button
+            >
+              SELECT
+            </button>
           </mat-card-actions>
         </mat-card>
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
