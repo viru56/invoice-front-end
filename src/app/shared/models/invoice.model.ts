@@ -4,7 +4,7 @@ export interface Iinvoice {
   id?: string;
   label?: IinvoiceTextLabel;
   name: string;
-  number: string;
+  number: number;
   sender: string;
   receiver: string;
   date: Date;

@@ -1,0 +1,90 @@
+<div class="dialog ">
+  <form action="submit" [formGroup]="paymentForm" (ngSubmit)="submit()">
+    <h2 mat-dialog-title>
+      {{ title }}
+      <button [mat-dialog-close]="false">
+        <mat-icon class="clear-icon">clear</mat-icon>
+      </button>
+    </h2>
+    <mat-divider></mat-divider>
+    <mat-dialog-content>
+      <div  class="ptb10 font20">Customer <span class="pr20 float-right">{{ data.customerName }}</span> </div>
+      <div class="font20 invoice-text">Invoice  <span class="pr20 float-right">{{ data.number }} - Rs {{ data.balanceDue }} Balance</span> </div>
+      <hr>
+      <div>
+          <mat-form-field class="au-wt">
+              <input
+                matInput
+                [matDatepicker]="picker1"
+                formControlName="receiveDate"
+                autocomplete="off"
+                placeholder="Receive On"
+                type="text"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker1"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <mat-select formControlName="mode">
+            <mat-option *ngFor="let mode of paymentMode" [value]="mode">{{
+              mode
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+          <mat-form-field class="au-wt">
+            <input
+              matInput
+              type="text"
+              autocomplete="off"
+              placeholder="Reference"
+              formControlName="txnid"
+            />
+          </mat-form-field>
+        </div>
+      <div>
+        <mat-form-field class="au-wt">
+          <input
+            matInput
+            type="number"
+            autocomplete="off"
+            placeholder="Amount (Rs)"
+            formControlName="amount"
+          />
+        </mat-form-field>
+      </div>
+      <div>
+          <mat-form-field class="au-wt">
+              <input
+                matInput
+                type="text"
+                autocomplete="off"
+                placeholder="Notes"
+                formControlName="notes"
+              />
+            </mat-form-field>
+      </div>
+      <div *ngIf="serverError" class="is-danger">
+        {{ serverError }}
+      </div>
+    </mat-dialog-content>
+    <mat-divider></mat-divider>
+    <mat-dialog-actions align="end">
+      <!-- <button mat-button [mat-dialog-close]="false">Cancel</button> -->
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="!paymentForm.valid"
+        color="primary"
+      >
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>
