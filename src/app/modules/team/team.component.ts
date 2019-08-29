@@ -5,6 +5,8 @@ import { Iteam, Iuser } from "../../shared/models";
 import { MatTableDataSource } from "@angular/material";
 import { AuthService } from "../../shared/services";
 import { ToastrService } from "ngx-toastr";
+import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-team",
@@ -12,27 +14,41 @@ import { ToastrService } from "ngx-toastr";
   styleUrls: ["./team.component.scss"]
 })
 export class TeamComponent implements OnInit {
-  displayedColumns: string[] = [
-    "fullName",
-    "email",
-    "role",
-    "status",
-    "action"
-  ];
+  currentScreenWidth: string = "";
+  flexMediaWatcher: Subscription;
+  displayedColumns: string[];
   dataSource: MatTableDataSource<Iuser>;
   itemLoading: string;
   currentUser: Iuser;
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private mediaObserver: MediaObserver
   ) {}
 
   ngOnInit() {
     this.itemLoading = "loading...";
     this.dataSource = new MatTableDataSource([]);
     this.getAllUsers();
-    this.authService.getUserDetails().then(user=>this.currentUser = user,err=>console.log(err));
+    // resize table as device resized
+    this.flexMediaWatcher = this.mediaObserver.media$.subscribe(
+      (mediaChange: MediaChange) => {
+        if (mediaChange.mqAlias !== this.currentScreenWidth) {
+          this.currentScreenWidth = mediaChange.mqAlias;
+          this.configTable();
+        }
+      }
+    );
+    this.authService
+      .getUserDetails()
+      .then(user => (this.currentUser = user), err => console.log(err));
+  }
+  configTable() {
+    this.displayedColumns = ["fullName", "email", "role", "status", "action"];
+    if (this.currentScreenWidth === "xs" || this.currentScreenWidth === "sm") {
+      this.displayedColumns = ["fullName", "email", "action"];
+    }
   }
   getAllUsers(): void {
     this.authService
@@ -50,8 +66,8 @@ export class TeamComponent implements OnInit {
       });
   }
   addNewUser(): void {
-    if(this.currentUser.role !=='admin'){
-      this.toastr.info('you do not privilage!');
+    if (this.currentUser.role !== "admin") {
+      this.toastr.info("you do not privilage!");
       return;
     }
     DialogConfig.data = null;
@@ -72,8 +88,8 @@ export class TeamComponent implements OnInit {
       );
   }
   deleteUser(index: number, id: string): void {
-    if(this.currentUser.role !=='admin'){
-      this.toastr.info('you do not privilage!');
+    if (this.currentUser.role !== "admin") {
+      this.toastr.info("you do not privilage!");
       return;
     }
     this.authService
@@ -88,8 +104,8 @@ export class TeamComponent implements OnInit {
       });
   }
   editUser(user: Iteam): void {
-    if(this.currentUser.role !=='admin'){
-      this.toastr.info('you do not privilage!');
+    if (this.currentUser.role !== "admin") {
+      this.toastr.info("you do not privilage!");
       return;
     }
     DialogConfig.data = user;

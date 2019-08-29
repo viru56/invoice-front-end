@@ -17,12 +17,12 @@ export const menus = [
     link: "/auth/invoices",
     icon: "receipt"
   },
-  {
-    name: "Payments",
-    open: false,
-    link: "/auth/payments",
-    icon: "payment"
-  },
+  // {
+  //   name: "Payments",
+  //   open: false,
+  //   link: "/auth/payments",
+  //   icon: "payment"
+  // },
   {
     name: "Team",
     open: false,
@@ -41,12 +41,12 @@ export const menus = [
     link: "/auth/item",
     icon: "store"
   },
-  {
-    name: "Reports",
-    open: false,
-    link: "/auth/reports",
-    icon: "assessment"
-  },
+  // {
+  //   name: "Reports",
+  //   open: false,
+  //   link: "/auth/reports",
+  //   icon: "assessment"
+  // },
   {
     name: "Settings",
     open: false,
