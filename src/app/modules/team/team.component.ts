@@ -50,6 +50,10 @@ export class TeamComponent implements OnInit {
       });
   }
   addNewUser(): void {
+    if(this.currentUser.role !=='admin'){
+      this.toastr.info('you do not privilage!');
+      return;
+    }
     DialogConfig.data = null;
     const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
     dialogRef
@@ -68,6 +72,10 @@ export class TeamComponent implements OnInit {
       );
   }
   deleteUser(index: number, id: string): void {
+    if(this.currentUser.role !=='admin'){
+      this.toastr.info('you do not privilage!');
+      return;
+    }
     this.authService
       .deleteUser(index, id)
       .then(() => {
@@ -80,6 +88,10 @@ export class TeamComponent implements OnInit {
       });
   }
   editUser(user: Iteam): void {
+    if(this.currentUser.role !=='admin'){
+      this.toastr.info('you do not privilage!');
+      return;
+    }
     DialogConfig.data = user;
     const dialogRef = this.dialog.open(TeamDialogComponent, DialogConfig);
     dialogRef

@@ -1,7 +1,12 @@
 <div class="header">
   <p>
     <span class="title">Team</span>
-    <button mat-raised-button color="primary" (click)="addNewUser()">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addNewUser()"
+      *ngIf="currentUser?.role=='admin'"
+    >
       <mat-icon>add_box</mat-icon> Invite Member
     </button>
   </p>
@@ -40,8 +45,10 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
       <mat-cell *matCellDef="let element; let index = index">
-        <div *ngIf="currentUser && currentUser.id !== element.id">
-          <mat-icon (click)="editUser(element)" matTooltip="edit"
+        <div *ngIf="currentUser && (currentUser.id !== element.id && currentUser.role=='admin')">
+          <mat-icon
+            (click)="editUser(element)"
+            matTooltip="edit"
             >edit
           </mat-icon>
           <mat-icon

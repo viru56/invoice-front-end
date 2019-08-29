@@ -32,8 +32,8 @@ export class ToolbarComponent implements OnInit {
         this.data.currentUser = user;
         this.subscriptionRemainingDays = moment(
           this.data.currentUser.company.subscriptionEndDate
-        ).diff(moment(), "days") + 1;
-        if(this.subscriptionRemainingDays < 1){
+        ).diff(moment(), "days");
+        if(this.subscriptionRemainingDays < 0){
           this.router.navigateByUrl('plan');
         }
       },
