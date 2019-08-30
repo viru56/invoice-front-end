@@ -43,6 +43,11 @@ const routes: Routes = [
     path: "plan",
     loadChildren: "../plan/plan.module#PlanModule",
     canActivate: [AuthGuard]
+  },
+  {
+    path: "checkout/:plan",
+    loadChildren: '../checkout/checkout.module#CheckoutModule',
+    canActivate: [AuthGuard]
   }
 ];
 

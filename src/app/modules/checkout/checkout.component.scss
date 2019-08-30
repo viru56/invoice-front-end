@@ -1,0 +1,30 @@
+.plan-container {
+    margin: 20px auto;
+    .checkoutForm{
+        margin: 20px auto;
+  }
+  .header{
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .dropin-container{
+      margin: 0 20px 20px 20px;
+  }
+  .loading-img{
+      text-align: center;
+      img{
+          width: 300px;
+      }
+  }
+  .btn-checkout {
+    text-align: right;
+    margin: 20px;
+    .submit-btn{
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+  }
+}

@@ -15,3 +15,4 @@ export * from './team/team.module';
 export * from './account-activation/account-activation.module';
 export * from './reset-password/reset-password.module';
 export * from './plan/plan.module';
+export * from './checkout/checkout.module';

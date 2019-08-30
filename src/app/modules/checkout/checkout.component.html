@@ -1,0 +1,41 @@
+<div
+  fxLayout="column"
+  fxLayoutAlign="space-between stretch"
+  fxLayoutGap="20px"
+  fxFlexFill
+  fxFlex.xs="90"
+  fxFlex.lg="50"
+  fxFlex.md="90"
+  fxFlex.sm="50"
+  class="plan-container"
+>
+  <form class="checkoutForm">
+    <div
+      fxLayout="column"
+      class="mat-elevation-z1"
+      fxLayoutAlign="space-between stretch"
+      fxFlexFill
+    >
+      <div *ngIf="plan && amount" class="header">
+        You are paying Rs {{ amount }} for {{ plan }} subscription;
+      </div>
+      <div class="dropin-container" id="dropin-container"></div>
+      <div *ngIf="showLoader" class="loading-img">
+        <img alt="processing payment" [src]="'assets/load.gif'" />
+      </div>
+      <div class="btn-checkout">
+        <button
+        *ngIf="!showLoader"
+          mat-raised-button
+          type="click"
+          color="primary"
+          id="submit-btn"
+          class="submit-btn"
+          (click)="checkout()"
+        >
+          Checkout
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

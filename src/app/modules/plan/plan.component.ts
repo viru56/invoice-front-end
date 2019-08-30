@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService, CompanyService } from "src/app/shared/services";
+import { AuthService, PaymentService } from "src/app/shared/services";
 import { Iuser } from "src/app/shared/models";
 import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
@@ -45,7 +45,7 @@ export class PlanComponent implements OnInit {
   planExpired: boolean;
   constructor(
     private authService: AuthService,
-    private companyService: CompanyService,
+    private paymentService: PaymentService,
     private toastr: ToastrService,
     private router: Router
   ) {}
@@ -58,25 +58,7 @@ export class PlanComponent implements OnInit {
     }, console.log);
   }
   doPayment(plan: string): void {
-    let subscriptionEndDate = moment();
-    if (plan.toLowerCase() == "monthly") {
-      subscriptionEndDate.add(1, "M");
-      if (moment(this.currentUser.company.subscriptionEndDate) > moment()) {
-        subscriptionEndDate = moment(
-          this.currentUser.company.subscriptionEndDate
-        ).add(1, "M");
-      }
-    } else {
-      subscriptionEndDate.add(1, "y");
-    }
-    this.currentUser.company.subscription = plan;
-    this.currentUser.company.subscriptionEndDate = new Date(
-      subscriptionEndDate.toString()
-    );
-    this.companyService.updateCompany(this.currentUser.company).then(res => {
-      this.toastr.success("Suscription is renewed!");
-      this.router.navigateByUrl("auth/dashboard");
-    }, console.log);
+    this.router.navigateByUrl(`checkout/${plan}`);
   }
   logout(): void {
     this.authService.logout();
