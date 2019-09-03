@@ -97,6 +97,9 @@ export class NewInvoiceComponent implements OnInit {
       ]
     };
     this.route.paramMap.subscribe(params => {
+      if (params.has("invoiceNumber")) {
+        this.invoice.number = Number(params.get("invoiceNumber"));
+      }
       if (params.has("id")) {
         this.invoiceService.getInvoiceStore().then(invoices => {
           for (let inv of invoices) {
