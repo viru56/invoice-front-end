@@ -1,8 +1,9 @@
 <mat-toolbar color="primary" class="mat-toolbar">
   <mat-toolbar-row>
-    <h1 class="logo">
+    <a [routerLink]="['/']" class="logo">
+    <h1 >
       IND-INVOICES
-    </h1>
+    </h1></a>
     <span fxFlex></span>
     <a [routerLink]="['/login']" mat-raised-button class="auth-btn log-in">
       Log In</a
@@ -29,7 +30,7 @@
       fxFlex.lg="80"
       fxFlex.md="80"
       fxFlex.sm="100"
-      class="mat-elevation-z2 invoice-container"
+      class="mat-elevation-z2 home-invoice-container"
       fxLayout="column"
     >
       <div fxLayout="row" fxLayout.lt-sm="column" fxLayout.lt-xs="column">
@@ -613,7 +614,7 @@
         <div class="dflex">
           <h4>Currency: INR  </h4> <mat-icon class="edit-icon" click="changeCurrency()">edit</mat-icon>
         </div>
-        <a [routerLink]="['invoices']" class="my-invoice" >My Invoices <span>{{l_invoicesIds.length}}</span></a>
+        <a [routerLink]="['/invoices']" class="my-invoice" >My Invoices <span>{{l_invoicesIds.length}}</span></a>
       </div>
     </div>
   </div>

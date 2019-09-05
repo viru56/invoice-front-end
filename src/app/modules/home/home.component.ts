@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
           terms: "Terms"
         },
         name: "INVOICE",
-        number: 1,
+        number: this.l_invoicesIds.length + 1,
         sender: "",
         receiver: "",
         lineItems: [
@@ -299,6 +299,7 @@ export class HomeComponent implements OnInit {
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.notes = this.invoiceForm.value.notes;
     this.invoice.terms = this.invoiceForm.value.terms;
+    this.invoice.createdAt = new Date();
     // store invoice in local storage
     this.storageService.setItem(
       `l_invoice-${this.invoice.number}`,

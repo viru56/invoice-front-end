@@ -35,13 +35,8 @@ const routes: Routes = [
     canActivate: [NoAuthGuard]
   },
   {
-    path: "",
-    loadChildren: "../home/home.module#HomeModule",
-    canActivate: [NoAuthGuard]
-  },
-  {
-    path: ":id",
-    loadChildren: "../home/home.module#HomeModule",
+    path: "invoices",
+    loadChildren: "../my-invoices/my-invoices.module#MyInvoicesModule",
     canActivate: [NoAuthGuard]
   },
   {
@@ -53,6 +48,16 @@ const routes: Routes = [
     path: "checkout/:plan",
     loadChildren: "../checkout/checkout.module#CheckoutModule",
     canActivate: [AuthGuard]
+  },
+  {
+    path: "",
+    loadChildren: "../home/home.module#HomeModule",
+    canActivate: [NoAuthGuard]
+  },
+  {
+    path: ":id",
+    loadChildren: "../home/home.module#HomeModule",
+    canActivate: [NoAuthGuard]
   }
 ];
 

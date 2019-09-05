@@ -30,12 +30,15 @@
   .sign-up {
     border: 1px solid #fff;
   }
+  .logo{
+    text-decoration: none;
+  }
 }
 
 .full {
   width: 100%;
 }
-.invoice-container {
+.home-invoice-container {
   background-color: white;
   padding: 10px;
   .mat-title:hover,
@@ -170,11 +173,12 @@
     }
   }
   .invoice-balance {
-    padding: 10px;
     display: flex;
+    padding-top: 10px;
     h4 {
       margin: 0;
       outline-width: 0;
+      padding: 10px;
     }
     .balance-amount {
       padding: 10px;
@@ -182,7 +186,6 @@
     .balance-name {
       border: 1px solid #fff;
       border-radius: 4px;
-      padding: 10px;
       outline-width: 0;
     }
     .balance-name:hover,
