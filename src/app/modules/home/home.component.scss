@@ -20,13 +20,14 @@
     background-color: #42a5f5;
     color: #fff;
   }
-  .log-in{
+  .log-in {
     margin-right: 5px;
   }
-  .log-in:hover, .sign-up:hover{
+  .log-in:hover,
+  .sign-up:hover {
     text-decoration: underline;
   }
-  .sign-up{
+  .sign-up {
     border: 1px solid #fff;
   }
 }
@@ -159,11 +160,11 @@
     mat-form-field {
       width: 80%;
     }
-    .clear-icon{
+    .clear-icon {
       display: none;
     }
-    .item-row:hover{
-      .clear-icon{
+    .item-row:hover {
+      .clear-icon {
         display: block;
       }
     }
@@ -189,7 +190,7 @@
       border-color: #ccc;
     }
   }
-  .tax{
+  .tax {
     margin-right: 10px;
   }
   .discount,
@@ -200,4 +201,33 @@
       text-align: right;
     }
   }
+}
+.edit-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #42a5f5;
+  cursor: pointer;
+  padding-top: 18px;
+  display: none; 
+}
+.my-invoice{
+  text-decoration: none;
+  color: #42a5f5;
+  font-size: 1.2rem;
+  background: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  span{
+    background: #f5f5f5;
+    padding: 3px 7px;
+    border-radius: 10px;
+    border-radius: 20px;
+    color: #000;
+  }
+}
+.my-invoice:hover{
+  background: #42a5f5;;
+  color: #fff;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }

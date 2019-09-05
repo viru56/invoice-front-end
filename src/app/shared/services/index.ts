@@ -6,3 +6,5 @@ export * from './tax.service';
 export * from './customer.service';
 export * from './company.service';
 export * from './payment.service';
+export * from './currency.service';
+export * from './storage.service';

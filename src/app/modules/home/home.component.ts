@@ -1,13 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Iinvoice } from "../../shared/models";
-import { InvoiceService } from "src/app/shared/services";
-import { environment } from "src/environments/environment";
+import { Iinvoice, IlineItem } from "../../shared/models";
+import { InvoiceService, StorageService } from "src/app/shared/services";
 import { ToastrService } from "ngx-toastr";
 import { MatDialog } from "@angular/material/dialog";
 import { HomeDialogComponent, DialogConfig } from "src/app/shared/dialogs";
-
+import { ActivatedRoute } from "@angular/router";
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
@@ -20,71 +19,114 @@ export class HomeComponent implements OnInit {
   showDiscount: boolean;
   showTax: boolean;
   showShipping: boolean;
+  l_invoicesIds: Array<number>;
+  invoiceExists: boolean;
   constructor(
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
     private invoiceService: InvoiceService,
     private toastr: ToastrService,
-    public dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
-    this.showDiscount = false;
-    this.showTax = false;
-    this.showShipping = false;
-    this.invoice = {
-      label: {
+    this.invoiceExists = false;
+    this.l_invoicesIds = this.storageService.getItem("l_invoicesIds");
+    if (!this.l_invoicesIds) this.l_invoicesIds = [];
+    this.route.paramMap.subscribe(params => {
+      if (params.has("id")) {
+        const id = Number(params.get("id"));
+        if (
+          this.l_invoicesIds &&
+          this.l_invoicesIds.length > 0 &&
+          this.l_invoicesIds.indexOf(id) !== -1
+        ) {
+          this.invoiceExists = true;
+          this.invoice = this.storageService.getItem(`l_invoice-${id}`);
+          if (this.invoice.shipping) this.showShipping = true;
+          if (this.invoice.discountValue) this.showDiscount = true;
+          if (this.invoice.taxItems[0].amount) this.showTax = true;
+          const file = this.storageService.getItem("file");
+          this.fileToUpload = file
+            ? this.sanitizer.bypassSecurityTrustResourceUrl(file)
+            : null;
+          if (file) {
+            this.invoice.file = this.b64toFile(
+              file.split(",")[1],
+              file
+                .split(",")[0]
+                .split(";")[0]
+                .split(":")[1]
+            );
+          }
+        } else {
+          this.invoiceExists = false;
+        }
+      }
+    });
+    if (!this.invoiceExists) {
+      this.showDiscount = false;
+      this.showTax = false;
+      this.showShipping = false;
+      this.invoice = {
+        label: {
+          name: "INVOICE",
+          date: "Date",
+          paymentTerms: "Payment terms",
+          dueDate: "Due date",
+          lineItemName: "Item",
+          lineItemQuantity: "Quantity",
+          lineItemRate: "Rate",
+          lineItemAmount: "Amount",
+          subtotal: "Subtotal",
+          discount: "Discount",
+          tax: "Tax",
+          shipping: "Shipping",
+          total: "Total",
+          amountPaid: "Amount paid",
+          balanceDue: "balance due",
+          notes: "Notes",
+          terms: "Terms"
+        },
         name: "INVOICE",
-        date: "Date",
-        paymentTerms: "Payment terms",
-        dueDate: "Due date",
-        lineItemName: "Item",
-        lineItemQuantity: "Quantity",
-        lineItemRate: "Rate",
-        lineItemAmount: "Amount",
-        subtotal: "Subtotal",
-        discount: "Discount",
-        tax: "Tax",
-        shipping: "Shipping",
-        total: "Total",
-        amountPaid: "Amount paid",
-        balanceDue: "balance due",
-        notes: "Notes",
-        terms: "Terms"
-      },
-      name: "INVOICE",
-      number: Date.now(),
-      sender: "",
-      receiver: "",
-      lineItems: [
-        {
-          name: "",
-          unitCost: 0,
-          quantity: 0,
-          amount: 0.0,
-          taxable: true
-        }
-      ],
-      taxItems: [
-        {
-          name: "",
-          amount: 0,
-          taxMode: "Exclusive"
-        }
-      ],
-      subtotal: 0.0,
-      total: 0.0,
-      balanceDue: 0.0,
-      amountPaid: 0.0,
-      discountType: "flat",
-      discountValue: 0,
-      shipping: 0,
-      paymentTerms: "",
-      date: new Date(),
-      dueDate: new Date(),
-      notes: "",
-      terms: ""
-    };
+        number: 1,
+        sender: "",
+        receiver: "",
+        lineItems: [
+          {
+            name: "",
+            unitCost: 0,
+            quantity: 0,
+            amount: 0,
+            taxable: true
+          }
+        ],
+        taxItems: [
+          {
+            name: "",
+            amount: 0,
+            taxMode: "Exclusive"
+          }
+        ],
+        subtotal: 0,
+        total: 0,
+        balanceDue: 0,
+        amountPaid: 0,
+        discountType: "flat",
+        discountValue: 0,
+        shipping: 0,
+        paymentTerms: "",
+        date: new Date(),
+        dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+        notes: "",
+        terms: ""
+      };
+    }
+    this.buildForm();
+  }
+  buildForm() {
     this.invoiceForm = this.fb.group({
       number: [this.invoice.number],
       sender: [this.invoice.sender, Validators.required],
@@ -108,6 +150,11 @@ export class HomeComponent implements OnInit {
       terms: [this.invoice.terms],
       amountPaid: [this.invoice.amountPaid]
     });
+    if (this.invoice.lineItems.length > 1) {
+      for (var i = 1; i < this.invoice.lineItems.length; i++) {
+        this.addLineItem(this.invoice.lineItems[i]);
+      }
+    }
   }
   get lineItems() {
     return this.invoiceForm.get("lineItems") as FormArray;
@@ -130,6 +177,7 @@ export class HomeComponent implements OnInit {
           this.fileToUpload = this.sanitizer.bypassSecurityTrustResourceUrl(
             reader.result as string
           );
+          this.storageService.setItem("file", reader.result);
         };
         reader.readAsDataURL(this.invoice.file);
       }
@@ -138,13 +186,13 @@ export class HomeComponent implements OnInit {
   clearLogoPreview(): void {
     this.fileToUpload = null;
   }
-  addLineItem(): void {
+  addLineItem(lineItem?: IlineItem): void {
     this.lineItems.push(
       this.fb.group({
-        name: [""],
-        quantity: [0],
-        unitCost: [0],
-        amount: [0]
+        name: [lineItem ? lineItem.name : ""],
+        quantity: [lineItem ? lineItem.quantity : 0],
+        unitCost: [lineItem ? lineItem.unitCost : 0],
+        amount: [lineItem ? lineItem.amount : 0]
       })
     );
   }
@@ -209,23 +257,24 @@ export class HomeComponent implements OnInit {
       DialogConfig.data = {
         sender: this.invoice.sender,
         receiver: this.invoice.receiver,
-        number: this.invoice.number
+        number: this.invoice.number,
+        mail: this.invoice.mail
       };
       const dialogRef = this.dialog.open(HomeDialogComponent, DialogConfig);
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.invoice.mail = result;
           this.invoice.mail.userName = this.invoice.receiver;
+          this.storageService.setItem(
+            `l_invoice-${this.invoice.number}`,
+            this.invoice
+          );
           this.createInvoice();
         }
       });
     }
   }
   setInvoiceData(): boolean {
-    if (!this.invoice.file) {
-      alert("plese select a file");
-      return false;
-    }
     if (!this.invoiceForm.value.sender && !this.invoiceForm.value.receiver) {
       alert("required field is empty");
       return false;
@@ -250,6 +299,15 @@ export class HomeComponent implements OnInit {
     this.invoice.amountPaid = this.invoiceForm.value.amountPaid;
     this.invoice.notes = this.invoiceForm.value.notes;
     this.invoice.terms = this.invoiceForm.value.terms;
+    // store invoice in local storage
+    this.storageService.setItem(
+      `l_invoice-${this.invoice.number}`,
+      this.invoice
+    );
+    if (this.l_invoicesIds.indexOf(this.invoice.number) === -1) {
+      this.l_invoicesIds.push(this.invoice.number);
+      this.storageService.setItem("l_invoicesIds", this.l_invoicesIds);
+    }
     return true;
   }
   createInvoice(type: string = "mail"): void {
@@ -268,5 +326,28 @@ export class HomeComponent implements OnInit {
   }
   downloadInvoice(): void {
     if (this.setInvoiceData()) this.createInvoice("download");
+  }
+  b64toFile(b64Data, contentType): File {
+    contentType = contentType || "";
+    const sliceSize = 512;
+
+    var byteCharacters = atob(b64Data);
+    var byteArrays = [];
+
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      var byteNumbers = new Array(slice.length);
+      for (var i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      var byteArray = new Uint8Array(byteNumbers);
+
+      byteArrays.push(byteArray);
+    }
+
+    var blob = new Blob(byteArrays, { type: contentType });
+    return <File>blob;
   }
 }

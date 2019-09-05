@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -26,6 +26,7 @@
     "chart.js": "^2.8.0",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
+    "iso-country-currency": "^0.3.4",
     "moment": "^2.24.0",
     "ngx-cookie-service": "^2.2.0",
     "ngx-perfect-scrollbar": "^7.2.1",

@@ -37,7 +37,12 @@ const routes: Routes = [
   {
     path: "",
     loadChildren: "../home/home.module#HomeModule",
-   canActivate: [NoAuthGuard]
+    canActivate: [NoAuthGuard]
+  },
+  {
+    path: ":id",
+    loadChildren: "../home/home.module#HomeModule",
+    canActivate: [NoAuthGuard]
   },
   {
     path: "plan",
@@ -46,7 +51,7 @@ const routes: Routes = [
   },
   {
     path: "checkout/:plan",
-    loadChildren: '../checkout/checkout.module#CheckoutModule',
+    loadChildren: "../checkout/checkout.module#CheckoutModule",
     canActivate: [AuthGuard]
   }
 ];
