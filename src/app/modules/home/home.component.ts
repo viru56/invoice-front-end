@@ -185,6 +185,7 @@ export class HomeComponent implements OnInit {
   }
   clearLogoPreview(): void {
     this.fileToUpload = null;
+    this.storageService.removeItem('file');
   }
   addLineItem(lineItem?: IlineItem): void {
     this.lineItems.push(
