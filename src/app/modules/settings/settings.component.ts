@@ -30,7 +30,7 @@ export class SettingsComponent implements OnInit {
       .then(user => {
         this.company = user.company;
         console.log(this.company);
-        this.fileToUpload = `${environment.base_url}/uploads/Screenshot.png`;
+        this.fileToUpload = `${environment.base_url}/${this.company.logoUrl}`;
         this.copyForm();
       })
       .catch(err => console.log(err));
