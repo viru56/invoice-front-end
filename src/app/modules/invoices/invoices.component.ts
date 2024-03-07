@@ -8,7 +8,11 @@ import {
 } from "../../shared/services";
 import { Iinvoice, Icustomer } from "src/app/shared/models";
 import { ToastrService } from "ngx-toastr";
-import { InvoiceDialogComponent, DialogConfig } from "src/app/shared/dialogs";
+import {
+  InvoiceDialogComponent,
+  DialogConfig,
+  PaymentDialogComponent
+} from "src/app/shared/dialogs";
 import { MatDialog } from "@angular/material";
 
 @Component({
@@ -31,7 +35,7 @@ export class InvoicesComponent implements OnInit {
   ];
   statusData: string[] = ["Draft", "Sent", "Paid", "Outstanding", "All"];
   status: string;
-  invoices:Iinvoice[];
+  invoices: Iinvoice[];
   constructor(
     private invoiceService: InvoiceService,
     private toastr: ToastrService,
@@ -153,5 +157,21 @@ export class InvoicesComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
+  }
+  receivePayment(invoice: Iinvoice): void {
+    DialogConfig.data = invoice;
+    const dialogRef = this.dialog.open(PaymentDialogComponent, DialogConfig);
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(
+        result => {
+          if (result) {
+            this.toastr.success("Your payment has been recorded!");
+            this.getAllInvoices();
+          }
+        },
+        err => console.log(err)
+      );
   }
 }

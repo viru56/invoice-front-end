@@ -52,7 +52,10 @@ import {
   InvoiceService,
   ItemService,
   TaxService,
-  CompanyService
+  CompanyService,
+  PaymentService,
+  CurrencyService,
+  StorageService
 } from "../shared/services";
 import { ToastrModule } from "ngx-toastr";
 import { CookieService } from "ngx-cookie-service";
@@ -164,6 +167,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     TaxService,
     CustomerService,
     CompanyService,
+    PaymentService,
+    CurrencyService,
+    StorageService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

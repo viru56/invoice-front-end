@@ -1,8 +1,9 @@
 <mat-toolbar color="primary" class="mat-toolbar">
   <mat-toolbar-row>
-    <h1 class="logo">
+    <a [routerLink]="['/']" class="logo">
+    <h1 >
       IND-INVOICES
-    </h1>
+    </h1></a>
     <span fxFlex></span>
     <a [routerLink]="['/login']" mat-raised-button class="auth-btn log-in">
       Log In</a
@@ -29,7 +30,7 @@
       fxFlex.lg="80"
       fxFlex.md="80"
       fxFlex.sm="100"
-      class="mat-elevation-z2 invoice-container"
+      class="mat-elevation-z2 home-invoice-container"
       fxLayout="column"
     >
       <div fxLayout="row" fxLayout.lt-sm="column" fxLayout.lt-xs="column">
@@ -201,7 +202,7 @@
       <div fxLayout="row" fxLayoutAlign="start center" class="item-list">
         <div fxFlex="100" class="item-header" fxLayoutGap="10px">
           <div
-            fxFlex="40"
+            fxFlex="36"
             contenteditable="true"
             [textContent]="invoice.label.lineItemName"
             (input)="invoice.label.lineItemName = $event.target.textContent"
@@ -209,7 +210,7 @@
             Item
           </div>
           <div
-            fxFlex="20"
+            fxFlex="22"
             contenteditable="true"
             [textContent]="invoice.label.lineItemQuantity"
             (input)="invoice.label.lineItemQuantity = $event.target.textContent"
@@ -217,7 +218,7 @@
             Quantity
           </div>
           <div
-            fxFlex="20"
+            fxFlex="21"
             contenteditable="true"
             [textContent]="invoice.label.lineItemRate"
             (input)="invoice.label.lineItemRate = $event.target.textContent"
@@ -225,7 +226,7 @@
             Rate
           </div>
           <div
-            fxFlex="20"
+            fxFlex="21"
             contenteditable="true"
             [textContent]="invoice.label.lineItemAmount"
             (input)="invoice.label.lineItemAmount = $event.target.textContent"
@@ -243,9 +244,10 @@
         <div fxFlex="100" fxLayoutGap="10px">
           <div
             *ngFor="let item of lineItems.controls; let itemIndex = index"
-            [formGroupName]="itemIndex" class="item-row"
+            [formGroupName]="itemIndex"
+            class="item-row"
           >
-            <div fxFlex="40">
+            <div fxFlex="35">
               <mat-form-field>
                 <input
                   matInput
@@ -256,7 +258,7 @@
                 />
               </mat-form-field>
             </div>
-            <div fxFlex="20">
+            <div fxFlex="23">
               <mat-form-field>
                 <input
                   matInput
@@ -268,7 +270,7 @@
                 />
               </mat-form-field>
             </div>
-            <div fxFlex="20">
+            <div fxFlex="22">
               <mat-form-field>
                 <input
                   matInput
@@ -281,7 +283,13 @@
               </mat-form-field>
             </div>
             <div fxFlex="20" style="display:flex">
-              <h4 style="display:flex" [ngStyle]="{'margin-left':itemIndex === lineItems.controls.length-1?'-8px':0}">
+              <h4
+                style="display:flex"
+                [ngStyle]="{
+                  'margin-left':
+                    itemIndex === lineItems.controls.length - 1 ? '-8px' : 0
+                }"
+              >
                 Rs
                 <input
                   readonly
@@ -292,12 +300,7 @@
                   autocomplete="off"
                 />
               </h4>
-              <div
-                style="padding-top:20px"
-                *ngIf="
-                itemIndex !== 0
-                "
-              > 
+              <div style="padding-top:20px" *ngIf="itemIndex !== 0">
                 <mat-icon class="clear-icon" (click)="removeLineItem(itemIndex)"
                   >clear</mat-icon
                 >
@@ -307,7 +310,12 @@
         </div>
       </div>
       <div fxLayout="row" fxLayoutAlign="start center" class="item">
-        <button mat-raised-button color="primary" (click)="addLineItem()" type="button">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="addLineItem()"
+          type="button"
+        >
           + Line Item
         </button>
       </div>
@@ -402,10 +410,12 @@
                   formControlName="tax"
                   (keyup)="updateTotal()"
                   autocomplete="off"
-                /> 
+                />
               </mat-form-field>
             </div>
-            <mat-icon class="clear-icon mt20" (click)="removeTaxDiscountShipping('tax')"
+            <mat-icon
+              class="clear-icon mt20"
+              (click)="removeTaxDiscountShipping('tax')"
               >clear</mat-icon
             >
           </div>
@@ -497,7 +507,12 @@
           <div class="balance-amount">Rs {{ invoice.balanceDue }}</div>
         </div>
       </div>
-      <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="20px">
+      <div
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        fxLayout.lt-xs="column"
+        fxLayoutAlign="start start"
+      >
         <div class="invoice-balance">
           <div class="balance-name">
             <h4
@@ -517,12 +532,17 @@
             matAutosizeMinRows="2"
             matAutosizeMaxRows="5"
             formControlName="notes"
-            placeholder="Notes - any relevant information not already covered"
+            placeholder="any relevant information"
             autocomplete="off"
           ></textarea>
         </mat-form-field>
       </div>
-      <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="20px">
+      <div
+        fxLayout="row"
+        fxLayout.lt-sm="column"
+        fxLayout.lt-xs="column"
+        fxLayoutAlign="start start"
+      >
         <div class="invoice-balance">
           <div class="balance-name">
             <h4
@@ -542,7 +562,7 @@
             matAutosizeMinRows="2"
             matAutosizeMaxRows="5"
             formControlName="terms"
-            placeholder="Terms and conditions - late fees, payment methods, delivery schedule"
+            placeholder="Terms and conditions"
             autocomplete="off"
           ></textarea>
         </mat-form-field>
@@ -574,7 +594,12 @@
         >
           Send Invoice
         </button>
-        <button mat-raised-button color="warn" type="button" (click)="downloadInvoice()">
+        <button
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="downloadInvoice()"
+        >
           <mat-icon class="clear-icon">cloud_download</mat-icon> Download
           Invoice
         </button>
@@ -586,9 +611,10 @@
         fxLayout.lt-sm="row"
         fxLayoutAlign.lt-sm="center center"
       >
-        <div>
-          <h4>Currency: INR</h4>
+        <div class="dflex mr20">
+          <h4>Currency: INR  </h4> <mat-icon class="edit-icon" click="changeCurrency()">edit</mat-icon>
         </div>
+        <a [routerLink]="['/invoices']" class="my-invoice" >My Invoices <span>{{l_invoicesIds.length}}</span></a>
       </div>
     </div>
   </div>

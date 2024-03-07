@@ -6,6 +6,7 @@ import { CustomerDialogComponent } from "./customer-dialog/customer-dialog.compo
 import { InvoiceDialogComponent } from "./invoice-dialog/invoice-dialog.component";
 import { TeamDialogComponent } from "./team-dialog/team-dialog.component";
 import { HomeDialogComponent } from './home-dialog/home-dialog.component';
+import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
 @NgModule({
   declarations: [
     TaxDialogComponent,
@@ -13,7 +14,8 @@ import { HomeDialogComponent } from './home-dialog/home-dialog.component';
     CustomerDialogComponent,
     InvoiceDialogComponent,
     TeamDialogComponent,
-    HomeDialogComponent
+    HomeDialogComponent,
+    PaymentDialogComponent
   ],
   imports: [BaseModule],
   entryComponents: [
@@ -22,7 +24,8 @@ import { HomeDialogComponent } from './home-dialog/home-dialog.component';
     CustomerDialogComponent,
     TeamDialogComponent,
     InvoiceDialogComponent,
-    HomeDialogComponent
+    HomeDialogComponent,
+    PaymentDialogComponent
   ]
 })
 export class DialogModule {}

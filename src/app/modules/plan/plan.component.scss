@@ -1,0 +1,39 @@
+
+.plan-container {
+  margin: 20px auto;
+  .info{
+    font-size: 1rem;
+  }
+  .logout {
+    box-shadow: none;
+    text-decoration: underline;
+  }
+  .payment-card {
+    max-width: 80%;
+    .mat-card-header {
+      border-bottom: 1px solid #ccc;
+      display: block;
+      padding-bottom: 10px;
+    }
+    .title {
+      font-size: 20px;
+      margin-bottom: 12px;
+      font-weight: bold;
+      .price {
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
+        background: #f5f5f5;
+      }
+    }
+    .payment-info {
+      list-style-type: none;
+      padding: 0;
+      .mat-icon {
+        background: #42a5f5;
+        border-radius: 50%;
+        color: #fff;
+      }
+    }
+  }
+}

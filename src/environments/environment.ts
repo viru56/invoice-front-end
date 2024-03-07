@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  tokenizationKeys:'sandbox_zjwttp83_7s2bnfjgqrdggdcx',
   base_url: "http://localhost:3000",
   api_url:"http://localhost:3000/api",
   user_url:"http://localhost:3000/user",
@@ -11,7 +12,8 @@ export const environment = {
   invoice_url:"http://localhost:3000/invoice",
   item_url:"http://localhost:3000/item",
   tax_url:"http://localhost:3000/tax",
-  customer_url:"http://localhost:3000/customer"
+  customer_url:"http://localhost:3000/customer",
+  payment_url:"http://localhost:3000/payment"
 };
 
 /*

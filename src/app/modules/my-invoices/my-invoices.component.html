@@ -1,0 +1,92 @@
+<mat-toolbar color="primary" class="mat-toolbar">
+  <mat-toolbar-row>
+    <a [routerLink]="['/']" class="logo">
+      <h1>
+        IND-INVOICES
+      </h1>
+    </a>
+    <span fxFlex></span>
+    <a [routerLink]="['/login']" mat-raised-button class="auth-btn log-in">
+      Log In</a
+    >
+    <a [routerLink]="['/register']" mat-raised-button class="auth-btn sign-up">
+      Sign Up</a
+    >
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div
+  fxLayout="row"
+  fxLayoutAlign="space-between stretch"
+  class="components-container-gt-xs "
+  fxLayout.lt-sm="column"
+  fxLayout.lt-xs="column"
+>
+  <div class="mat-elevation-z2 invoice-container" fxLayout="column" fxFlex="80">
+    <div fxFill>
+      <h2 class="text-center">My Invoices</h2>
+      <p class="text-center">
+        We automatically save any invoices that you draft to your device.
+      </p>
+      <div fxLayout="row" class="m20">
+        <span fxFlex></span>
+        <a
+          class="float-right"
+          [routerLink]="['/']"
+          mat-raised-button
+          color="primary"
+        >
+          New Invoice
+        </a>
+      </div>
+      <div
+        *ngIf="invoices.length > 0"
+        fxLayout="row wrap"
+        fxLayoutAlign="center center"
+      >
+        <div *ngFor="let inv of invoices; let index" class="invoice">
+          <a [routerLink]="['/', inv.number]">
+            <mat-icon
+              class="clear-icon"
+              (click)="
+                deleteInvoice(inv.number, index);
+                $event.preventDefault();
+                $event.stopPropagation()
+              "
+            >
+              delete
+            </mat-icon>
+            <p class="title">Rs {{ inv.total }}</p>
+            <p class="name">{{ inv.receiver | slice: 0:60 }}</p>
+            <p class="date">{{ inv.createdAt | date }}</p>
+          </a>
+        </div>
+      </div>
+      <div
+        *ngIf="invoices.length === 0"
+        fxLayout="row wrap"
+        fxLayoutAlign="center center"
+        class="mb20"
+      >
+       <h2 style="color:#555">No invoices found.</h2>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="text-center">
+        <p style="color:rgb(133, 20, 20)">
+          These invoices are stored on your device, and not online. Clearing
+          your browser's cache could cause you to lose these invoices.<br> We
+          recommend hanging on to a copy of each invoice you generate.
+        </p>
+        <button
+        *ngIf="invoices.length>0"
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="clearInvoices()"
+        >
+          Erase Everything
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

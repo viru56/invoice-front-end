@@ -362,13 +362,13 @@
                   style="font-size:0.8rem;padding-left: 20px;"
                 >
                   Rs
-                  {{
+                   {{ invoice.taxableAmount ?
                     (
                       (100 /
                         (invoice.taxableAmount +
                           (invoice.taxableAmount * tax.amount) / 100)) *
                       invoice.taxableAmount
-                    ).toFixed(2)
+                    ).toFixed(2) : 0
                   }}
                 </span>
               </p>

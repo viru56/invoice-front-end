@@ -20,15 +20,15 @@ export class CompanyService {
         .catch(err => reject(err));
     });
   }
-  updateCompany(body: Icompany, file: File): Promise<boolean> {
+  updateCompany(body: Icompany, file?: File): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const businessFormData = new FormData();
-      businessFormData.append("logo", file);
+      if (file) businessFormData.append("logo", file);
       businessFormData.append("data", JSON.stringify(body));
       this.apiService
         .putFile(environment.company_url, businessFormData)
         .toPromise()
-        .then((data) => {
+        .then(data => {
           if (AuthService.currentUser.company) {
             AuthService.currentUser.company.name = body.name;
             AuthService.currentUser.company.email = body.email;

@@ -18,7 +18,7 @@ export class TeamDialogComponent implements OnInit {
   title: string;
   teamForm: FormGroup;
   serverError:string;
-  Roles:string[]=['admin','readOnly','employee']
+  Roles:string[]=['admin','employee']
   ngOnInit() {
     this.data
       ? (this.title = "Edit User")

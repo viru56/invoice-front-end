@@ -67,7 +67,7 @@ export class NewInvoiceComponent implements OnInit {
   }
   initilizeInvoice(): void {
     this.invoice = {
-      number: Date.now().toString(),
+      number: 1,
       name: "INVOICE",
       sender: "",
       receiver: "",
@@ -97,6 +97,9 @@ export class NewInvoiceComponent implements OnInit {
       ]
     };
     this.route.paramMap.subscribe(params => {
+      if (params.has("invoiceNumber")) {
+        this.invoice.number = Number(params.get("invoiceNumber"));
+      }
       if (params.has("id")) {
         this.invoiceService.getInvoiceStore().then(invoices => {
           for (let inv of invoices) {
@@ -129,7 +132,7 @@ export class NewInvoiceComponent implements OnInit {
                 this.addLineItem(item);
               }
               if (params.has("invoiceNumber")) {
-                this.invoice.number = params.get("invoiceNumber");
+                this.invoice.number = Number(params.get("invoiceNumber"));
                 delete this.invoice.id;
               }
               this.copyForm();
@@ -143,7 +146,7 @@ export class NewInvoiceComponent implements OnInit {
     if (this.invoice.discountValue) this.showDiscount = true;
     this.invoiceForm.controls["name"].setValue(this.invoice.name);
     this.invoiceForm.controls["number"].setValue(
-      `INV-000${this.invoice.number}`
+      this.invoice.number
     );
     this.invoiceForm.controls["date"].setValue(this.invoice.date);
     this.invoiceForm.controls["dueDate"].setValue(this.invoice.dueDate);
@@ -161,7 +164,7 @@ export class NewInvoiceComponent implements OnInit {
   buildForm(): void {
     this.invoiceForm = this.fb.group({
       name: [this.invoice.name, [Validators.required]],
-      number: [{ value: `INV-000${this.invoice.number}`, disabled: true }],
+      number: [{ value: this.invoice.number, disabled: true }],
       date: [this.invoice.date, [Validators.required]],
       dueDate: [this.invoice.dueDate, [Validators.required]],
       selectedItem: [null],
@@ -264,7 +267,6 @@ export class NewInvoiceComponent implements OnInit {
     );
   }
   selectedCustomerValue() {
-    console.log(this.selectedCustomer);
     if (this.selectedCustomer.value)
       this.invoice.customer = this.selectedCustomer.value.id;
   }
@@ -303,18 +305,20 @@ export class NewInvoiceComponent implements OnInit {
     let exclusiveTax = 0;
     let inclusiveTax = 0;
     if (this.invoice.subtotal > 0) {
-      for (let tax of this.invoice.taxItems) {
-        if (tax.taxMode === "Exclusive") {
-          exclusiveTax += (this.invoice.taxableAmount * tax.amount) / 100;
-        } else if (tax.taxMode === "Inclusive") {
-          inclusiveTax += Number(
-            (
-              (100 /
-                (this.invoice.taxableAmount +
-                  (this.invoice.taxableAmount * tax.amount) / 100)) *
-              this.invoice.taxableAmount
-            ).toFixed(2)
-          );
+      if(this.invoice.taxableAmount > 0){
+        for (let tax of this.invoice.taxItems) {
+          if (tax.taxMode === "Exclusive") {
+            exclusiveTax += (this.invoice.taxableAmount * tax.amount) / 100;
+          } else if (tax.taxMode === "Inclusive") {
+            inclusiveTax += Number(
+              (
+                (100 /
+                  (this.invoice.taxableAmount +
+                    (this.invoice.taxableAmount * tax.amount) / 100)) *
+                this.invoice.taxableAmount
+              ).toFixed(2)
+            );
+          }
         }
       }
       this.invoice.subtotal -= inclusiveTax;

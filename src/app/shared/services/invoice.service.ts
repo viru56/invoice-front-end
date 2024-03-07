@@ -56,27 +56,29 @@ export class InvoiceService {
         .put(environment.invoice_url, body)
         .toPromise()
         .then(() => {
-          for (let inv of InvoiceService.invoiceStore) {
-            if (inv.id === body.id) {
-              inv.name = body.name;
-              inv.number = body.number;
-              inv.amountPaid = body.amountPaid;
-              inv.balanceDue = body.balanceDue;
-              inv.customer = body.customer;
-              inv.date = body.date;
-              inv.discountType = body.discountType;
-              inv.discountValue = body.discountValue;
-              inv.dueDate = body.dueDate;
-              inv.lineItems = body.lineItems;
-              inv.nonTaxableAmount = body.nonTaxableAmount;
-              inv.notes = body.notes;
-              inv.receiver = body.receiver;
-              inv.sender = body.sender;
-              inv.shipping = body.shipping;
-              inv.subtotal = body.subtotal;
-              inv.taxItems = body.taxItems;
-              inv.terms = body.terms;
-              inv.total = body.total;
+          if (InvoiceService.invoiceStore) {
+            for (let inv of InvoiceService.invoiceStore) {
+              if (inv.id === body.id) {
+                inv.name = body.name;
+                inv.number = body.number;
+                inv.amountPaid = body.amountPaid;
+                inv.balanceDue = body.balanceDue;
+                inv.customer = body.customer;
+                inv.date = body.date;
+                inv.discountType = body.discountType;
+                inv.discountValue = body.discountValue;
+                inv.dueDate = body.dueDate;
+                inv.lineItems = body.lineItems;
+                inv.nonTaxableAmount = body.nonTaxableAmount;
+                inv.notes = body.notes;
+                inv.receiver = body.receiver;
+                inv.sender = body.sender;
+                inv.shipping = body.shipping;
+                inv.subtotal = body.subtotal;
+                inv.taxItems = body.taxItems;
+                inv.terms = body.terms;
+                inv.total = body.total;
+              }
             }
           }
           resolve(body.id);
@@ -92,6 +94,25 @@ export class InvoiceService {
         .then(() => {
           InvoiceService.invoiceStore.splice(index, 1);
           resolve(true);
+        })
+        .catch(err => reject(err));
+    });
+  }
+  invoicePayment(body: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.apiService
+        .post(`${environment.base_url}/payment`, body)
+        .toPromise()
+        .then(res => {
+          if (InvoiceService.invoiceStore) {
+            for (let inv of InvoiceService.invoiceStore) {
+              if (inv.id === res.id) {
+                inv.amountPaid = res.amountPaid;
+                inv.balanceDue = res.balanceDue;
+              }
+            }
+          }
+          resolve(res);
         })
         .catch(err => reject(err));
     });

@@ -16,24 +16,29 @@ export class HomeDialogComponent implements OnInit {
   invoiceForm: FormGroup;
   ngOnInit() {
     this.invoiceForm = this.fb.group({
-      from: ["", [Validators.required, Validators.email]],
-      to: ["", [Validators.required, Validators.email]],
+      from: [
+        this.data.mail && this.data.mail.from ? this.data.mail.from : "",
+        [Validators.required, Validators.email]
+      ],
+      to: [
+        this.data.mail && this.data.mail.to ? this.data.mail.to : "",
+        [Validators.required, Validators.email]
+      ],
       subject: [
-        {
-          value: `Invoice from ${this.data.sender} #${this.data.number}`,
-          disabled: true
-        }
+        this.data.mail && this.data.mail.subject
+          ? this.data.mail.subject
+          : `Invoice from ${this.data.sender} #${this.data.number}`,
+        Validators.required
       ],
       message: [
-        "A new invoice has been created on your account. You may find a PDF of your invoice attached.",
+        this.data.mail && this.data.mail.message
+          ? this.data.mail.message
+          : "A new invoice has been created on your account. You may find a PDF of your invoice attached.",
         Validators.required
       ]
     });
   }
   submit(): void {
-    this.invoiceForm.value.subject = `Invoice from ${this.data.sender} #${
-      this.data.number
-    }`;
     this.dialogRef.close(this.invoiceForm.value);
   }
 }

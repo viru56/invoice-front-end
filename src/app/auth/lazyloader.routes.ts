@@ -11,6 +11,7 @@ export const appRoutes: Routes = [{
         { path: 'payments', loadChildren: '../modules/payments/payments.module#PaymentsModule' },
         { path: 'tax', loadChildren: '../modules/tax/tax.module#TaxModule' },
         { path: 'item', loadChildren: '../modules/item/item.module#ItemModule' },
-        { path: 'team', loadChildren: '../modules/team/team.module#TeamModule' }
+        { path: 'team', loadChildren: '../modules/team/team.module#TeamModule' },
+        {path:'profile',loadChildren:'../modules/user-profile/user-profile.module#UserProfileModule'}
     ]
 }];

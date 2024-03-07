@@ -76,13 +76,16 @@ body {
 }
 .ps-content {
   height: 100%;
-  overflow: hidden;
+  overflow-y: hidden;
 }
 .wd-150 {
   width: 150px;
 }
 .float-right {
   float: right;
+}
+.float-left {
+  float: left;
 }
 .m20{
   margin: 20px
@@ -114,6 +117,9 @@ body {
 .pb20 {
   padding-bottom: 20px;
 }
+.p10{
+  padding: 10px;
+}
 .dflex {
   display: flex;
 }
@@ -123,6 +129,9 @@ body {
 }
 .text-bold{
   font-weight: bold;
+}
+.text-center{
+  text-align: center;
 }
 .mat-select-panel,.mat-autocomplete-panel,.mat-calendar{
   background-color: #fff;

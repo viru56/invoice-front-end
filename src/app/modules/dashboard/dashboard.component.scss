@@ -1,12 +1,8 @@
 .dashboard {
-    .mat-subheader{
-        margin-top: 0;
-    }
-  .sample-img{
-    width: 300px;
-    border: 2px solid #ccc;
-  }
-  .mw-800{
-    max-width: 800px;
+  padding: 20px;
+  .mat-toolbar{
+    border-bottom: 1px solid #ccc;
+    background: #fff;
+    margin-bottom: 20px;
   }
 }
