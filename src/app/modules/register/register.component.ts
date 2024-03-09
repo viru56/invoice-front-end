@@ -87,14 +87,14 @@ export class RegisterComponent implements OnInit {
       })
       .catch(err => {
         console.log(err);
-        if (err.error.errmsg) {
-          if (err.error.errmsg.indexOf("email") !== -1) {
+        if (err.error.code === 11000) {
+          if (err.error.keyPattern.email === 1) {
             this.serverError = "Email already exists";
-          } else if (err.error.errmsg.indexOf("name") !== -1) {
+          } else if (err.error.keyPattern.name === 1) {
             this.serverError = "Comapny name already exists";
           }
         } else {
-          this.serverError = err.error.message
+          this.serverError = err.error.message || "Something went wrong";
         }
       });
   }
